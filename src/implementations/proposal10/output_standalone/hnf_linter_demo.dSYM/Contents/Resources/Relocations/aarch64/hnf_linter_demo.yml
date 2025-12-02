@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     'output_standalone/hnf_linter_demo'
+relocations:     []
+...

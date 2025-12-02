@@ -1,0 +1,10 @@
+dataset precision dpg error_bound reliable
+adult float64 0.030834 0.000000 1
+adult float32 0.030834 0.000000 1
+adult float16 0.030834 0.023822 0
+compas float64 0.010710 0.000000 1
+compas float32 0.010710 0.000000 1
+compas float16 0.010710 0.042330 0
+tabular float64 0.075747 0.000000 1
+tabular float32 0.075747 0.000000 1
+tabular float16 0.075747 0.023204 1

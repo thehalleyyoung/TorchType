@@ -1,0 +1,12 @@
+{
+  "rosenbrock": {
+    "constant_lr_final": 4.878743648529053,
+    "homotopy_lr_final": 5.398920059204102,
+    "improvement_pct": -10.662097624905599
+  },
+  "quadratic": {
+    "constant_lr_final": 0.00019607588183134794,
+    "homotopy_lr_final": 0.00010552516323514283,
+    "improvement_pct": 46.18146696598367
+  }
+}

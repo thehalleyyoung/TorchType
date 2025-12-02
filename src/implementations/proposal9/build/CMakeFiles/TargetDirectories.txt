@@ -1,0 +1,16 @@
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/curvature_quantizer.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/test_comprehensive.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/mnist_quantization_demo.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/resnet_quantization.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/transformer_layer_quant.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/mnist_real_quantization.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/test_curvature_beats_manual.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/sheaf_cohomology_quantization.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/homotopy_algorithm_space.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/formal_verification.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/edit_cache.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/rebuild_cache.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/list_install_components.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/install.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/install/local.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal9/build/CMakeFiles/install/strip.dir

@@ -1,0 +1,14 @@
+{
+  "adult": {
+    "n_flip_cases": 0,
+    "flip_cases": []
+  },
+  "compas": {
+    "n_flip_cases": 0,
+    "flip_cases": []
+  },
+  "tabular": {
+    "n_flip_cases": 0,
+    "flip_cases": []
+  }
+}

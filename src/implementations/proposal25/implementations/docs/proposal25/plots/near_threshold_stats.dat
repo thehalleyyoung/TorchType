@@ -1,0 +1,7 @@
+dataset group mean_distance median_distance
+adult 0 0.308841 0.346823
+adult 1 0.300275 0.335032
+compas 0 0.168950 0.149552
+compas 1 0.160138 0.146608
+tabular 0 0.284250 0.301065
+tabular 1 0.268703 0.271780

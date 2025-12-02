@@ -1,0 +1,15 @@
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/hnf_profiler.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/test_profiler.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/test_comprehensive.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/test_rigorous.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/test_advanced.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/test_advanced_simple.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/mnist_complete_validation.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/mnist_precision.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/mnist_real_training.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/mnist_stability_demo.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/simple_training.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/transformer_profiling.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/test.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/edit_cache.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal5/build/CMakeFiles/rebuild_cache.dir

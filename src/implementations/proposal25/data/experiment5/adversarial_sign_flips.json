@@ -1,0 +1,637 @@
+{
+  "description": "Adversarial examples showing sign flips under numerical perturbation",
+  "scenarios": [
+    {
+      "name": "very_tight",
+      "concentration": 0.005,
+      "imbalance": 0.002,
+      "trials": [
+        {
+          "trial": 0,
+          "true_dpg": 0.30800000000000005,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.30800000000000005,
+            "float32": 0.312,
+            "float16": 0.01200000000000001
+          },
+          "dpg_range": [
+            0.01200000000000001,
+            0.312
+          ]
+        },
+        {
+          "trial": 1,
+          "true_dpg": 0.33999999999999997,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.33999999999999997,
+            "float32": 0.33999999999999997,
+            "float16": 0.04800000000000004
+          },
+          "dpg_range": [
+            0.04800000000000004,
+            0.33999999999999997
+          ]
+        },
+        {
+          "trial": 2,
+          "true_dpg": 0.196,
+          "uncertainty": 0.99,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.196,
+            "float32": 0.2,
+            "float16": 0.008000000000000007
+          },
+          "dpg_range": [
+            0.008000000000000007,
+            0.2
+          ]
+        },
+        {
+          "trial": 3,
+          "true_dpg": 0.36400000000000005,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.36400000000000005,
+            "float32": 0.36800000000000005,
+            "float16": 0.055999999999999994
+          },
+          "dpg_range": [
+            0.055999999999999994,
+            0.36800000000000005
+          ]
+        },
+        {
+          "trial": 4,
+          "true_dpg": 0.34,
+          "uncertainty": 0.996,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.34,
+            "float32": 0.328,
+            "float16": 0.055999999999999994
+          },
+          "dpg_range": [
+            0.055999999999999994,
+            0.34
+          ]
+        },
+        {
+          "trial": 5,
+          "true_dpg": 0.284,
+          "uncertainty": 0.994,
+          "has_sign_flip": true,
+          "dpg_by_precision": {
+            "float64": 0.284,
+            "float32": 0.284,
+            "float16": -0.03600000000000003
+          },
+          "dpg_range": [
+            -0.03600000000000003,
+            0.284
+          ]
+        },
+        {
+          "trial": 6,
+          "true_dpg": 0.276,
+          "uncertainty": 0.99,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.276,
+            "float32": 0.276,
+            "float16": 0.023999999999999966
+          },
+          "dpg_range": [
+            0.023999999999999966,
+            0.276
+          ]
+        },
+        {
+          "trial": 7,
+          "true_dpg": 0.34800000000000003,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.34800000000000003,
+            "float32": 0.34,
+            "float16": 0.0040000000000000036
+          },
+          "dpg_range": [
+            0.0040000000000000036,
+            0.34800000000000003
+          ]
+        },
+        {
+          "trial": 8,
+          "true_dpg": 0.34800000000000003,
+          "uncertainty": 0.99,
+          "has_sign_flip": true,
+          "dpg_by_precision": {
+            "float64": 0.34800000000000003,
+            "float32": 0.34,
+            "float16": -0.06400000000000006
+          },
+          "dpg_range": [
+            -0.06400000000000006,
+            0.34800000000000003
+          ]
+        },
+        {
+          "trial": 9,
+          "true_dpg": 0.336,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.336,
+            "float32": 0.336,
+            "float16": 0.10400000000000004
+          },
+          "dpg_range": [
+            0.10400000000000004,
+            0.336
+          ]
+        }
+      ],
+      "sign_flip_rate": 0.2
+    },
+    {
+      "name": "tight",
+      "concentration": 0.01,
+      "imbalance": 0.005,
+      "trials": [
+        {
+          "trial": 0,
+          "true_dpg": 0.37199999999999994,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.37199999999999994,
+            "float32": 0.36799999999999994,
+            "float16": 0.03200000000000003
+          },
+          "dpg_range": [
+            0.03200000000000003,
+            0.37199999999999994
+          ]
+        },
+        {
+          "trial": 1,
+          "true_dpg": 0.40399999999999997,
+          "uncertainty": 0.99,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.40399999999999997,
+            "float32": 0.40399999999999997,
+            "float16": 0.052000000000000046
+          },
+          "dpg_range": [
+            0.052000000000000046,
+            0.40399999999999997
+          ]
+        },
+        {
+          "trial": 2,
+          "true_dpg": 0.30800000000000005,
+          "uncertainty": 0.99,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.30800000000000005,
+            "float32": 0.31200000000000006,
+            "float16": 0.01200000000000001
+          },
+          "dpg_range": [
+            0.01200000000000001,
+            0.31200000000000006
+          ]
+        },
+        {
+          "trial": 3,
+          "true_dpg": 0.43199999999999994,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.43199999999999994,
+            "float32": 0.42799999999999994,
+            "float16": 0.068
+          },
+          "dpg_range": [
+            0.068,
+            0.43199999999999994
+          ]
+        },
+        {
+          "trial": 4,
+          "true_dpg": 0.44,
+          "uncertainty": 0.996,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.44,
+            "float32": 0.444,
+            "float16": 0.068
+          },
+          "dpg_range": [
+            0.068,
+            0.444
+          ]
+        },
+        {
+          "trial": 5,
+          "true_dpg": 0.364,
+          "uncertainty": 0.994,
+          "has_sign_flip": true,
+          "dpg_by_precision": {
+            "float64": 0.364,
+            "float32": 0.364,
+            "float16": -0.02400000000000002
+          },
+          "dpg_range": [
+            -0.02400000000000002,
+            0.364
+          ]
+        },
+        {
+          "trial": 6,
+          "true_dpg": 0.35600000000000004,
+          "uncertainty": 0.99,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.35600000000000004,
+            "float32": 0.36000000000000004,
+            "float16": 0.02799999999999997
+          },
+          "dpg_range": [
+            0.02799999999999997,
+            0.36000000000000004
+          ]
+        },
+        {
+          "trial": 7,
+          "true_dpg": 0.416,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.416,
+            "float32": 0.416,
+            "float16": 0.01200000000000001
+          },
+          "dpg_range": [
+            0.01200000000000001,
+            0.416
+          ]
+        },
+        {
+          "trial": 8,
+          "true_dpg": 0.41600000000000004,
+          "uncertainty": 0.986,
+          "has_sign_flip": true,
+          "dpg_by_precision": {
+            "float64": 0.41600000000000004,
+            "float32": 0.41600000000000004,
+            "float16": -0.06000000000000005
+          },
+          "dpg_range": [
+            -0.06000000000000005,
+            0.41600000000000004
+          ]
+        },
+        {
+          "trial": 9,
+          "true_dpg": 0.4,
+          "uncertainty": 0.992,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.4,
+            "float32": 0.4,
+            "float16": 0.12000000000000005
+          },
+          "dpg_range": [
+            0.12000000000000005,
+            0.4
+          ]
+        }
+      ],
+      "sign_flip_rate": 0.2
+    },
+    {
+      "name": "moderate",
+      "concentration": 0.02,
+      "imbalance": 0.008,
+      "trials": [
+        {
+          "trial": 0,
+          "true_dpg": 0.30800000000000005,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.30800000000000005,
+            "float32": 0.312,
+            "float16": 0.03200000000000003
+          },
+          "dpg_range": [
+            0.03200000000000003,
+            0.312
+          ]
+        },
+        {
+          "trial": 1,
+          "true_dpg": 0.33999999999999997,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.33999999999999997,
+            "float32": 0.33199999999999996,
+            "float16": 0.07599999999999996
+          },
+          "dpg_range": [
+            0.07599999999999996,
+            0.33999999999999997
+          ]
+        },
+        {
+          "trial": 2,
+          "true_dpg": 0.196,
+          "uncertainty": 0.99,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.196,
+            "float32": 0.2,
+            "float16": 0.03200000000000003
+          },
+          "dpg_range": [
+            0.03200000000000003,
+            0.2
+          ]
+        },
+        {
+          "trial": 3,
+          "true_dpg": 0.36400000000000005,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.36400000000000005,
+            "float32": 0.36400000000000005,
+            "float16": 0.09200000000000003
+          },
+          "dpg_range": [
+            0.09200000000000003,
+            0.36400000000000005
+          ]
+        },
+        {
+          "trial": 4,
+          "true_dpg": 0.34,
+          "uncertainty": 0.996,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.34,
+            "float32": 0.336,
+            "float16": 0.068
+          },
+          "dpg_range": [
+            0.068,
+            0.34
+          ]
+        },
+        {
+          "trial": 5,
+          "true_dpg": 0.284,
+          "uncertainty": 0.994,
+          "has_sign_flip": true,
+          "dpg_by_precision": {
+            "float64": 0.284,
+            "float32": 0.284,
+            "float16": -0.008000000000000007
+          },
+          "dpg_range": [
+            -0.008000000000000007,
+            0.284
+          ]
+        },
+        {
+          "trial": 6,
+          "true_dpg": 0.276,
+          "uncertainty": 0.99,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.276,
+            "float32": 0.276,
+            "float16": 0.04799999999999999
+          },
+          "dpg_range": [
+            0.04799999999999999,
+            0.276
+          ]
+        },
+        {
+          "trial": 7,
+          "true_dpg": 0.34800000000000003,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.34800000000000003,
+            "float32": 0.34800000000000003,
+            "float16": 0.016000000000000014
+          },
+          "dpg_range": [
+            0.016000000000000014,
+            0.34800000000000003
+          ]
+        },
+        {
+          "trial": 8,
+          "true_dpg": 0.34800000000000003,
+          "uncertainty": 0.99,
+          "has_sign_flip": true,
+          "dpg_by_precision": {
+            "float64": 0.34800000000000003,
+            "float32": 0.34400000000000003,
+            "float16": -0.052000000000000046
+          },
+          "dpg_range": [
+            -0.052000000000000046,
+            0.34800000000000003
+          ]
+        },
+        {
+          "trial": 9,
+          "true_dpg": 0.336,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.336,
+            "float32": 0.336,
+            "float16": 0.11200000000000004
+          },
+          "dpg_range": [
+            0.11200000000000004,
+            0.336
+          ]
+        }
+      ],
+      "sign_flip_rate": 0.2
+    },
+    {
+      "name": "loose",
+      "concentration": 0.05,
+      "imbalance": 0.015,
+      "trials": [
+        {
+          "trial": 0,
+          "true_dpg": 0.23199999999999998,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.23199999999999998,
+            "float32": 0.23199999999999998,
+            "float16": 0.06000000000000005
+          },
+          "dpg_range": [
+            0.06000000000000005,
+            0.23199999999999998
+          ]
+        },
+        {
+          "trial": 1,
+          "true_dpg": 0.264,
+          "uncertainty": 0.996,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.264,
+            "float32": 0.264,
+            "float16": 0.09599999999999997
+          },
+          "dpg_range": [
+            0.09599999999999997,
+            0.264
+          ]
+        },
+        {
+          "trial": 2,
+          "true_dpg": 0.128,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.128,
+            "float32": 0.128,
+            "float16": 0.016000000000000014
+          },
+          "dpg_range": [
+            0.016000000000000014,
+            0.128
+          ]
+        },
+        {
+          "trial": 3,
+          "true_dpg": 0.32,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.32,
+            "float32": 0.32,
+            "float16": 0.12000000000000005
+          },
+          "dpg_range": [
+            0.12000000000000005,
+            0.32
+          ]
+        },
+        {
+          "trial": 4,
+          "true_dpg": 0.248,
+          "uncertainty": 0.998,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.248,
+            "float32": 0.248,
+            "float16": 0.09600000000000003
+          },
+          "dpg_range": [
+            0.09600000000000003,
+            0.248
+          ]
+        },
+        {
+          "trial": 5,
+          "true_dpg": 0.21600000000000003,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.21600000000000003,
+            "float32": 0.21600000000000003,
+            "float16": 0.0
+          },
+          "dpg_range": [
+            0.0,
+            0.21600000000000003
+          ]
+        },
+        {
+          "trial": 6,
+          "true_dpg": 0.19999999999999996,
+          "uncertainty": 0.992,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.19999999999999996,
+            "float32": 0.19999999999999996,
+            "float16": 0.06
+          },
+          "dpg_range": [
+            0.06,
+            0.19999999999999996
+          ]
+        },
+        {
+          "trial": 7,
+          "true_dpg": 0.28,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.28,
+            "float32": 0.28,
+            "float16": 0.03199999999999997
+          },
+          "dpg_range": [
+            0.03199999999999997,
+            0.28
+          ]
+        },
+        {
+          "trial": 8,
+          "true_dpg": 0.252,
+          "uncertainty": 0.99,
+          "has_sign_flip": true,
+          "dpg_by_precision": {
+            "float64": 0.252,
+            "float32": 0.252,
+            "float16": -0.01200000000000001
+          },
+          "dpg_range": [
+            -0.01200000000000001,
+            0.252
+          ]
+        },
+        {
+          "trial": 9,
+          "true_dpg": 0.23199999999999998,
+          "uncertainty": 0.994,
+          "has_sign_flip": false,
+          "dpg_by_precision": {
+            "float64": 0.23199999999999998,
+            "float32": 0.23199999999999998,
+            "float16": 0.12800000000000006
+          },
+          "dpg_range": [
+            0.12800000000000006,
+            0.23199999999999998
+          ]
+        }
+      ],
+      "sign_flip_rate": 0.1
+    }
+  ]
+}

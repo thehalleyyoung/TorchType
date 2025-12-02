@@ -1,0 +1,1516 @@
+{
+  "gridworld_4x4": {
+    "gamma_0.7": {
+      "gamma": 0.7,
+      "target_error": 0.01,
+      "theoretical_min_bits": 15.845707832670335,
+      "theoretical_safe_bits": 17.845707832670335,
+      "observed_threshold": 32,
+      "convergence_results": [
+        {
+          "precision_bits": 4,
+          "converged": false,
+          "final_error": 0.5808773040771484,
+          "iterations": 1000,
+          "theoretical_error": 36.80555555555554
+        },
+        {
+          "precision_bits": 6,
+          "converged": false,
+          "final_error": 0.08031940460205078,
+          "iterations": 1000,
+          "theoretical_error": 9.201388888888886
+        },
+        {
+          "precision_bits": 8,
+          "converged": true,
+          "final_error": 0.013178229331970215,
+          "iterations": 32,
+          "theoretical_error": 2.300689959108977
+        },
+        {
+          "precision_bits": 10,
+          "converged": false,
+          "final_error": 0.0037102699279785156,
+          "iterations": 1000,
+          "theoretical_error": 0.5750868055555554
+        },
+        {
+          "precision_bits": 12,
+          "converged": false,
+          "final_error": 0.0017296075820922852,
+          "iterations": 1000,
+          "theoretical_error": 0.14377170138888884
+        },
+        {
+          "precision_bits": 14,
+          "converged": false,
+          "final_error": 0.0004322528839111328,
+          "iterations": 1000,
+          "theoretical_error": 0.03594292534722221
+        },
+        {
+          "precision_bits": 16,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.008985731336805552
+        },
+        {
+          "precision_bits": 18,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.002246432834201388
+        },
+        {
+          "precision_bits": 20,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.000561608208550347
+        },
+        {
+          "precision_bits": 22,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.00014040205213758676
+        },
+        {
+          "precision_bits": 24,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 3.510051303439669e-05
+        },
+        {
+          "precision_bits": 28,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 2.193782064649793e-06
+        },
+        {
+          "precision_bits": 32,
+          "converged": true,
+          "final_error": 2.384185791015625e-07,
+          "iterations": 7,
+          "theoretical_error": 2.745207753003039
+        },
+        {
+          "precision_bits": 48,
+          "converged": true,
+          "final_error": 2.384185791015625e-07,
+          "iterations": 7,
+          "theoretical_error": 2.745207753003039
+        },
+        {
+          "precision_bits": 64,
+          "converged": true,
+          "final_error": 2.384185791015625e-07,
+          "iterations": 7,
+          "theoretical_error": 2.745207753003039
+        }
+      ],
+      "V_max": 33.33333333333333,
+      "R_max": 10.0
+    },
+    "gamma_0.8": {
+      "gamma": 0.8,
+      "target_error": 0.01,
+      "theoretical_min_bits": 16.98815209769054,
+      "theoretical_safe_bits": 18.98815209769054,
+      "observed_threshold": 32,
+      "convergence_results": [
+        {
+          "precision_bits": 4,
+          "converged": false,
+          "final_error": 0.9952887296676636,
+          "iterations": 1000,
+          "theoretical_error": 81.25000000000004
+        },
+        {
+          "precision_bits": 6,
+          "converged": false,
+          "final_error": 0.07584404945373535,
+          "iterations": 1000,
+          "theoretical_error": 20.31250000000001
+        },
+        {
+          "precision_bits": 8,
+          "converged": true,
+          "final_error": 0.031340599060058594,
+          "iterations": 42,
+          "theoretical_error": 5.081946530487884
+        },
+        {
+          "precision_bits": 10,
+          "converged": false,
+          "final_error": 0.00845193862915039,
+          "iterations": 1000,
+          "theoretical_error": 1.2695312500000007
+        },
+        {
+          "precision_bits": 12,
+          "converged": false,
+          "final_error": 0.0018420219421386719,
+          "iterations": 1000,
+          "theoretical_error": 0.31738281250000017
+        },
+        {
+          "precision_bits": 14,
+          "converged": false,
+          "final_error": 0.0008590593934059143,
+          "iterations": 1000,
+          "theoretical_error": 0.07934570312500004
+        },
+        {
+          "precision_bits": 16,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.01983642578125001
+        },
+        {
+          "precision_bits": 18,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.004959106445312503
+        },
+        {
+          "precision_bits": 20,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0012397766113281257
+        },
+        {
+          "precision_bits": 22,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0003099441528320314
+        },
+        {
+          "precision_bits": 24,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 7.748603820800785e-05
+        },
+        {
+          "precision_bits": 28,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 4.842877388000491e-06
+        },
+        {
+          "precision_bits": 32,
+          "converged": true,
+          "final_error": 5.21540641784668e-08,
+          "iterations": 7,
+          "theoretical_error": 10.485882472076423
+        },
+        {
+          "precision_bits": 48,
+          "converged": true,
+          "final_error": 5.21540641784668e-08,
+          "iterations": 7,
+          "theoretical_error": 10.485882472076423
+        },
+        {
+          "precision_bits": 64,
+          "converged": true,
+          "final_error": 5.21540641784668e-08,
+          "iterations": 7,
+          "theoretical_error": 10.485882472076423
+        }
+      ],
+      "V_max": 50.000000000000014,
+      "R_max": 10.0
+    },
+    "gamma_0.9": {
+      "gamma": 0.9,
+      "target_error": 0.01,
+      "theoretical_min_bits": 18.960137721520944,
+      "theoretical_safe_bits": 20.960137721520944,
+      "observed_threshold": 10,
+      "convergence_results": [
+        {
+          "precision_bits": 4,
+          "converged": true,
+          "final_error": 0.21132516860961914,
+          "iterations": 105,
+          "theoretical_error": 318.74656907240626
+        },
+        {
+          "precision_bits": 6,
+          "converged": true,
+          "final_error": 0.09495353698730469,
+          "iterations": 92,
+          "theoretical_error": 79.68875335542961
+        },
+        {
+          "precision_bits": 8,
+          "converged": true,
+          "final_error": 0.015263080596923828,
+          "iterations": 90,
+          "theoretical_error": 19.927975139198992
+        },
+        {
+          "precision_bits": 10,
+          "converged": true,
+          "final_error": 0.005228996276855469,
+          "iterations": 58,
+          "theoretical_error": 5.1912725479620905
+        },
+        {
+          "precision_bits": 12,
+          "converged": true,
+          "final_error": 0.00217437744140625,
+          "iterations": 50,
+          "theoretical_error": 1.7540776541408671
+        },
+        {
+          "precision_bits": 14,
+          "converged": true,
+          "final_error": 0.000598907470703125,
+          "iterations": 26,
+          "theoretical_error": 6.7522491758263765
+        },
+        {
+          "precision_bits": 16,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.07781982421875003
+        },
+        {
+          "precision_bits": 18,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.019454956054687507
+        },
+        {
+          "precision_bits": 20,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.004863739013671877
+        },
+        {
+          "precision_bits": 22,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0012159347534179692
+        },
+        {
+          "precision_bits": 24,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0003039836883544923
+        },
+        {
+          "precision_bits": 28,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 1.899898052215577e-05
+        },
+        {
+          "precision_bits": 32,
+          "converged": true,
+          "final_error": 8.344650268554688e-07,
+          "iterations": 7,
+          "theoretical_error": 47.83000717846515
+        },
+        {
+          "precision_bits": 48,
+          "converged": true,
+          "final_error": 8.344650268554688e-07,
+          "iterations": 7,
+          "theoretical_error": 47.83000717846515
+        },
+        {
+          "precision_bits": 64,
+          "converged": true,
+          "final_error": 8.344650268554688e-07,
+          "iterations": 7,
+          "theoretical_error": 47.83000717846515
+        }
+      ],
+      "V_max": 100.00000000000003,
+      "R_max": 10.0
+    },
+    "gamma_0.95": {
+      "gamma": 0.95,
+      "target_error": 0.01,
+      "theoretical_min_bits": 20.945923862301242,
+      "theoretical_safe_bits": 22.945923862301242,
+      "observed_threshold": 10,
+      "convergence_results": [
+        {
+          "precision_bits": 4,
+          "converged": true,
+          "final_error": 0.27876853942871094,
+          "iterations": 192,
+          "theoretical_error": 1262.4438614547664
+        },
+        {
+          "precision_bits": 6,
+          "converged": true,
+          "final_error": 0.07144641876220703,
+          "iterations": 169,
+          "theoretical_error": 315.6051234484412
+        },
+        {
+          "precision_bits": 8,
+          "converged": true,
+          "final_error": 0.02302074432373047,
+          "iterations": 147,
+          "theoretical_error": 78.9705915777125
+        },
+        {
+          "precision_bits": 10,
+          "converged": true,
+          "final_error": 0.007018089294433594,
+          "iterations": 116,
+          "theoretical_error": 20.19631592316718
+        },
+        {
+          "precision_bits": 12,
+          "converged": true,
+          "final_error": 0.000629425048828125,
+          "iterations": 88,
+          "theoretical_error": 7.06893378933774
+        },
+        {
+          "precision_bits": 14,
+          "converged": true,
+          "final_error": 0.00036025047302246094,
+          "iterations": 63,
+          "theoretical_error": 9.084030103497655
+        },
+        {
+          "precision_bits": 16,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.30822753906249944
+        },
+        {
+          "precision_bits": 18,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.07705688476562486
+        },
+        {
+          "precision_bits": 20,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.019264221191406215
+        },
+        {
+          "precision_bits": 22,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.004816055297851554
+        },
+        {
+          "precision_bits": 24,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0012040138244628885
+        },
+        {
+          "precision_bits": 28,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 7.525086402893054e-05
+        },
+        {
+          "precision_bits": 32,
+          "converged": true,
+          "final_error": 4.76837158203125e-07,
+          "iterations": 7,
+          "theoretical_error": 139.66818563088148
+        },
+        {
+          "precision_bits": 48,
+          "converged": true,
+          "final_error": 4.76837158203125e-07,
+          "iterations": 7,
+          "theoretical_error": 139.66818563088148
+        },
+        {
+          "precision_bits": 64,
+          "converged": true,
+          "final_error": 4.76837158203125e-07,
+          "iterations": 7,
+          "theoretical_error": 139.66818563088148
+        }
+      ],
+      "V_max": 199.99999999999983,
+      "R_max": 10.0
+    },
+    "gamma_0.99": {
+      "gamma": 0.99,
+      "target_error": 0.01,
+      "theoretical_min_bits": 25.578307267632017,
+      "theoretical_safe_bits": 27.578307267632017,
+      "observed_threshold": 10,
+      "convergence_results": [
+        {
+          "precision_bits": 4,
+          "converged": true,
+          "final_error": 1.2756705284118652,
+          "iterations": 620,
+          "theoretical_error": 31252.87307591186
+        },
+        {
+          "precision_bits": 6,
+          "converged": true,
+          "final_error": 0.16436195373535156,
+          "iterations": 687,
+          "theoretical_error": 7821.2751643494585
+        },
+        {
+          "precision_bits": 8,
+          "converged": true,
+          "final_error": 0.02081155776977539,
+          "iterations": 374,
+          "theoretical_error": 1934.721798208116
+        },
+        {
+          "precision_bits": 10,
+          "converged": true,
+          "final_error": 0.004878044128417969,
+          "iterations": 441,
+          "theoretical_error": 495.32968368971535
+        },
+        {
+          "precision_bits": 12,
+          "converged": true,
+          "final_error": 0.0022292137145996094,
+          "iterations": 373,
+          "theoretical_error": 142.98093405465605
+        },
+        {
+          "precision_bits": 14,
+          "converged": true,
+          "final_error": 0.0004067420959472656,
+          "iterations": 183,
+          "theoretical_error": 184.66107484254286
+        },
+        {
+          "precision_bits": 16,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 7.687494538503285
+        },
+        {
+          "precision_bits": 18,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 1.9542520701838144
+        },
+        {
+          "precision_bits": 20,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.520941453103947
+        },
+        {
+          "precision_bits": 22,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.1626137988339801
+        },
+        {
+          "precision_bits": 24,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.07303188526648839
+        },
+        {
+          "precision_bits": 28,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.045037537276647235
+        },
+        {
+          "precision_bits": 32,
+          "converged": true,
+          "final_error": 4.76837158203125e-07,
+          "iterations": 7,
+          "theoretical_error": 932.0694052262365
+        },
+        {
+          "precision_bits": 48,
+          "converged": true,
+          "final_error": 4.76837158203125e-07,
+          "iterations": 7,
+          "theoretical_error": 932.0694052262365
+        },
+        {
+          "precision_bits": 64,
+          "converged": true,
+          "final_error": 4.76837158203125e-07,
+          "iterations": 7,
+          "theoretical_error": 932.0694052262365
+        }
+      ],
+      "V_max": 999.9999999999991,
+      "R_max": 10.0
+    }
+  },
+  "gridworld_8x8": {
+    "gamma_0.7": {
+      "gamma": 0.7,
+      "target_error": 0.01,
+      "theoretical_min_bits": 16.65694618921517,
+      "theoretical_safe_bits": 18.65694618921517,
+      "observed_threshold": 32,
+      "convergence_results": [
+        {
+          "precision_bits": 4,
+          "converged": false,
+          "final_error": 0.7775455713272095,
+          "iterations": 1000,
+          "theoretical_error": 64.58333333333331
+        },
+        {
+          "precision_bits": 6,
+          "converged": false,
+          "final_error": 0.14411330223083496,
+          "iterations": 1000,
+          "theoretical_error": 16.14583333333333
+        },
+        {
+          "precision_bits": 8,
+          "converged": true,
+          "final_error": 0.028374940156936646,
+          "iterations": 38,
+          "theoretical_error": 4.036496400172624
+        },
+        {
+          "precision_bits": 10,
+          "converged": false,
+          "final_error": 0.008341550827026367,
+          "iterations": 1000,
+          "theoretical_error": 1.009114583333333
+        },
+        {
+          "precision_bits": 12,
+          "converged": false,
+          "final_error": 0.0024394989013671875,
+          "iterations": 1000,
+          "theoretical_error": 0.25227864583333326
+        },
+        {
+          "precision_bits": 14,
+          "converged": false,
+          "final_error": 0.000705718994140625,
+          "iterations": 1000,
+          "theoretical_error": 0.06306966145833331
+        },
+        {
+          "precision_bits": 16,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.01576741536458333
+        },
+        {
+          "precision_bits": 18,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.003941853841145832
+        },
+        {
+          "precision_bits": 20,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.000985463460286458
+        },
+        {
+          "precision_bits": 22,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0002463658650716145
+        },
+        {
+          "precision_bits": 24,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 6.159146626790363e-05
+        },
+        {
+          "precision_bits": 28,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 3.849466641743977e-06
+        },
+        {
+          "precision_bits": 32,
+          "converged": true,
+          "final_error": 2.384185791015625e-07,
+          "iterations": 15,
+          "theoretical_error": 0.1583746484454198
+        },
+        {
+          "precision_bits": 48,
+          "converged": true,
+          "final_error": 2.384185791015625e-07,
+          "iterations": 15,
+          "theoretical_error": 0.1583746484454198
+        },
+        {
+          "precision_bits": 64,
+          "converged": true,
+          "final_error": 2.384185791015625e-07,
+          "iterations": 15,
+          "theoretical_error": 0.1583746484454198
+        }
+      ],
+      "V_max": 33.33333333333333,
+      "R_max": 10.0
+    },
+    "gamma_0.8": {
+      "gamma": 0.8,
+      "target_error": 0.01,
+      "theoretical_min_bits": 17.811274335606463,
+      "theoretical_safe_bits": 19.811274335606463,
+      "observed_threshold": 32,
+      "convergence_results": [
+        {
+          "precision_bits": 4,
+          "converged": false,
+          "final_error": 0.8997147083282471,
+          "iterations": 1000,
+          "theoretical_error": 143.75000000000006
+        },
+        {
+          "precision_bits": 6,
+          "converged": true,
+          "final_error": 0.22221851348876953,
+          "iterations": 62,
+          "theoretical_error": 35.93751379245988
+        },
+        {
+          "precision_bits": 8,
+          "converged": false,
+          "final_error": 0.07008552551269531,
+          "iterations": 1000,
+          "theoretical_error": 8.984375000000004
+        },
+        {
+          "precision_bits": 10,
+          "converged": false,
+          "final_error": 0.014299869537353516,
+          "iterations": 1000,
+          "theoretical_error": 2.246093750000001
+        },
+        {
+          "precision_bits": 12,
+          "converged": false,
+          "final_error": 0.0037605836987495422,
+          "iterations": 1000,
+          "theoretical_error": 0.5615234375000002
+        },
+        {
+          "precision_bits": 14,
+          "converged": false,
+          "final_error": 0.0009655952453613281,
+          "iterations": 1000,
+          "theoretical_error": 0.14038085937500006
+        },
+        {
+          "precision_bits": 16,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.035095214843750014
+        },
+        {
+          "precision_bits": 18,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.008773803710937503
+        },
+        {
+          "precision_bits": 20,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.002193450927734376
+        },
+        {
+          "precision_bits": 22,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.000548362731933594
+        },
+        {
+          "precision_bits": 24,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0001370906829833985
+        },
+        {
+          "precision_bits": 28,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 8.568167686462406e-06
+        },
+        {
+          "precision_bits": 32,
+          "converged": true,
+          "final_error": 2.384185791015625e-07,
+          "iterations": 15,
+          "theoretical_error": 1.759483138908369
+        },
+        {
+          "precision_bits": 48,
+          "converged": true,
+          "final_error": 2.384185791015625e-07,
+          "iterations": 15,
+          "theoretical_error": 1.759483138908369
+        },
+        {
+          "precision_bits": 64,
+          "converged": true,
+          "final_error": 2.384185791015625e-07,
+          "iterations": 15,
+          "theoretical_error": 1.759483138908369
+        }
+      ],
+      "V_max": 50.000000000000014,
+      "R_max": 10.0
+    },
+    "gamma_0.9": {
+      "gamma": 0.9,
+      "target_error": 0.01,
+      "theoretical_min_bits": 19.795507019748147,
+      "theoretical_safe_bits": 21.795507019748147,
+      "observed_threshold": 32,
+      "convergence_results": [
+        {
+          "precision_bits": 4,
+          "converged": false,
+          "final_error": 1.031550407409668,
+          "iterations": 1000,
+          "theoretical_error": 568.7500000000002
+        },
+        {
+          "precision_bits": 6,
+          "converged": false,
+          "final_error": 0.28258800506591797,
+          "iterations": 1000,
+          "theoretical_error": 142.18750000000006
+        },
+        {
+          "precision_bits": 8,
+          "converged": false,
+          "final_error": 0.052183687686920166,
+          "iterations": 1000,
+          "theoretical_error": 35.546875000000014
+        },
+        {
+          "precision_bits": 10,
+          "converged": false,
+          "final_error": 0.015113353729248047,
+          "iterations": 1000,
+          "theoretical_error": 8.886718750000004
+        },
+        {
+          "precision_bits": 12,
+          "converged": false,
+          "final_error": 0.0033288002014160156,
+          "iterations": 1000,
+          "theoretical_error": 2.221679687500001
+        },
+        {
+          "precision_bits": 14,
+          "converged": false,
+          "final_error": 0.0013506412506103516,
+          "iterations": 1000,
+          "theoretical_error": 0.5554199218750002
+        },
+        {
+          "precision_bits": 16,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.13885498046875006
+        },
+        {
+          "precision_bits": 18,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.034713745117187514
+        },
+        {
+          "precision_bits": 20,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.008678436279296878
+        },
+        {
+          "precision_bits": 22,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0021696090698242196
+        },
+        {
+          "precision_bits": 24,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0005424022674560549
+        },
+        {
+          "precision_bits": 28,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 3.390014171600343e-05
+        },
+        {
+          "precision_bits": 32,
+          "converged": true,
+          "final_error": 8.344650268554688e-07,
+          "iterations": 15,
+          "theoretical_error": 20.58997466236603
+        },
+        {
+          "precision_bits": 48,
+          "converged": true,
+          "final_error": 8.344650268554688e-07,
+          "iterations": 15,
+          "theoretical_error": 20.58997466236603
+        },
+        {
+          "precision_bits": 64,
+          "converged": true,
+          "final_error": 8.344650268554688e-07,
+          "iterations": 15,
+          "theoretical_error": 20.58997466236603
+        }
+      ],
+      "V_max": 100.00000000000003,
+      "R_max": 10.0
+    },
+    "gamma_0.95": {
+      "gamma": 0.95,
+      "target_error": 0.01,
+      "theoretical_min_bits": 21.78755826663265,
+      "theoretical_safe_bits": 23.78755826663265,
+      "observed_threshold": 32,
+      "convergence_results": [
+        {
+          "precision_bits": 4,
+          "converged": false,
+          "final_error": 1.6946364641189575,
+          "iterations": 1000,
+          "theoretical_error": 2262.499999999996
+        },
+        {
+          "precision_bits": 6,
+          "converged": false,
+          "final_error": 0.6422328948974609,
+          "iterations": 1000,
+          "theoretical_error": 565.624999999999
+        },
+        {
+          "precision_bits": 8,
+          "converged": false,
+          "final_error": 0.044001102447509766,
+          "iterations": 1000,
+          "theoretical_error": 141.40624999999974
+        },
+        {
+          "precision_bits": 10,
+          "converged": false,
+          "final_error": 0.02113078534603119,
+          "iterations": 1000,
+          "theoretical_error": 35.351562499999936
+        },
+        {
+          "precision_bits": 12,
+          "converged": false,
+          "final_error": 0.0038123130798339844,
+          "iterations": 1000,
+          "theoretical_error": 8.837890624999984
+        },
+        {
+          "precision_bits": 14,
+          "converged": false,
+          "final_error": 0.002670764923095703,
+          "iterations": 1000,
+          "theoretical_error": 2.209472656249996
+        },
+        {
+          "precision_bits": 16,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.552368164062499
+        },
+        {
+          "precision_bits": 18,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.13809204101562475
+        },
+        {
+          "precision_bits": 20,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.03452301025390619
+        },
+        {
+          "precision_bits": 22,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.008630752563476547
+        },
+        {
+          "precision_bits": 24,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0021576881408691367
+        },
+        {
+          "precision_bits": 28,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.00013485550880432105
+        },
+        {
+          "precision_bits": 32,
+          "converged": true,
+          "final_error": 7.152557373046875e-07,
+          "iterations": 15,
+          "theoretical_error": 92.6605621322461
+        },
+        {
+          "precision_bits": 48,
+          "converged": true,
+          "final_error": 7.152557373046875e-07,
+          "iterations": 15,
+          "theoretical_error": 92.6605621322461
+        },
+        {
+          "precision_bits": 64,
+          "converged": true,
+          "final_error": 7.152557373046875e-07,
+          "iterations": 15,
+          "theoretical_error": 92.6605621322461
+        }
+      ],
+      "V_max": 199.99999999999983,
+      "R_max": 10.0
+    }
+  },
+  "frozenlake": {
+    "gamma_0.7": {
+      "gamma": 0.7,
+      "target_error": 0.01,
+      "theoretical_min_bits": 10.93881728005748,
+      "theoretical_safe_bits": 12.93881728005748,
+      "observed_threshold": 6,
+      "convergence_results": [
+        {
+          "precision_bits": 4,
+          "converged": true,
+          "final_error": 0.02707485668361187,
+          "iterations": 14,
+          "theoretical_error": 1.2260669079831015
+        },
+        {
+          "precision_bits": 6,
+          "converged": true,
+          "final_error": 0.005486797075718641,
+          "iterations": 15,
+          "theoretical_error": 0.310531901904352
+        },
+        {
+          "precision_bits": 8,
+          "converged": true,
+          "final_error": 0.0016663593705743551,
+          "iterations": 18,
+          "theoretical_error": 0.07836272762836856
+        },
+        {
+          "precision_bits": 10,
+          "converged": true,
+          "final_error": 0.0004246234893798828,
+          "iterations": 20,
+          "theoretical_error": 0.020040845692577993
+        },
+        {
+          "precision_bits": 12,
+          "converged": true,
+          "final_error": 0.00013233302161097527,
+          "iterations": 22,
+          "theoretical_error": 0.005224941024217729
+        },
+        {
+          "precision_bits": 14,
+          "converged": true,
+          "final_error": 1.9807368516921997e-05,
+          "iterations": 23,
+          "theoretical_error": 0.0015018668447199267
+        },
+        {
+          "precision_bits": 16,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0002994512518246968
+        },
+        {
+          "precision_bits": 18,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 7.48628129561742e-05
+        },
+        {
+          "precision_bits": 20,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 1.871570323904355e-05
+        },
+        {
+          "precision_bits": 22,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 4.678925809760887e-06
+        },
+        {
+          "precision_bits": 24,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 1.1697314524402218e-06
+        },
+        {
+          "precision_bits": 28,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 7.310821577751386e-08
+        },
+        {
+          "precision_bits": 32,
+          "converged": true,
+          "final_error": 1.9436702132225037e-06,
+          "iterations": 27,
+          "theoretical_error": 7.535361863831284e-05
+        },
+        {
+          "precision_bits": 48,
+          "converged": true,
+          "final_error": 1.9436702132225037e-06,
+          "iterations": 27,
+          "theoretical_error": 7.535361863831284e-05
+        },
+        {
+          "precision_bits": 64,
+          "converged": true,
+          "final_error": 1.9436702132225037e-06,
+          "iterations": 27,
+          "theoretical_error": 7.535361863831284e-05
+        }
+      ],
+      "V_max": 1.1111111442248025,
+      "R_max": 0.3333333432674408
+    },
+    "gamma_0.8": {
+      "gamma": 0.8,
+      "target_error": 0.01,
+      "theoretical_min_bits": 12.081261545077686,
+      "theoretical_safe_bits": 14.081261545077686,
+      "observed_threshold": 8,
+      "convergence_results": [
+        {
+          "precision_bits": 4,
+          "converged": true,
+          "final_error": 0.03377193212509155,
+          "iterations": 16,
+          "theoretical_error": 2.6790131031001176
+        },
+        {
+          "precision_bits": 6,
+          "converged": true,
+          "final_error": 0.010228408500552177,
+          "iterations": 19,
+          "theoretical_error": 0.6913447527570188
+        },
+        {
+          "precision_bits": 8,
+          "converged": true,
+          "final_error": 0.0033996012061834335,
+          "iterations": 21,
+          "theoretical_error": 0.18308187764686795
+        },
+        {
+          "precision_bits": 10,
+          "converged": true,
+          "final_error": 0.0004408992826938629,
+          "iterations": 26,
+          "theoretical_error": 0.04722700323029093
+        },
+        {
+          "precision_bits": 12,
+          "converged": true,
+          "final_error": 0.00015196483582258224,
+          "iterations": 30,
+          "theoretical_error": 0.012629564162153483
+        },
+        {
+          "precision_bits": 14,
+          "converged": true,
+          "final_error": 5.484744906425476e-05,
+          "iterations": 34,
+          "theoretical_error": 0.0034886161732451243
+        },
+        {
+          "precision_bits": 16,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.000661052763462067
+        },
+        {
+          "precision_bits": 18,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.00016526319086551674
+        },
+        {
+          "precision_bits": 20,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 4.1315797716379186e-05
+        },
+        {
+          "precision_bits": 22,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 1.0328949429094796e-05
+        },
+        {
+          "precision_bits": 24,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 2.582237357273699e-06
+        },
+        {
+          "precision_bits": 28,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 1.613898348296062e-07
+        },
+        {
+          "precision_bits": 32,
+          "converged": true,
+          "final_error": 2.8219074010849e-06,
+          "iterations": 40,
+          "theoretical_error": 0.0002267030552902226
+        },
+        {
+          "precision_bits": 48,
+          "converged": true,
+          "final_error": 2.8219074010849e-06,
+          "iterations": 40,
+          "theoretical_error": 0.0002267030552902226
+        },
+        {
+          "precision_bits": 64,
+          "converged": true,
+          "final_error": 2.8219074010849e-06,
+          "iterations": 40,
+          "theoretical_error": 0.0002267030552902226
+        }
+      ],
+      "V_max": 1.6666667163372044,
+      "R_max": 0.3333333432674408
+    },
+    "gamma_0.9": {
+      "gamma": 0.9,
+      "target_error": 0.01,
+      "theoretical_min_bits": 14.05324716890809,
+      "theoretical_safe_bits": 16.05324716890809,
+      "observed_threshold": 8,
+      "convergence_results": [
+        {
+          "precision_bits": 4,
+          "converged": true,
+          "final_error": 0.10428418219089508,
+          "iterations": 21,
+          "theoretical_error": 9.827153497121381
+        },
+        {
+          "precision_bits": 6,
+          "converged": true,
+          "final_error": 0.0284869484603405,
+          "iterations": 28,
+          "theoretical_error": 2.6916850762046924
+        },
+        {
+          "precision_bits": 8,
+          "converged": true,
+          "final_error": 0.006769545376300812,
+          "iterations": 34,
+          "theoretical_error": 0.7383025217895322
+        },
+        {
+          "precision_bits": 10,
+          "converged": true,
+          "final_error": 0.0020994842052459717,
+          "iterations": 39,
+          "theoretical_error": 0.21803313403701358
+        },
+        {
+          "precision_bits": 12,
+          "converged": true,
+          "final_error": 0.0004193037748336792,
+          "iterations": 49,
+          "theoretical_error": 0.06035429570206356
+        },
+        {
+          "precision_bits": 14,
+          "converged": true,
+          "final_error": 8.768588304519653e-05,
+          "iterations": 65,
+          "theoretical_error": 0.013902022229037967
+        },
+        {
+          "precision_bits": 16,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0025933608412742628
+        },
+        {
+          "precision_bits": 18,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0006483402103185657
+        },
+        {
+          "precision_bits": 20,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.00016208505257964142
+        },
+        {
+          "precision_bits": 22,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 4.0521263144910356e-05
+        },
+        {
+          "precision_bits": 24,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 1.0130315786227589e-05
+        },
+        {
+          "precision_bits": 28,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 6.331447366392243e-07
+        },
+        {
+          "precision_bits": 32,
+          "converged": true,
+          "final_error": 6.273388862609863e-06,
+          "iterations": 78,
+          "theoretical_error": 0.0009193321591926595
+        },
+        {
+          "precision_bits": 48,
+          "converged": true,
+          "final_error": 6.273388862609863e-06,
+          "iterations": 78,
+          "theoretical_error": 0.0009193321591926595
+        },
+        {
+          "precision_bits": 64,
+          "converged": true,
+          "final_error": 6.273388862609863e-06,
+          "iterations": 78,
+          "theoretical_error": 0.0009193321591926595
+        }
+      ],
+      "V_max": 3.333333432674409,
+      "R_max": 0.3333333432674408
+    },
+    "gamma_0.95": {
+      "gamma": 0.95,
+      "target_error": 0.01,
+      "theoretical_min_bits": 16.039033309688385,
+      "theoretical_safe_bits": 18.039033309688385,
+      "observed_threshold": 10,
+      "convergence_results": [
+        {
+          "precision_bits": 4,
+          "converged": true,
+          "final_error": 0.18047168850898743,
+          "iterations": 24,
+          "theoretical_error": 31.742056333988728
+        },
+        {
+          "precision_bits": 6,
+          "converged": true,
+          "final_error": 0.044571444392204285,
+          "iterations": 36,
+          "theoretical_error": 9.912726238425948
+        },
+        {
+          "precision_bits": 8,
+          "converged": true,
+          "final_error": 0.011031553149223328,
+          "iterations": 48,
+          "theoretical_error": 2.974347132960616
+        },
+        {
+          "precision_bits": 10,
+          "converged": true,
+          "final_error": 0.0036810487508773804,
+          "iterations": 70,
+          "theoretical_error": 0.8233056643355288
+        },
+        {
+          "precision_bits": 12,
+          "converged": true,
+          "final_error": 0.0009570717811584473,
+          "iterations": 80,
+          "theoretical_error": 0.27177559512449323
+        },
+        {
+          "precision_bits": 14,
+          "converged": true,
+          "final_error": 0.00016552209854125977,
+          "iterations": 102,
+          "theoretical_error": 0.07649926558896424
+        },
+        {
+          "precision_bits": 16,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.010271742939949018
+        },
+        {
+          "precision_bits": 18,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0025679357349872546
+        },
+        {
+          "precision_bits": 20,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0006419839337468136
+        },
+        {
+          "precision_bits": 22,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 0.0001604959834367034
+        },
+        {
+          "precision_bits": 24,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 4.012399585917585e-05
+        },
+        {
+          "precision_bits": 28,
+          "converged": false,
+          "final_error": NaN,
+          "iterations": 1000,
+          "theoretical_error": 2.5077497411984912e-06
+        },
+        {
+          "precision_bits": 32,
+          "converged": true,
+          "final_error": 1.1533498764038086e-05,
+          "iterations": 128,
+          "theoretical_error": 0.009467228339015131
+        },
+        {
+          "precision_bits": 48,
+          "converged": true,
+          "final_error": 1.1533498764038086e-05,
+          "iterations": 128,
+          "theoretical_error": 0.009467228339015131
+        },
+        {
+          "precision_bits": 64,
+          "converged": true,
+          "final_error": 1.1533498764038086e-05,
+          "iterations": 128,
+          "theoretical_error": 0.009467228339015131
+        }
+      ],
+      "V_max": 6.66666686534881,
+      "R_max": 0.3333333432674408
+    }
+  }
+}

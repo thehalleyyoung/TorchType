@@ -1,0 +1,44 @@
+{
+  "scenarios": [
+    {
+      "name": "tight_clustering_0.001",
+      "spread": 0.001,
+      "max_dist_from_threshold": 0.0009994353465722083,
+      "dpg_float64": 0.008807927134421023,
+      "dpg_float32": 0.008807927134421023,
+      "dpg_float16": 0.02235345143962897,
+      "dpg_diff_32": 0.0,
+      "dpg_diff_16": 0.013545524305207945,
+      "near_threshold_32": 0.0,
+      "near_threshold_16": 0.175,
+      "sign_flip": false
+    },
+    {
+      "name": "extreme_clustering_0.0005",
+      "spread": 0.0005,
+      "max_dist_from_threshold": 0.0004987185363088953,
+      "dpg_float64": 0.015880959530243932,
+      "dpg_float32": 0.015880959530243932,
+      "dpg_float16": 0.07673572882260699,
+      "dpg_diff_32": 0.0,
+      "dpg_diff_16": 0.06085476929236305,
+      "near_threshold_16": 0.39666666666666667,
+      "sign_flip": false
+    },
+    {
+      "name": "bimodal_straddling",
+      "dpg_float64": 0.09675374503720019,
+      "dpg_float32": 0.09675374503720019,
+      "dpg_float16": 0.08968071264137722,
+      "dpg_diff_32": 0.0,
+      "dpg_diff_16": 0.007073032395822965,
+      "classification_flip_rate": 0.06333333333333334,
+      "sign_flip": false
+    }
+  ],
+  "summary": {
+    "max_dpg_diff_f32": 0.0,
+    "max_dpg_diff_f16": 0.06085476929236305,
+    "any_sign_flips": false
+  }
+}

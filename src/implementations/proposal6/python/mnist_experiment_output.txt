@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/halleyyoung/Documents/TorchType/src/implementations/proposal6/python/mnist_precision_experiment.py", line 23, in <module>
+    import matplotlib.pyplot as plt
+ModuleNotFoundError: No module named 'matplotlib'

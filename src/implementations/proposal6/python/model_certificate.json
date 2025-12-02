@@ -1,0 +1,111 @@
+{
+  "model_name": "MNIST_MLP_3Layer",
+  "total_layers": 6,
+  "target_accuracy": 1e-06,
+  "input_domain_diameter": 10.0,
+  "global_curvature": 51.6145603061741,
+  "min_required_bits": 34,
+  "recommended_dtype": "float64",
+  "layer_certificates": [
+    {
+      "layer_name": "0",
+      "layer_type": "Linear",
+      "curvature": 0.0,
+      "lipschitz": 0.8039268851280212,
+      "required_bits": 24,
+      "recommended_dtype": "float32",
+      "input_shape": [
+        1,
+        784
+      ],
+      "output_shape": [
+        1,
+        128
+      ]
+    },
+    {
+      "layer_name": "1",
+      "layer_type": "ReLU",
+      "curvature": 0.0,
+      "lipschitz": 1.0,
+      "required_bits": 24,
+      "recommended_dtype": "float32",
+      "input_shape": [
+        1,
+        128
+      ],
+      "output_shape": [
+        1,
+        128
+      ]
+    },
+    {
+      "layer_name": "2",
+      "layer_type": "Linear",
+      "curvature": 0.0,
+      "lipschitz": 1.1256650686264038,
+      "required_bits": 24,
+      "recommended_dtype": "float32",
+      "input_shape": [
+        1,
+        128
+      ],
+      "output_shape": [
+        1,
+        128
+      ]
+    },
+    {
+      "layer_name": "3",
+      "layer_type": "ReLU",
+      "curvature": 0.0,
+      "lipschitz": 1.0,
+      "required_bits": 24,
+      "recommended_dtype": "float32",
+      "input_shape": [
+        1,
+        128
+      ],
+      "output_shape": [
+        1,
+        128
+      ]
+    },
+    {
+      "layer_name": "4",
+      "layer_type": "Linear",
+      "curvature": 0.0,
+      "lipschitz": 0.6951481103897095,
+      "required_bits": 24,
+      "recommended_dtype": "float32",
+      "input_shape": [
+        1,
+        128
+      ],
+      "output_shape": [
+        1,
+        10
+      ]
+    },
+    {
+      "layer_name": "5",
+      "layer_type": "Softmax",
+      "curvature": 51.6145603061741,
+      "lipschitz": 1.0,
+      "required_bits": 34,
+      "recommended_dtype": "float64",
+      "input_shape": [
+        1,
+        10
+      ],
+      "output_shape": [
+        1,
+        10
+      ]
+    }
+  ],
+  "bottleneck_layers": [
+    "5"
+  ],
+  "verification_timestamp": 1764683977.042546
+}

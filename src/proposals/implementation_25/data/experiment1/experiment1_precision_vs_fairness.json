@@ -1,0 +1,415 @@
+{
+  "description": "Evaluate DPG at different precisions and compare to bounds",
+  "datasets": [
+    {
+      "name": "synthetic_tabular",
+      "results": {
+        "n_train": 2400,
+        "n_test": 600,
+        "n_features": 15,
+        "final_accuracy": 0.8125,
+        "final_dpg_train": 0.02352607709750576,
+        "precisions": {
+          "float64": {
+            "dpg": 0.0170820405031194,
+            "error_bound": 0.0,
+            "is_reliable": true,
+            "reliability_score": Infinity,
+            "near_threshold_fraction": {
+              "group_0": 0.0,
+              "group_1": 0.0,
+              "overall": 0.0
+            },
+            "threshold_sensitivity": [
+              {
+                "threshold": 0.3,
+                "dpg": 0.04991158709505228,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              },
+              {
+                "threshold": 0.5,
+                "dpg": 0.0170820405031194,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              },
+              {
+                "threshold": 0.7,
+                "dpg": 0.017982851232776154,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              }
+            ],
+            "machine_epsilon": 2.22e-16,
+            "empirical_lipschitz": 0.1892887250150475
+          },
+          "float32": {
+            "dpg": 0.0170820405031194,
+            "error_bound": 0.0,
+            "is_reliable": true,
+            "reliability_score": Infinity,
+            "near_threshold_fraction": {
+              "group_0": 0.0,
+              "group_1": 0.0,
+              "overall": 0.0
+            },
+            "threshold_sensitivity": [
+              {
+                "threshold": 0.3,
+                "dpg": 0.04991158709505228,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              },
+              {
+                "threshold": 0.5,
+                "dpg": 0.0170820405031194,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              },
+              {
+                "threshold": 0.7,
+                "dpg": 0.017982851232776154,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              }
+            ],
+            "machine_epsilon": 1.19e-07,
+            "empirical_lipschitz": 0.19167863305421054
+          },
+          "float16": {
+            "dpg": 0.0170820405031194,
+            "error_bound": 0.013145163980916157,
+            "is_reliable": false,
+            "reliability_score": 1.2994923857867964,
+            "near_threshold_fraction": {
+              "group_0": 0.009708737864077669,
+              "group_1": 0.003436426116838488,
+              "overall": 0.006666666666666667
+            },
+            "threshold_sensitivity": [
+              {
+                "threshold": 0.3,
+                "dpg": 0.04991158709505228,
+                "error_bound": 0.030327294565108597,
+                "reliable": false,
+                "reliability_score": 1.645764576457648,
+                "near_threshold_frac": 0.015
+              },
+              {
+                "threshold": 0.5,
+                "dpg": 0.0170820405031194,
+                "error_bound": 0.013145163980916157,
+                "reliable": false,
+                "reliability_score": 1.2994923857867964,
+                "near_threshold_frac": 0.006666666666666667
+              },
+              {
+                "threshold": 0.7,
+                "dpg": 0.017982851232776154,
+                "error_bound": 0.03619924598805592,
+                "reliable": false,
+                "reliability_score": 0.49677419354838676,
+                "near_threshold_frac": 0.018333333333333333
+              }
+            ],
+            "machine_epsilon": 0.000488,
+            "empirical_lipschitz": 0.10071942446043165
+          }
+        }
+      }
+    },
+    {
+      "name": "synthetic_compas",
+      "results": {
+        "n_train": 1600,
+        "n_test": 400,
+        "n_features": 8,
+        "final_accuracy": 0.813125,
+        "final_dpg_train": 0.0016197832975174409,
+        "precisions": {
+          "float64": {
+            "dpg": 0.038926309947274196,
+            "error_bound": 0.0,
+            "is_reliable": true,
+            "reliability_score": Infinity,
+            "near_threshold_fraction": {
+              "group_0": 0.0,
+              "group_1": 0.0,
+              "overall": 0.0
+            },
+            "threshold_sensitivity": [
+              {
+                "threshold": 0.3,
+                "dpg": 0.033956457024647446,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              },
+              {
+                "threshold": 0.5,
+                "dpg": 0.038926309947274196,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              },
+              {
+                "threshold": 0.7,
+                "dpg": 0.07033477131108251,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              }
+            ],
+            "machine_epsilon": 2.22e-16,
+            "empirical_lipschitz": 0.3373027114960223
+          },
+          "float32": {
+            "dpg": 0.038926309947274196,
+            "error_bound": 0.0,
+            "is_reliable": true,
+            "reliability_score": Infinity,
+            "near_threshold_fraction": {
+              "group_0": 0.0,
+              "group_1": 0.0,
+              "overall": 0.0
+            },
+            "threshold_sensitivity": [
+              {
+                "threshold": 0.3,
+                "dpg": 0.033956457024647446,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              },
+              {
+                "threshold": 0.5,
+                "dpg": 0.038926309947274196,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              },
+              {
+                "threshold": 0.7,
+                "dpg": 0.07033477131108251,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              }
+            ],
+            "machine_epsilon": 1.19e-07,
+            "empirical_lipschitz": 0.298067673243851
+          },
+          "float16": {
+            "dpg": 0.038926309947274196,
+            "error_bound": 0.014657281969777239,
+            "is_reliable": true,
+            "reliability_score": 2.6557659208261652,
+            "near_threshold_fraction": {
+              "group_0": 0.0091324200913242,
+              "group_1": 0.0055248618784530384,
+              "overall": 0.0075
+            },
+            "threshold_sensitivity": [
+              {
+                "threshold": 0.3,
+                "dpg": 0.033956457024647446,
+                "error_bound": 0.04780645324049547,
+                "reliable": false,
+                "reliability_score": 0.7102902374670186,
+                "near_threshold_frac": 0.0225
+              },
+              {
+                "threshold": 0.5,
+                "dpg": 0.038926309947274196,
+                "error_bound": 0.014657281969777239,
+                "reliable": true,
+                "reliability_score": 2.6557659208261652,
+                "near_threshold_frac": 0.0075
+              },
+              {
+                "threshold": 0.7,
+                "dpg": 0.07033477131108251,
+                "error_bound": 0.05141401145336663,
+                "reliable": false,
+                "reliability_score": 1.368007850834151,
+                "near_threshold_frac": 0.025
+              }
+            ],
+            "machine_epsilon": 0.000488,
+            "empirical_lipschitz": 0.30563514804202485
+          }
+        }
+      }
+    },
+    {
+      "name": "adult_subset",
+      "results": {
+        "n_train": 4000,
+        "n_test": 1000,
+        "n_features": 10,
+        "final_accuracy": 0.79925,
+        "final_dpg_train": 0.005616010006253891,
+        "precisions": {
+          "float64": {
+            "dpg": 0.02176834829357266,
+            "error_bound": 0.0,
+            "is_reliable": true,
+            "reliability_score": Infinity,
+            "near_threshold_fraction": {
+              "group_0": 0.0,
+              "group_1": 0.0,
+              "overall": 0.0
+            },
+            "threshold_sensitivity": [
+              {
+                "threshold": 0.3,
+                "dpg": 0.0061920990735852,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              },
+              {
+                "threshold": 0.5,
+                "dpg": 0.02176834829357266,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              },
+              {
+                "threshold": 0.7,
+                "dpg": 0.01517624281988511,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              }
+            ],
+            "machine_epsilon": 2.22e-16,
+            "empirical_lipschitz": 0.33502054134448
+          },
+          "float32": {
+            "dpg": 0.02176834829357266,
+            "error_bound": 0.0,
+            "is_reliable": true,
+            "reliability_score": Infinity,
+            "near_threshold_fraction": {
+              "group_0": 0.0,
+              "group_1": 0.0,
+              "overall": 0.0
+            },
+            "threshold_sensitivity": [
+              {
+                "threshold": 0.3,
+                "dpg": 0.0061920990735852,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              },
+              {
+                "threshold": 0.5,
+                "dpg": 0.02176834829357266,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              },
+              {
+                "threshold": 0.7,
+                "dpg": 0.01517624281988511,
+                "error_bound": 0.0,
+                "reliable": true,
+                "reliability_score": Infinity,
+                "near_threshold_frac": 0.0
+              }
+            ],
+            "machine_epsilon": 1.19e-07,
+            "empirical_lipschitz": 0.24049148528516753
+          },
+          "float16": {
+            "dpg": 0.02176834829357266,
+            "error_bound": 0.021976351621625943,
+            "is_reliable": false,
+            "reliability_score": 0.9905351292318877,
+            "near_threshold_fraction": {
+              "group_0": 0.008032128514056224,
+              "group_1": 0.013944223107569721,
+              "overall": 0.011
+            },
+            "threshold_sensitivity": [
+              {
+                "threshold": 0.3,
+                "dpg": 0.0061920990735852,
+                "error_bound": 0.0480007680122882,
+                "reliable": false,
+                "reliability_score": 0.12900000000000048,
+                "near_threshold_frac": 0.024
+              },
+              {
+                "threshold": 0.5,
+                "dpg": 0.02176834829357266,
+                "error_bound": 0.021976351621625943,
+                "reliable": false,
+                "reliability_score": 0.9905351292318877,
+                "near_threshold_frac": 0.011
+              },
+              {
+                "threshold": 0.7,
+                "dpg": 0.017184274948399192,
+                "error_bound": 0.037992607881726106,
+                "reliable": false,
+                "reliability_score": 0.45230574857864864,
+                "near_threshold_frac": 0.019
+              }
+            ],
+            "machine_epsilon": 0.000488,
+            "empirical_lipschitz": 0.3368421052631579
+          }
+        }
+      }
+    }
+  ],
+  "precision_comparison": {},
+  "summary": {
+    "total_assessments": 9,
+    "borderline_count": 2,
+    "borderline_percentage": 22.22222222222222,
+    "reliable_by_precision": {
+      "float64": {
+        "total": 3,
+        "borderline": 0,
+        "borderline_pct": 0.0
+      },
+      "float32": {
+        "total": 3,
+        "borderline": 0,
+        "borderline_pct": 0.0
+      },
+      "float16": {
+        "total": 3,
+        "borderline": 2,
+        "borderline_pct": 66.66666666666667
+      }
+    }
+  }
+}

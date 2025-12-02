@@ -1,0 +1,7 @@
+comprehensive_tests 1 0.171258
+mnist_comprehensive_test 1 21.398
+advanced_features_test 1 1.31372
+mnist_demonstration 1 0.307136
+mnist_precision_demonstration 1 11.3566
+mnist_rigorous_validation 1 0.341407
+---

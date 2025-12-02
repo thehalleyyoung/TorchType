@@ -1,0 +1,126 @@
+{
+  "memory_savings": {
+    "float64": {
+      "model_size_mb": 0.5117263793945312,
+      "dpg": 0.001848428835489857,
+      "error_bound": 0.0,
+      "is_reliable": true,
+      "reliability_score": Infinity
+    },
+    "float32": {
+      "model_size_mb": 0.2558631896972656,
+      "dpg": 0.001848428835489857,
+      "error_bound": 2.0,
+      "is_reliable": false,
+      "reliability_score": 0.0009242144177449285
+    },
+    "float16": {
+      "model_size_mb": 0.1279315948486328,
+      "dpg": 0.001848428835489857,
+      "error_bound": 2.0,
+      "is_reliable": false,
+      "reliability_score": 0.0009242144177449285
+    }
+  },
+  "speedup": {
+    "float64": {
+      "time_ms": 4.385418891906738,
+      "is_reliable": true,
+      "dpg": 0.0,
+      "error_bound": 0.0
+    },
+    "float32": {
+      "time_ms": 0.44293880462646484,
+      "is_reliable": false,
+      "dpg": 0.0,
+      "error_bound": 0.01176681639035956
+    },
+    "float16": {
+      "time_ms": 3.836960792541504,
+      "is_reliable": false,
+      "dpg": 0.0,
+      "error_bound": 2.0
+    }
+  },
+  "mnist_fairness": {
+    "float32": {
+      "dpg": 0.7301291385959578,
+      "error_bound": 0.011905714422876894,
+      "is_reliable": true,
+      "reliability_score": 61.325940860215056,
+      "near_threshold_pct": 0.6
+    },
+    "float16": {
+      "dpg": 0.7321054231809381,
+      "error_bound": 2.0,
+      "is_reliable": false,
+      "reliability_score": 0.36605271159046904,
+      "near_threshold_pct": 100.0
+    }
+  },
+  "deployment_guidance": {
+    "simple": {
+      "recommendation": "float32",
+      "savings": "50% memory vs float64",
+      "precision_results": {
+        "float64": {
+          "is_reliable": true,
+          "reliability_score": Infinity,
+          "error_bound": 0.0
+        },
+        "float32": {
+          "is_reliable": true,
+          "reliability_score": Infinity,
+          "error_bound": 0.0
+        },
+        "float16": {
+          "is_reliable": false,
+          "reliability_score": 0.06632555053001062,
+          "error_bound": 0.916222659562553
+        }
+      }
+    },
+    "medium": {
+      "recommendation": "float64",
+      "savings": "full precision required",
+      "precision_results": {
+        "float64": {
+          "is_reliable": true,
+          "reliability_score": Infinity,
+          "error_bound": 0.0
+        },
+        "float32": {
+          "is_reliable": false,
+          "reliability_score": 1.1325301204819254,
+          "error_bound": 0.00796812749003984
+        },
+        "float16": {
+          "is_reliable": false,
+          "reliability_score": 0.014848237571801148,
+          "error_bound": 2.0
+        }
+      }
+    },
+    "complex": {
+      "recommendation": "float32",
+      "savings": "50% memory vs float64",
+      "precision_results": {
+        "float64": {
+          "is_reliable": true,
+          "reliability_score": Infinity,
+          "error_bound": 0.0
+        },
+        "float32": {
+          "is_reliable": true,
+          "reliability_score": Infinity,
+          "error_bound": 0.0
+        },
+        "float16": {
+          "is_reliable": false,
+          "reliability_score": 0.0,
+          "error_bound": 2.0
+        }
+      }
+    }
+  }
+}

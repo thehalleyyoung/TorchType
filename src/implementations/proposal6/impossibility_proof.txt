@@ -1,0 +1,20 @@
+Certified Precision Impossibility Proof
+========================================
+
+Scenario 1: Feed-Forward Network
+  Curvature: 0
+  Required precision: 9 bits
+  INT8 status: UNSAFE
+
+Scenario 2: Long-Context Attention (8192 tokens)
+  Curvature: 4.43089e+06
+  Required precision: 43 bits
+  INT8 status: IMPOSSIBLE (mathematically proven)
+
+Scenario 3: Ill-Conditioned Matrix Inversion (κ = 1e12)
+  Curvature: 2e+36
+  Required precision: 157 bits
+  FP64 status: INSUFFICIENT (> 52 bits required)
+
+These bounds are derived from Theorem 5.7 in hnf_paper.tex
+and represent fundamental mathematical limits.

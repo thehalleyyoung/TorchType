@@ -1,0 +1,53 @@
+╔════════════════════════════════════════════════════════════════╗
+║          KV-CACHE PRECISION ANALYSIS REPORT                    ║
+╠════════════════════════════════════════════════════════════════╣
+║ Configuration:                                                 ║
+║   Layers:   6                                                   ║
+║   Max Sequence Length:   512                                ║
+║   Hidden Dimension:   512                                   ║
+╠════════════════════════════════════════════════════════════════╣
+║ Memory Analysis:                                               ║
+║   Uniform FP16:   0.00 GB                                  ║
+║   Adaptive Precision:   0.00 GB                             ║
+║   Compression Ratio:   3.97x                                 ║
+║   Memory Saved:   0.00 GB                                   ║
+╠════════════════════════════════════════════════════════════════╣
+║ Quality:                                                       ║
+║   Estimated Preservation: 100.00%                            ║
+╠════════════════════════════════════════════════════════════════╣
+║ Per-Layer Breakdown:                                           ║
+╠════════════════════════════════════════════════════════════════╣
+║ Layer │ Avg Curv │ Max Curv │ Compression │ Memory (MB)       ║
+╠═══════╪══════════╪══════════╪═════════════╪═══════════════════╣
+║     0 │    0.000 │    0.001 │       3.97x │          0.1 MB   ║
+║     1 │    0.000 │    0.001 │       3.97x │          0.1 MB   ║
+║     2 │    0.000 │    0.001 │       3.97x │          0.1 MB   ║
+║     3 │    0.000 │    0.001 │       3.97x │          0.1 MB   ║
+║     4 │    0.000 │    0.001 │       3.97x │          0.1 MB   ║
+║     5 │    0.000 │    0.001 │       3.97x │          0.1 MB   ║
+╠════════════════════════════════════════════════════════════════╣
+║ Recommendations:                                               ║
+╠════════════════════════════════════════════════════════════════╣
+║ Excellent compression ratio of 3.968992x. Consider using    ║
+║ this for production.                                        ║
+╚════════════════════════════════════════════════════════════════╝
+
+Detailed layer data:
+Layer 0 precision distribution:
+  INT4: 127 positions
+  INT8: 1 positions
+Layer 1 precision distribution:
+  INT4: 127 positions
+  INT8: 1 positions
+Layer 2 precision distribution:
+  INT4: 127 positions
+  INT8: 1 positions
+Layer 3 precision distribution:
+  INT4: 127 positions
+  INT8: 1 positions
+Layer 4 precision distribution:
+  INT4: 127 positions
+  INT8: 1 positions
+Layer 5 precision distribution:
+  INT4: 127 positions
+  INT8: 1 positions

@@ -1,0 +1,123 @@
+
+======================================================================
+NUMGEOM-FAIR: COMPREHENSIVE EXPERIMENTS
+Proposal 25: Numerical Geometry of Fairness Metrics
+======================================================================
+
+Device: mps
+Output directory: /Users/halleyyoung/Documents/TorchType/src/implementations/proposal25/data
+
+======================================================================
+EXPERIMENT 1: Precision vs Fairness
+======================================================================
+
+[synthetic_tabular]
+  Train: 2400, Test: 600
+  Training model (float64)...
+  Evaluating at float64...
+  Evaluating at float32...
+  Evaluating at float16...
+
+[synthetic_compas]
+  Train: 1600, Test: 400
+  Training model (float64)...
+  Evaluating at float64...
+  Evaluating at float32...
+  Evaluating at float16...
+
+[adult_subset]
+  Train: 4000, Test: 1000
+  Training model (float64)...
+  Evaluating at float64...
+  Evaluating at float32...
+  Evaluating at float16...
+
+  Summary: 33.3% of assessments are numerically borderline
+  Saved to: /Users/halleyyoung/Documents/TorchType/src/implementations/proposal25/data/experiment1/experiment1_precision_vs_fairness.json
+
+======================================================================
+EXPERIMENT 2: Near-Threshold Distribution
+======================================================================
+
+[low_concentration]
+  Training model...
+
+[medium_concentration]
+  Training model...
+
+[high_concentration]
+  Training model...
+  Saved to: /Users/halleyyoung/Documents/TorchType/src/implementations/proposal25/data/experiment2/experiment2_near_threshold_distribution.json
+
+======================================================================
+EXPERIMENT 3: Threshold Stability Mapping
+======================================================================
+
+[well_separated]
+  Training model...
+  Analyzing threshold stability...
+
+[borderline]
+  Training model...
+  Analyzing threshold stability...
+  Saved to: /Users/halleyyoung/Documents/TorchType/src/implementations/proposal25/data/experiment3/experiment3_threshold_stability.json
+
+======================================================================
+EXPERIMENT 4: Calibration Reliability
+======================================================================
+
+[synthetic_tabular]
+  Training model...
+  Evaluating calibration at float64...
+  Evaluating calibration at float32...
+  Evaluating calibration at float16...
+
+[synthetic_compas]
+  Training model...
+  Evaluating calibration at float64...
+  Evaluating calibration at float32...
+  Evaluating calibration at float16...
+  Saved to: /Users/halleyyoung/Documents/TorchType/src/implementations/proposal25/data/experiment4/experiment4_calibration_reliability.json
+
+======================================================================
+EXPERIMENT 5: Sign Flip Cases
+======================================================================
+
+[Trial 1/10]
+
+[Trial 2/10]
+
+[Trial 3/10]
+
+[Trial 4/10]
+
+[Trial 5/10]
+
+[Trial 6/10]
+
+[Trial 7/10]
+
+[Trial 8/10]
+
+[Trial 9/10]
+
+[Trial 10/10]
+
+  Summary: Found 0 sign flips in 10 trials
+  Saved to: /Users/halleyyoung/Documents/TorchType/src/implementations/proposal25/data/experiment5/experiment5_sign_flip_cases.json
+
+======================================================================
+ALL EXPERIMENTS COMPLETE
+======================================================================
+
+Total time: 0.3 minutes
+
+Results saved to: /Users/halleyyoung/Documents/TorchType/src/implementations/proposal25/data
+
+Key findings:
+  • Borderline assessments: 33.3%
+  • Sign flips detected: 0/10
+
+Next steps:
+  python3.11 scripts/generate_plots.py
+  cd implementations/docs/proposal25 && make

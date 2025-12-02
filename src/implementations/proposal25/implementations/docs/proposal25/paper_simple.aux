@@ -1,0 +1,35 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Background: Numerical Geometry}{2}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Theoretical Framework}{2}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Fairness Metrics as Numerical Functions}{2}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Error Propagation to Fairness Metrics}{2}{subsection.3.2}\protected@file@percent }
+\newlabel{thm:fairness_error}{{3}{2}{Fairness Metric Error}{theorem.3}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces NumGeom-Fair: Certified Fairness Evaluation}}{3}{algorithm.1}\protected@file@percent }
+\newlabel{alg:numgeom_fair}{{1}{3}{Certified Fairness Evaluator}{algorithm.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Implementation: NumGeom-Fair}{3}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Certified Fairness Evaluator}{3}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Threshold Stability Analysis}{3}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Experiments}{3}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Experimental Setup}{3}{subsection.5.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \textbf  {Fairness metrics with certified error bounds across precisions.} Green bars indicate reliable assessments (reliability score $\geq 2$), red bars indicate borderline assessments. Float64 is always reliable (error bounds near zero). Float16 shows larger error bounds, making some assessments borderline.}}{4}{figure.1}\protected@file@percent }
+\newlabel{fig:fairness_error_bars}{{1}{4}{\textbf {Fairness metrics with certified error bounds across precisions.} Green bars indicate reliable assessments (reliability score $\geq 2$), red bars indicate borderline assessments. Float64 is always reliable (error bounds near zero). Float16 shows larger error bounds, making some assessments borderline}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Experiment 1: Precision vs Fairness}{4}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Experiment 2: Near-Threshold Distribution}{4}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Experiment 3: Threshold Stability}{4}{subsection.5.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textbf  {Prediction distributions showing near-threshold ``danger zones''.} Shaded regions indicate where predictions are within error bounds of threshold $t=0.5$. Samples in this region may flip classification due to numerical noise. Higher concentration predicts lower fairness metric reliability.}}{5}{figure.2}\protected@file@percent }
+\newlabel{fig:danger_zone}{{2}{5}{\textbf {Prediction distributions showing near-threshold ``danger zones''.} Shaded regions indicate where predictions are within error bounds of threshold $t=0.5$. Samples in this region may flip classification due to numerical noise. Higher concentration predicts lower fairness metric reliability}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Experiment 4: Calibration Reliability}{5}{subsection.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Experiment 5: Sign Flip Cases}{5}{subsection.5.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {DPG across threshold choices with uncertainty ribbons.} Ribbon width shows error bounds. Wider ribbons indicate numerically unstable thresholds. Most thresholds in [0.15, 0.85] are stable for our datasets.}}{6}{figure.3}\protected@file@percent }
+\newlabel{fig:threshold_stability}{{3}{6}{\textbf {DPG across threshold choices with uncertainty ribbons.} Ribbon width shows error bounds. Wider ribbons indicate numerically unstable thresholds. Most thresholds in [0.15, 0.85] are stable for our datasets}{figure.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {Calibration curves across precisions.} Points show bin-wise accuracy vs confidence. Error bars indicate numerical uncertainty. Float16 shows larger uncertainty in middle bins where predictions accumulate.}}{6}{figure.4}\protected@file@percent }
+\newlabel{fig:calibration}{{4}{6}{\textbf {Calibration curves across precisions.} Points show bin-wise accuracy vs confidence. Error bars indicate numerical uncertainty. Float16 shows larger uncertainty in middle bins where predictions accumulate}{figure.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion and Limitations}{6}{section.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textbf  {Adversarial sign flip demonstration.} Left: Sign flip rates under simulated numerical perturbations across different concentration scenarios. Right: Example showing DPG sign change between precisions. While PyTorch's implementations are numerically stable (0/20 empirical trials showed flips), adversarial scenarios demonstrate the theoretical possibility when predictions cluster tightly near thresholds.}}{7}{figure.5}\protected@file@percent }
+\newlabel{fig:sign_flips}{{5}{7}{\textbf {Adversarial sign flip demonstration.} Left: Sign flip rates under simulated numerical perturbations across different concentration scenarios. Right: Example showing DPG sign change between precisions. While PyTorch's implementations are numerically stable (0/20 empirical trials showed flips), adversarial scenarios demonstrate the theoretical possibility when predictions cluster tightly near thresholds}{figure.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{7}{section.7}\protected@file@percent }
+\gdef \@abspage@last{7}

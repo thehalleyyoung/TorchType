@@ -1,0 +1,67 @@
+% ICML 2025 style file (simplified)
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{icml2025}[2024/12/02 ICML 2025 Proceedings Style]
+
+\RequirePackage{ifthen}
+\RequirePackage{fancyhdr}
+
+\newif\if@icmlaccepted
+\@icmlacceptedfalse
+\DeclareOption{accepted}{\@icmlacceptedtrue}
+\ProcessOptions\relax
+
+% Page dimensions
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{9in}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\headheight}{0.2in}
+\setlength{\headsep}{0.3in}
+
+% Title command
+\newcommand{\icmltitlerunning}[1]{\gdef\@icmltitlerunning{#1}}
+\newcommand{\@icmltitlerunning}{}
+
+\newcommand{\icmltitle}[1]{%
+  \begin{center}%
+    {\LARGE\bfseries #1}%
+  \end{center}%
+  \vskip 0.2in
+}
+
+% Author commands
+\newcommand{\icmlsetsymbol}[2]{}
+\newcounter{@icmlauthorcount}
+\newenvironment{icmlauthorlist}{}{}
+\newcommand{\icmlauthor}[2]{}
+\newcommand{\icmlaffiliation}[2]{}
+\newcommand{\icmlcorrespondingauthor}[2]{}
+\newcommand{\icmlkeywords}[1]{%
+  \vskip 0.1in
+  \noindent\textbf{Keywords:} #1
+}
+
+\newcommand{\printAffiliationsAndNotice}{%
+  \if@icmlaccepted
+    \vskip 0.1in
+  \else
+    \vskip 0.1in
+    \noindent\textit{Under review for ICML 2025. Do not distribute.}
+  \fi
+}
+
+% Section headings
+\RequirePackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{1em}{}
+
+% Headers
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\small\@icmltitlerunning}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+\endinput

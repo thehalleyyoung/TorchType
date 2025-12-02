@@ -1,0 +1,5 @@
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build/CMakeFiles/test_sheaf_cohomology.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build/CMakeFiles/mnist_precision_demo.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build/CMakeFiles/test.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build/CMakeFiles/edit_cache.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build/CMakeFiles/rebuild_cache.dir

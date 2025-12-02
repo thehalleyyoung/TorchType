@@ -1,0 +1,74 @@
+{
+  "sequence_length_analysis": {
+    "seq_lengths": [
+      8,
+      16,
+      32,
+      64,
+      128
+    ],
+    "error_bounds": [
+      0.18163619678780857,
+      0.3310005773136709,
+      0.8117770457825499,
+      2.1191295596912596,
+      5.910814705347087
+    ],
+    "qk_lipschitz": [
+      2.109876106967926e-05,
+      2.2501109664344785e-05,
+      2.5498322769641874e-05,
+      3.095753739824295e-05,
+      3.560588692083359e-05
+    ],
+    "softmax_intrinsic": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "total_warnings": [
+      2,
+      3,
+      3,
+      3,
+      3
+    ]
+  },
+  "component_analysis": {
+    "qk_matmul": {
+      "lipschitz": 181.65497589111328,
+      "intrinsic": 2.129843868408203e-05
+    },
+    "scaling": {
+      "factor": 0.25,
+      "lipschitz": 45.41374397277832,
+      "intrinsic": 5.324609671020507e-06
+    },
+    "softmax": {
+      "lipschitz": 1.0,
+      "intrinsic": 0.031546058505458996
+    },
+    "av_matmul": {
+      "lipschitz": 97.50161743164062,
+      "intrinsic": 2.6787885971069334e-06
+    },
+    "total_composed": {
+      "lipschitz": 4427.913490972307,
+      "intrinsic": 3.0763135647191295,
+      "error_at_eps_machine": 3.0765774683631917
+    }
+  },
+  "precision_comparison": {
+    "fp32": {
+      "error_bound": 1.0228069713657749e+17,
+      "n_warnings": 10
+    },
+    "fp16": {
+      "error_bound": 8.381164895347911e+20,
+      "n_warnings": 16
+    },
+    "output_diff": 0.00390625
+  }
+}

@@ -1,0 +1,48 @@
+╔═══════════════════════════════════════════════════════════════╗
+║  PRECISION CERTIFICATION REPORT                               ║
+║  HNF Proposal 6: Certified Precision Bounds                   ║
+╚═══════════════════════════════════════════════════════════════╝
+
+Generated: Tue Dec  2 02:13:47 2025
+
+
+NETWORK ARCHITECTURE:
+  Input: 784 (28×28 MNIST images)
+  Hidden: 256 -> 128
+  Output: 10 (digit classes)
+  Activations: ReLU (hidden), Softmax (output)
+
+╔══════════════════════════════════════════════════════════════╗
+║ PRECISION CERTIFICATE                                         ║
+╠══════════════════════════════════════════════════════════════╣
+║ Minimum Required Precision:  58 bits mantissa                   ║
+║ Recommendation:              extended precision (> fp64)   ║
+║                                                                ║
+║ Target Accuracy:             1.00e-04                              ║
+║ Curvature Bound:             2.45e+09                              ║
+║ Domain Diameter:             28.0000                                    ║
+║                                                                ║
+║ Bottleneck Layers:                                            ║
+║   - softmax: κ = 2.425826e+08                              ║
+╚══════════════════════════════════════════════════════════════╝
+
+
+LAYER-WISE ANALYSIS:
+  fc1: κ = 0.000000e+00
+  relu1: κ = 0.000000e+00
+  fc2: κ = 0.000000e+00
+  relu2: κ = 0.000000e+00
+  fc3: κ = 0.000000e+00
+  softmax: κ = 2.425826e+08
+
+DEPLOYMENT RECOMMENDATIONS:
+  ✓ This model can be safely deployed with extended precision (> fp64)
+  ✓ Target accuracy 1.000000e-04 is achievable
+  ✓ 58 mantissa bits are sufficient
+
+  ⚠  This model requires FP64 or higher precision
+
+===================================================================
+Certificate validated by HNF Theorem 5.7
+Mathematical guarantee: NO algorithm on hardware with fewer
+than 58 bits can achieve the target accuracy uniformly.

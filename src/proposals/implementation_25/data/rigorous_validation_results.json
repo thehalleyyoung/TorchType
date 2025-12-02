@@ -1,0 +1,50 @@
+{
+  "total_tests": 4,
+  "passed_tests": 4,
+  "all_passed": true,
+  "results": [
+    {
+      "test_name": "Error Functional Bounds",
+      "passed": true,
+      "metrics": {
+        "avg_violation_rate": 0.0,
+        "avg_slack": 0.0,
+        "max_violation": 0.0,
+        "n_models_tested": 10,
+        "n_tests_per_model": 30
+      },
+      "details": "Violation rate: 0.00% (target: <5%)\nAverage slack: 0.00e+00\nMax violation: 0.00e+00"
+    },
+    {
+      "test_name": "Fairness Metric Error Theorem",
+      "passed": true,
+      "metrics": {
+        "violation_rate": 0.0,
+        "avg_tightness": 0.33369905895819085,
+        "n_experiments": 15,
+        "n_violations": 0,
+        "n_total": 30
+      },
+      "details": "Violation rate: 0.00% (target: <5%)\nAverage tightness: 33.37% (lower is tighter)"
+    },
+    {
+      "test_name": "Cross-Precision Consistency",
+      "passed": true,
+      "metrics": {
+        "consistency_rate": 1.0,
+        "consistent_cases": 24,
+        "total_cases": 24
+      },
+      "details": "Consistency rate: 100.00% (target: >90%)"
+    },
+    {
+      "test_name": "Threshold Sensitivity",
+      "passed": true,
+      "metrics": {
+        "avg_prediction_accuracy": 0.995630175557523,
+        "n_experiments": 15
+      },
+      "details": "Flip prediction accuracy: 99.56% (target: >50%)"
+    }
+  ]
+}

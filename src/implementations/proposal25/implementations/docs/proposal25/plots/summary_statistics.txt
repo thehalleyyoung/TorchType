@@ -1,0 +1,15 @@
+NUMGEOM-FAIR SUMMARY STATISTICS
+==================================================
+
+Number of datasets: 3
+Number of precisions tested: 3
+Total assessments: 9
+
+Reliable assessments (score >= 2.0): 7/9
+Borderline assessments (score < 2.0): 2/9
+Borderline percentage: 22.2%
+
+Reliability scores by precision:
+  float64: mean=inf, min=inf, max=inf
+  float32: mean=inf, min=inf, max=inf
+  float16: mean=1.60, min=0.25, max=3.26

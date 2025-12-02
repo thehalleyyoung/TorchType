@@ -1,0 +1,2 @@
+/usr/bin/ar qc libhnf_sheaf.a CMakeFiles/hnf_sheaf.dir/src/advanced_sheaf_theory.cpp.o
+/usr/bin/ranlib libhnf_sheaf.a

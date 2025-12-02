@@ -1,0 +1,9 @@
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build_ultra/CMakeFiles/hnf_sheaf.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build_ultra/CMakeFiles/test_sheaf_cohomology.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build_ultra/CMakeFiles/test_advanced_sheaf.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build_ultra/CMakeFiles/mnist_precision_demo.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build_ultra/CMakeFiles/impossible_without_sheaf.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build_ultra/CMakeFiles/comprehensive_mnist_demo.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build_ultra/CMakeFiles/test.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build_ultra/CMakeFiles/edit_cache.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal2/build_ultra/CMakeFiles/rebuild_cache.dir

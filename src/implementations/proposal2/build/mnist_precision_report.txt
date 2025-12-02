@@ -1,0 +1,41 @@
+HNF Mixed-Precision Analysis Report for MNIST Network
+======================================================
+
+Network Architecture:
+  Input: 784 (28x28 pixels)
+  Hidden1: 256 (ReLU)
+  Hidden2: 128 (ReLU)
+  Output: 10 (log-softmax)
+
+Precision Assignment (from Sheaf Cohomology):
+---------------------------------------------
+  relu1          : 16  bits (Low curvature allows reduced precision)
+  fc1            : 16  bits (Low curvature allows reduced precision)
+  fc2            : 16  bits (Low curvature allows reduced precision)
+  input          : 16  bits (Low curvature allows reduced precision)
+  relu2          : 16  bits (Low curvature allows reduced precision)
+  fc3            : 16  bits (Low curvature allows reduced precision)
+  logsoftmax     : 16  bits (Standard precision for logsoftmax)
+
+Cohomological Analysis:
+-----------------------
+  H^0 dimension: 4
+  Number of obstructions: 0
+
+Memory Analysis:
+----------------
+  Estimated saving vs FP32: 50.0%
+
+Theoretical Foundation:
+-----------------------
+This analysis uses Homotopy Numerical Foundations (HNF) to:
+1. Compute curvature κ^curv for each operation (Theorem 5.7)
+2. Determine precision requirements: p >= log2(c·κ·D²/ε)
+3. Build precision sheaf P_G^ε over computation graph
+4. Compute H^0 (global sections) and H^1 (obstructions)
+5. Resolve obstructions to find minimal mixed-precision
+
+References:
+-----------
+[1] HNF Paper, Section 4.4: Precision Sheaves
+[2] Proposal #2: Mixed-Precision via Sheaf Cohomology

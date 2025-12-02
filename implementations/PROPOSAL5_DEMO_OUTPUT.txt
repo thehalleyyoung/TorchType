@@ -1,0 +1,64 @@
+========================================
+HNF Proposal 5: Condition Number Profiler
+Simple Training Example
+========================================
+
+Training for 100 steps...
+
+[2KStep 0 | Loss: 2.387158e+00 | Max κ: 1.564684e-01 (layer0) [32m[OK][0m[2KStep 1 | Loss: 2.238855e+00 | Max κ: 1.563433e-01 (layer0) [32m[OK][0m[2KStep 2 | Loss: 2.344506e+00 | Max κ: 1.507025e-01 (layer0) [32m[OK][0m[2KStep 3 | Loss: 2.292648e+00 | Max κ: 1.605752e-01 (layer0) [32m[OK][0m[2KStep 4 | Loss: 2.350037e+00 | Max κ: 1.622683e-01 (layer0) [32m[OK][0m[2KStep 5 | Loss: 2.303432e+00 | Max κ: 1.693033e-01 (layer0) [32m[OK][0m[2KStep 6 | Loss: 2.319285e+00 | Max κ: 1.497737e-01 (layer0) [32m[OK][0m[2KStep 7 | Loss: 2.300626e+00 | Max κ: 1.646063e-01 (layer0) [32m[OK][0m[2KStep 8 | Loss: 2.384630e+00 | Max κ: 1.558457e-01 (layer4) [32m[OK][0m[2KStep 9 | Loss: 2.316614e+00 | Max κ: 1.440972e-01 (layer0) [32m[OK][0m[2KStep 10 | Loss: 2.349582e+00 | Max κ: 1.411072e-01 (layer0) [32m[OK][0m[2KStep 11 | Loss: 2.299607e+00 | Max κ: 1.410224e-01 (layer0) [32m[OK][0m[2KStep 12 | Loss: 2.289659e+00 | Max κ: 1.672193e-01 (layer0) [32m[OK][0m[2KStep 13 | Loss: 2.321599e+00 | Max κ: 1.458453e-01 (layer0) [32m[OK][0m[2KStep 14 | Loss: 2.348874e+00 | Max κ: 1.388136e-01 (layer0) [32m[OK][0m[2KStep 15 | Loss: 2.294397e+00 | Max κ: 1.521925e-01 (layer0) [32m[OK][0m[2KStep 16 | Loss: 2.362253e+00 | Max κ: 1.396949e-01 (layer4) [32m[OK][0m[2KStep 17 | Loss: 2.273753e+00 | Max κ: 1.500218e-01 (layer0) [32m[OK][0m[2KStep 18 | Loss: 2.281232e+00 | Max κ: 1.464210e-01 (layer0) [32m[OK][0m[2KStep 19 | Loss: 2.343886e+00 | Max κ: 1.510673e-01 (layer0) [32m[OK][0m[2KStep 20 | Loss: 2.310683e+00 | Max κ: 1.468065e-01 (layer0) [32m[OK][0m[2KStep 21 | Loss: 2.304345e+00 | Max κ: 1.553556e-01 (layer4) [32m[OK][0m[2KStep 22 | Loss: 2.304338e+00 | Max κ: 1.389042e-01 (layer0) [32m[OK][0m[2KStep 23 | Loss: 2.240607e+00 | Max κ: 1.472765e-01 (layer0) [32m[OK][0m[2KStep 24 | Loss: 2.287528e+00 | Max κ: 1.565680e-01 (layer4) [32m[OK][0m[2KStep 25 | Loss: 2.287933e+00 | Max κ: 1.419706e-01 (layer0) [32m[OK][0m[2KStep 26 | Loss: 2.314863e+00 | Max κ: 1.426495e-01 (layer0) [32m[OK][0m[2KStep 27 | Loss: 2.325223e+00 | Max κ: 1.653765e-01 (layer4) [32m[OK][0m[2KStep 28 | Loss: 2.333701e+00 | Max κ: 1.398196e-01 (layer0) [32m[OK][0m[2KStep 29 | Loss: 2.349516e+00 | Max κ: 1.509610e-01 (layer0) [32m[OK][0m[2KStep 30 | Loss: 2.328330e+00 | Max κ: 1.422330e-01 (layer0) [32m[OK][0m[2KStep 31 | Loss: 2.319875e+00 | Max κ: 1.416041e-01 (layer0) [32m[OK][0m[2KStep 32 | Loss: 2.347749e+00 | Max κ: 1.383178e-01 (layer0) [32m[OK][0m[2KStep 33 | Loss: 2.290922e+00 | Max κ: 1.458662e-01 (layer0) [32m[OK][0m[2KStep 34 | Loss: 2.318753e+00 | Max κ: 1.412537e-01 (layer0) [32m[OK][0m[2KStep 35 | Loss: 2.326199e+00 | Max κ: 1.415010e-01 (layer0) [32m[OK][0m[2KStep 36 | Loss: 2.321223e+00 | Max κ: 1.368703e-01 (layer0) [32m[OK][0m[2KStep 37 | Loss: 2.339108e+00 | Max κ: 1.386749e-01 (layer0) [32m[OK][0m[2KStep 38 | Loss: 2.341657e+00 | Max κ: 1.429876e-01 (layer0) [32m[OK][0m[2KStep 39 | Loss: 2.316952e+00 | Max κ: 1.487564e-01 (layer0) [32m[OK][0m[2KStep 40 | Loss: 2.332866e+00 | Max κ: 1.555885e-01 (layer0) [32m[OK][0m[2KStep 41 | Loss: 2.322221e+00 | Max κ: 1.552613e-01 (layer0) [32m[OK][0m[2KStep 42 | Loss: 2.267480e+00 | Max κ: 1.385546e-01 (layer0) [32m[OK][0m[2KStep 43 | Loss: 2.320161e+00 | Max κ: 1.388444e-01 (layer0) [32m[OK][0m[2KStep 44 | Loss: 2.316815e+00 | Max κ: 1.393944e-01 (layer0) [32m[OK][0m[2KStep 45 | Loss: 2.283898e+00 | Max κ: 1.439270e-01 (layer0) [32m[OK][0m[2KStep 46 | Loss: 2.302147e+00 | Max κ: 1.380247e-01 (layer0) [32m[OK][0m[2KStep 47 | Loss: 2.325774e+00 | Max κ: 1.511525e-01 (layer4) [32m[OK][0m[2KStep 48 | Loss: 2.344904e+00 | Max κ: 1.400481e-01 (layer0) [32m[OK][0m[2KStep 49 | Loss: 2.315146e+00 | Max κ: 1.282424e-01 (layer0) [32m[OK][0m[2KStep 50 | Loss: 2.309100e+00 | Max κ: 1.479187e-01 (layer0) [32m[OK][0m[2KStep 51 | Loss: 2.302292e+00 | Max κ: 1.483647e-01 (layer0) [32m[OK][0m[2KStep 52 | Loss: 2.325860e+00 | Max κ: 1.414206e-01 (layer0) [32m[OK][0m[2KStep 53 | Loss: 2.301619e+00 | Max κ: 1.435726e-01 (layer0) [32m[OK][0m[2KStep 54 | Loss: 2.315579e+00 | Max κ: 1.297135e-01 (layer0) [32m[OK][0m[2KStep 55 | Loss: 2.291708e+00 | Max κ: 1.419389e-01 (layer0) [32m[OK][0m[2KStep 56 | Loss: 2.332455e+00 | Max κ: 1.382675e-01 (layer0) [32m[OK][0m[2KStep 57 | Loss: 2.299821e+00 | Max κ: 1.300052e-01 (layer0) [32m[OK][0m[2KStep 58 | Loss: 2.307688e+00 | Max κ: 1.663155e-01 (layer4) [32m[OK][0m[2KStep 59 | Loss: 2.327026e+00 | Max κ: 1.360532e-01 (layer0) [32m[OK][0m[2KStep 60 | Loss: 2.310137e+00 | Max κ: 1.335562e-01 (layer0) [32m[OK][0m[2KStep 61 | Loss: 2.324130e+00 | Max κ: 1.246537e-01 (layer0) [32m[OK][0m[2KStep 62 | Loss: 2.281473e+00 | Max κ: 1.316530e-01 (layer0) [32m[OK][0m[2KStep 63 | Loss: 2.321308e+00 | Max κ: 1.426588e-01 (layer4) [32m[OK][0m[2KStep 64 | Loss: 2.318889e+00 | Max κ: 1.441144e-01 (layer0) [32m[OK][0m[2KStep 65 | Loss: 2.339494e+00 | Max κ: 1.321553e-01 (layer4) [32m[OK][0m[2KStep 66 | Loss: 2.318033e+00 | Max κ: 1.378619e-01 (layer0) [32m[OK][0m[2KStep 67 | Loss: 2.293801e+00 | Max κ: 1.652810e-01 (layer4) [32m[OK][0m[2KStep 68 | Loss: 2.279517e+00 | Max κ: 1.362797e-01 (layer0) [32m[OK][0m[2KStep 69 | Loss: 2.323096e+00 | Max κ: 1.331126e-01 (layer4) [32m[OK][0m[2KStep 70 | Loss: 2.297732e+00 | Max κ: 1.449910e-01 (layer0) [32m[OK][0m[2KStep 71 | Loss: 2.316378e+00 | Max κ: 1.419122e-01 (layer0) [32m[OK][0m[2KStep 72 | Loss: 2.299251e+00 | Max κ: 1.301348e-01 (layer0) [32m[OK][0m[2KStep 73 | Loss: 2.310866e+00 | Max κ: 1.276637e-01 (layer0) [32m[OK][0m[2KStep 74 | Loss: 2.330654e+00 | Max κ: 1.406373e-01 (layer0) [32m[OK][0m[2KStep 75 | Loss: 2.313501e+00 | Max κ: 1.290467e-01 (layer0) [32m[OK][0m[2KStep 76 | Loss: 2.289258e+00 | Max κ: 1.366567e-01 (layer4) [32m[OK][0m[2KStep 77 | Loss: 2.295026e+00 | Max κ: 1.311427e-01 (layer0) [32m[OK][0m[2KStep 78 | Loss: 2.291270e+00 | Max κ: 1.364762e-01 (layer0) [32m[OK][0m[2KStep 79 | Loss: 2.285775e+00 | Max κ: 1.360303e-01 (layer0) [32m[OK][0m[2KStep 80 | Loss: 2.328320e+00 | Max κ: 1.259902e-01 (layer0) [32m[OK][0m[2KStep 81 | Loss: 2.300563e+00 | Max κ: 1.239172e-01 (layer0) [32m[OK][0m[2KStep 82 | Loss: 2.296496e+00 | Max κ: 1.795034e-01 (layer4) [32m[OK][0m[2KStep 83 | Loss: 2.321744e+00 | Max κ: 1.366024e-01 (layer0) [32m[OK][0m[2KStep 84 | Loss: 2.320363e+00 | Max κ: 1.392979e-01 (layer0) [32m[OK][0m[2KStep 85 | Loss: 2.331005e+00 | Max κ: 1.364699e-01 (layer0) [32m[OK][0m[2KStep 86 | Loss: 2.316404e+00 | Max κ: 1.250281e-01 (layer0) [32m[OK][0m[2KStep 87 | Loss: 2.307953e+00 | Max κ: 1.308563e-01 (layer0) [32m[OK][0m[2KStep 88 | Loss: 2.327974e+00 | Max κ: 1.781652e-01 (layer4) [32m[OK][0m[2KStep 89 | Loss: 2.331423e+00 | Max κ: 1.418930e-01 (layer0) [32m[OK][0m[2KStep 90 | Loss: 2.327721e+00 | Max κ: 1.271535e-01 (layer4) [32m[OK][0m[2KStep 91 | Loss: 2.313532e+00 | Max κ: 1.380479e-01 (layer0) [32m[OK][0m[2KStep 92 | Loss: 2.296412e+00 | Max κ: 1.437799e-01 (layer0) [32m[OK][0m[2KStep 93 | Loss: 2.329138e+00 | Max κ: 1.221314e-01 (layer0) [32m[OK][0m[2KStep 94 | Loss: 2.285214e+00 | Max κ: 1.493180e-01 (layer0) [32m[OK][0m[2KStep 95 | Loss: 2.317732e+00 | Max κ: 1.319566e-01 (layer0) [32m[OK][0m[2KStep 96 | Loss: 2.310258e+00 | Max κ: 1.290478e-01 (layer4) [32m[OK][0m[2KStep 97 | Loss: 2.319166e+00 | Max κ: 1.276667e-01 (layer0) [32m[OK][0m[2KStep 98 | Loss: 2.310544e+00 | Max κ: 1.229872e-01 (layer0) [32m[OK][0m[2KStep 99 | Loss: 2.304941e+00 | Max κ: 1.270847e-01 (layer0) [32m[OK][0m
+
+=== Training completed! ===
+
+Exported curvature data to training_curvature.csv
+
+Curvature Heatmap (κ^{curv} over training steps)
+Legend: . = low (<1e3), o = med-low (<1e6), O = med-high (<1e9), @ = high (<1e12), ! = danger (≥1e12)
+
+         │    0   10   20   30   40   50   60   70   80   90
+---------+----------------------------------------------------------------------------------------------------
+layer0 │ ....................................................................................................
+layer2 │ ....................................................................................................
+layer4 │ ....................................................................................................
+
+
+=== Curvature Profiling Summary ===
+
+Layer: layer0
+  Steps tracked: 100
+  Curvature (κ^{curv}):
+    Min: 1.221314e-01
+    Max: 1.693033e-01
+    Avg: 1.397389e-01
+  Gradient norm:
+    Max: 3.386065e-01
+    Avg: 2.794778e-01
+  Estimated precision req: 17.0 bits (D=1, ε=1e-6)
+
+Layer: layer2
+  Steps tracked: 100
+  Curvature (κ^{curv}):
+    Min: 8.6e-02
+    Max: 1.5e-01
+    Avg: 1.1e-01
+  Gradient norm:
+    Max: 3.0e-01
+    Avg: 2.1e-01
+  Estimated precision req: 16.5 bits (D=1, ε=1e-6)
+
+Layer: layer4
+  Steps tracked: 100
+  Curvature (κ^{curv}):
+    Min: 7.5e-02
+    Max: 1.8e-01
+    Avg: 1.2e-01
+  Gradient norm:
+    Max: 3.6e-01
+    Avg: 2.3e-01
+  Estimated precision req: 16.7 bits (D=1, ε=1e-6)
+
+
+Generated plot_training.py - run with: python3 plot_training.py
+
+========================================
+Example completed successfully!
+========================================

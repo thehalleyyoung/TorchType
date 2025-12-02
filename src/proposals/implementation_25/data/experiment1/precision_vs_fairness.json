@@ -1,0 +1,170 @@
+{
+  "adult": {
+    "float64": {
+      "dpg": 0.030833760245901676,
+      "error_bound": 0.0,
+      "is_reliable": true,
+      "reliability_score": Infinity,
+      "near_threshold_fraction": {
+        "group_0": 0.0,
+        "group_1": 0.0,
+        "overall": 0.0
+      },
+      "metadata": {
+        "threshold": 0.5,
+        "n_samples": 1000.0,
+        "n_near_threshold": 0,
+        "predictions_mean": 0.5347106874555227,
+        "predictions_std": 0.3292409855087295
+      }
+    },
+    "float32": {
+      "dpg": 0.030833760245901676,
+      "error_bound": 0.0,
+      "is_reliable": true,
+      "reliability_score": Infinity,
+      "near_threshold_fraction": {
+        "group_0": 0.0,
+        "group_1": 0.0,
+        "overall": 0.0
+      },
+      "metadata": {
+        "threshold": 0.5,
+        "n_samples": 1000.0,
+        "n_near_threshold": 0,
+        "predictions_mean": 0.534710705280304,
+        "predictions_std": 0.32924097776412964
+      }
+    },
+    "float16": {
+      "dpg": 0.030833760245901676,
+      "error_bound": 0.023821721311475412,
+      "is_reliable": false,
+      "reliability_score": 1.2943548387096788,
+      "near_threshold_fraction": {
+        "group_0": 0.00819672131147541,
+        "group_1": 0.015625,
+        "overall": 0.012
+      },
+      "metadata": {
+        "threshold": 0.5,
+        "n_samples": 1000.0,
+        "n_near_threshold": 12,
+        "predictions_mean": 0.53466796875,
+        "predictions_std": 0.329345703125
+      }
+    }
+  },
+  "compas": {
+    "float64": {
+      "dpg": 0.010709914320685354,
+      "error_bound": 0.0,
+      "is_reliable": true,
+      "reliability_score": Infinity,
+      "near_threshold_fraction": {
+        "group_0": 0.0,
+        "group_1": 0.0,
+        "overall": 0.0
+      },
+      "metadata": {
+        "threshold": 0.5,
+        "n_samples": 400.0,
+        "n_near_threshold": 0,
+        "predictions_mean": 0.5760676242560131,
+        "predictions_std": 0.17845646661854356
+      }
+    },
+    "float32": {
+      "dpg": 0.010709914320685354,
+      "error_bound": 0.0,
+      "is_reliable": true,
+      "reliability_score": Infinity,
+      "near_threshold_fraction": {
+        "group_0": 0.0,
+        "group_1": 0.0,
+        "overall": 0.0
+      },
+      "metadata": {
+        "threshold": 0.5,
+        "n_samples": 400.0,
+        "n_near_threshold": 0,
+        "predictions_mean": 0.5760676264762878,
+        "predictions_std": 0.17845647037029266
+      }
+    },
+    "float16": {
+      "dpg": 0.010709914320685354,
+      "error_bound": 0.042329661362709096,
+      "is_reliable": false,
+      "reliability_score": 0.2530120481927692,
+      "near_threshold_fraction": {
+        "group_0": 0.03070175438596491,
+        "group_1": 0.011627906976744186,
+        "overall": 0.0225
+      },
+      "metadata": {
+        "threshold": 0.5,
+        "n_samples": 400.0,
+        "n_near_threshold": 9,
+        "predictions_mean": 0.576171875,
+        "predictions_std": 0.178466796875
+      }
+    }
+  },
+  "tabular": {
+    "float64": {
+      "dpg": 0.07574679943100993,
+      "error_bound": 0.0,
+      "is_reliable": true,
+      "reliability_score": Infinity,
+      "near_threshold_fraction": {
+        "group_0": 0.0,
+        "group_1": 0.0,
+        "overall": 0.0
+      },
+      "metadata": {
+        "threshold": 0.5,
+        "n_samples": 600.0,
+        "n_near_threshold": 0,
+        "predictions_mean": 0.5241730837375915,
+        "predictions_std": 0.3075028848270521
+      }
+    },
+    "float32": {
+      "dpg": 0.07574679943100993,
+      "error_bound": 0.0,
+      "is_reliable": true,
+      "reliability_score": Infinity,
+      "near_threshold_fraction": {
+        "group_0": 0.0,
+        "group_1": 0.0,
+        "overall": 0.0
+      },
+      "metadata": {
+        "threshold": 0.5,
+        "n_samples": 600.0,
+        "n_near_threshold": 0,
+        "predictions_mean": 0.5241730809211731,
+        "predictions_std": 0.3075028955936432
+      }
+    },
+    "float16": {
+      "dpg": 0.07574679943100993,
+      "error_bound": 0.023204125177809388,
+      "is_reliable": true,
+      "reliability_score": 3.2643678160919527,
+      "near_threshold_fraction": {
+        "group_0": 0.01644736842105263,
+        "group_1": 0.006756756756756757,
+        "overall": 0.011666666666666667
+      },
+      "metadata": {
+        "threshold": 0.5,
+        "n_samples": 600.0,
+        "n_near_threshold": 7,
+        "predictions_mean": 0.5244140625,
+        "predictions_std": 0.307373046875
+      }
+    }
+  }
+}

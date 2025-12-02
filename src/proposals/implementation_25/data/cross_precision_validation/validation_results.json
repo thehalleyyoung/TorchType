@@ -1,0 +1,68 @@
+{
+  "normal_model": {
+    "float32": {
+      "max_pred_diff": 9.454602967196024e-08,
+      "mean_pred_diff": 2.2078839739322666e-08,
+      "dpg_baseline": 0.013645614386280924,
+      "dpg_target": 0.013645614386280924,
+      "dpg_diff": 0.0,
+      "error_bound": 9.454602967196024e-08,
+      "near_threshold_fraction": 0.0,
+      "theoretical_dpg_bound": 0.0
+    },
+    "float16": {
+      "max_pred_diff": 0.0004531568093941729,
+      "mean_pred_diff": 0.00010659790848577964,
+      "dpg_baseline": 0.013645614386280924,
+      "dpg_target": 0.013645614386280924,
+      "dpg_diff": 0.0,
+      "error_bound": 0.0004531568093941729,
+      "near_threshold_fraction": 0.0033333333333333335,
+      "theoretical_dpg_bound": 0.006666666666666667
+    }
+  },
+  "near_threshold_model": {
+    "float32": {
+      "max_pred_diff": 7.724696726718605e-08,
+      "mean_pred_diff": 2.174524368028785e-08,
+      "dpg_baseline": 0.009608647783004687,
+      "dpg_target": 0.009608647783004687,
+      "dpg_diff": 0.0,
+      "error_bound": 7.724696726718605e-08,
+      "near_threshold_fraction": 0.0,
+      "theoretical_dpg_bound": 0.0
+    },
+    "float16": {
+      "max_pred_diff": 0.0004029683001938178,
+      "mean_pred_diff": 0.00010230568938842887,
+      "dpg_baseline": 0.009608647783004687,
+      "dpg_target": 0.009608647783004687,
+      "dpg_diff": 0.0,
+      "error_bound": 0.0004029683001938178,
+      "near_threshold_fraction": 0.0,
+      "theoretical_dpg_bound": 0.0
+    }
+  },
+  "tight_threshold_model": {
+    "float32": {
+      "max_pred_diff": 5.7722781110491894e-08,
+      "mean_pred_diff": 2.0616015121988073e-08,
+      "dpg_baseline": 0.0,
+      "dpg_target": 0.0,
+      "dpg_diff": 0.0,
+      "error_bound": 5.7722781110491894e-08,
+      "near_threshold_fraction": 0.0,
+      "theoretical_dpg_bound": 0.0
+    },
+    "float16": {
+      "max_pred_diff": 0.00012149773481945347,
+      "mean_pred_diff": 4.9854726921107205e-05,
+      "dpg_baseline": 0.0,
+      "dpg_target": 0.0,
+      "dpg_diff": 0.0,
+      "error_bound": 0.00012149773481945347,
+      "near_threshold_fraction": 0.0,
+      "theoretical_dpg_bound": 0.0
+    }
+  }
+}

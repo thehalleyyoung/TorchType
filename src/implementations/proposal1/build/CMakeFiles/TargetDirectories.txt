@@ -1,0 +1,11 @@
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal1/build/CMakeFiles/hnf_proposal1.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal1/build/CMakeFiles/test_proposal1.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal1/build/CMakeFiles/test_comprehensive_mnist.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal1/build/CMakeFiles/test_advanced_features.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal1/build/CMakeFiles/mnist_demo.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal1/build/CMakeFiles/mnist_precision_demo.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal1/build/CMakeFiles/mnist_rigorous_test.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal1/build/CMakeFiles/test_comprehensive_enhancements.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal1/build/CMakeFiles/test.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal1/build/CMakeFiles/edit_cache.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal1/build/CMakeFiles/rebuild_cache.dir

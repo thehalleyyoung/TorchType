@@ -1,0 +1,10 @@
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal4/build/CMakeFiles/test_proposal4.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal4/build/CMakeFiles/test_neural_network.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal4/build/CMakeFiles/test_mnist_feedforward.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal4/build/CMakeFiles/transformer_demo.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal4/build/CMakeFiles/edit_cache.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal4/build/CMakeFiles/rebuild_cache.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal4/build/CMakeFiles/list_install_components.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal4/build/CMakeFiles/install.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal4/build/CMakeFiles/install/local.dir
+/Users/halleyyoung/Documents/TorchType/src/implementations/proposal4/build/CMakeFiles/install/strip.dir

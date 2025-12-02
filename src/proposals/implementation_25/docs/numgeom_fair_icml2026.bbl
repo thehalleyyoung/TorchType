@@ -1,0 +1,67 @@
+\begin{thebibliography}{9}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Anonymous(2024)]{hnf_framework}
+Anonymous.
+\newblock Numerical geometry: A geometric framework for finite-precision
+  computation.
+\newblock \emph{In preparation}, 2024.
+
+\bibitem[Chouldechova(2017)]{chouldechova2017fair}
+Chouldechova, A.
+\newblock Fair prediction with disparate impact: A study of bias in recidivism
+  prediction instruments.
+\newblock In \emph{Big data}, volume~5, pp.\  153--163, 2017.
+
+\bibitem[Cohen et~al.(2019)Cohen, Rosenfeld, and Kolter]{cohen2019certified}
+Cohen, J., Rosenfeld, E., and Kolter, Z.
+\newblock Certified adversarial robustness via randomized smoothing.
+\newblock In \emph{International conference on machine learning}, pp.\
+  1310--1320, 2019.
+
+\bibitem[Gupta et~al.(2015)Gupta, Agrawal, Gopalakrishnan, and
+  Narayanan]{gupta2015deep}
+Gupta, S., Agrawal, A., Gopalakrishnan, K., and Narayanan, P.
+\newblock Deep learning with limited numerical precision.
+\newblock In \emph{International conference on machine learning}, pp.\
+  1737--1746, 2015.
+
+\bibitem[Hardt et~al.(2016)Hardt, Price, and Srebro]{hardt2016equality}
+Hardt, M., Price, E., and Srebro, N.
+\newblock Equality of opportunity in supervised learning.
+\newblock \emph{Advances in neural information processing systems}, 29, 2016.
+
+\bibitem[Kamiran \& Calders(2012)Kamiran and Calders]{kamiran2012data}
+Kamiran, F. and Calders, T.
+\newblock Data preprocessing techniques for classification without
+  discrimination.
+\newblock In \emph{Knowledge and information systems}, volume~33, pp.\  1--33,
+  2012.
+
+\bibitem[Micikevicius et~al.(2018)Micikevicius, Narang, Alben, Diamos, Elsen,
+  Garcia, Ginsburg, Houston, Kuchaiev, Venkatesh,
+  et~al.]{micikevicius2018mixed}
+Micikevicius, P., Narang, S., Alben, J., Diamos, G., Elsen, E., Garcia, D.,
+  Ginsburg, B., Houston, M., Kuchaiev, O., Venkatesh, G., et~al.
+\newblock Mixed precision training.
+\newblock \emph{arXiv preprint arXiv:1710.03740}, 2018.
+
+\bibitem[Wong \& Kolter(2018)Wong and Kolter]{wong2018provable}
+Wong, E. and Kolter, Z.
+\newblock Provable defenses against adversarial examples via the convex outer
+  adversarial polytope.
+\newblock In \emph{International conference on machine learning}, pp.\
+  5286--5295, 2018.
+
+\bibitem[Zafar et~al.(2017)Zafar, Valera, Gomez~Rodriguez, and
+  Gummadi]{zafar2017fairness}
+Zafar, M.~B., Valera, I., Gomez~Rodriguez, M., and Gummadi, K.~P.
+\newblock Fairness constraints: Mechanisms for fair classification.
+\newblock In \emph{Artificial Intelligence and Statistics}, pp.\  962--970,
+  2017.
+
+\end{thebibliography}

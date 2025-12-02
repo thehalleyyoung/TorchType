@@ -1,0 +1,37 @@
+MNIST Transformer Certification Report
+======================================
+
+╔══════════════════════════════════════════════════════════════╗
+║ PRECISION CERTIFICATE                                         ║
+╠══════════════════════════════════════════════════════════════╣
+║ Minimum Required Precision:  20 bits mantissa                   ║
+║ Recommendation:              float32 (fp32)                ║
+║                                                                ║
+║ Target Accuracy:             1.00e-04                              ║
+║ Curvature Bound:             2.16e-02                              ║
+║ Domain Diameter:             21.0000                                    ║
+║                                                                ║
+║ Bottleneck Layers:                                            ║
+║   - output_softmax: κ = 1.101323e+04                       ║
+╚══════════════════════════════════════════════════════════════╝
+
+
+JSON Export:
+{
+  "model_hash": "patch_embedding:Linear;mlp_fc1:Linear;mlp_relu:ReLU;mlp_fc2:Linear;classifier:Linear;output_softmax:Softmax;",
+  "target_accuracy": 0.0001,
+  "curvature_bound": 0.0215645,
+  "precision_requirement": 20,
+  "recommended_hardware": "float32 (fp32)",
+  "timestamp": "Mon Dec  1 23:31:34 2025
+",
+  "domain_diameter": 21,
+  "layer_curvatures": [
+    {"layer": "patch_embedding", "curvature": 0},
+    {"layer": "mlp_fc1", "curvature": 0},
+    {"layer": "mlp_relu", "curvature": 0},
+    {"layer": "mlp_fc2", "curvature": 0},
+    {"layer": "classifier", "curvature": 0},
+    {"layer": "output_softmax", "curvature": 11013.2}
+  ]
+}

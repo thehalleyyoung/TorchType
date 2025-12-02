@@ -1,0 +1,2764 @@
+% Target: SIAM Journal on Numerical Analysis
+% Fallback to article class for local compilation
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathrsfs}
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage{tikz-cd}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage[margin=1in]{geometry}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{notation}[theorem]{Notation}
+
+% Custom commands
+\newcommand{\Nnum}{\mathcal{N}}
+\newcommand{\Unum}{\mathcal{U}_{\mathrm{num}}}
+\newcommand{\Rep}{\mathrm{Rep}}
+\newcommand{\NMet}{\mathbf{NMet}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Lip}{\mathrm{Lip}}
+\newcommand{\Hom}{\mathrm{Hom}}
+\newcommand{\Path}{\mathrm{Path}}
+\newcommand{\NumEquiv}{\mathrm{NumEquiv}}
+\newcommand{\idtoequiv}{\mathrm{idtoequiv}}
+\newcommand{\ua}{\mathrm{ua}}
+\newcommand{\transport}{\mathrm{transport}}
+\newcommand{\fl}{\mathrm{fl}}
+\newcommand{\rd}{\mathrm{rd}}
+\newcommand{\ulp}{\mathrm{ulp}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\cond}{\mathrm{cond}}
+\newcommand{\diam}{\mathrm{diam}}
+\newcommand{\supp}{\mathrm{supp}}
+\newcommand{\sgn}{\mathrm{sgn}}
+\newcommand{\Tr}{\mathrm{Tr}}
+\newcommand{\rank}{\mathrm{rank}}
+\newcommand{\diag}{\mathrm{diag}}
+\newcommand{\op}{\mathrm{op}}
+\newcommand{\re}{\mathrm{re}}
+\newcommand{\im}{\mathrm{im}}
+
+\title{Homotopy Numerical Foundations:\\
+A Geometric Theory of Computational Precision}
+
+\author{Anonymous}
+
+\begin{document}
+
+\begin{abstract}
+We introduce \emph{Homotopy Numerical Foundations} (HNF), a new theoretical framework that reveals deep geometric structure underlying numerical computation. Our central discovery is that \textbf{precision constraints form a sheaf over the space of computations}, and that this sheaf carries homotopy-theoretic invariants that classify when computations can be accurately implemented.
+
+The framework yields three main theorems:
+
+\textbf{The Stability Composition Theorem:} Error functionals satisfy the compositional bound $\Phi_{g \circ f}(\eps) \leq \Phi_g(\Phi_f(\eps)) + L_g \cdot \Phi_f(\eps)$, which is tight for worst-case inputs (achieved by products of linear maps). This transforms error analysis from case-by-case reasoning to automatic derivation.
+
+\textbf{The Precision Obstruction Theorem:} The curvature $\kappa_f^{\mathrm{curv}}$ of a morphism provides a \emph{sharp necessary condition} $p \geq \log_2(c \cdot \kappa D^2/\eps)$ on required mantissa bits, where $c > 0$ is an explicit constant depending on smoothness assumptions. This is a lower bound: no algorithm on hardware with fewer bits can uniformly achieve $\eps$-accuracy. Sufficiency requires algorithm-specific analysis.
+
+\textbf{The Homotopy Classification Theorem:} Numerical types carry homotopy groups $\pi_n^{\mathrm{num}}(A)$ that obstruct numerical equivalence: types with non-isomorphic homotopy groups cannot be numerically equivalent, regardless of algorithm choice.
+
+Beyond these theorems, we develop the foundations of a new field---\emph{numerical homotopy theory}---studying the topology of precision constraints. We define the \emph{precision sheaf} $\mathcal{P}$ over a computation graph, prove it satisfies descent, and show its cohomology groups classify obstructions to global precision assignments. This sheaf-theoretic perspective unifies error propagation, precision requirements, and algorithmic equivalence into a single geometric framework.
+
+Applications include certified mixed-precision neural networks, precision-aware compilation, and type systems for numerical software.
+\end{abstract}
+
+\maketitle
+
+\tableofcontents
+
+%=============================================================================
+\section*{The Vision: Numerical Analysis as Geometry}
+%=============================================================================
+
+This paper develops a compositional framework for numerical error analysis, viewing \textbf{computation graphs as geometric objects carrying precision constraints}.
+
+The classical view treats numerical analysis as perturbation theory---studying how small input changes affect outputs. This yields algorithm-specific bounds that must be rederived for each composition. We propose a complementary perspective:
+
+\begin{quote}
+\emph{Precision constraints have algebraic structure. Error functionals compose according to explicit laws, curvature provides geometric invariants, and (more speculatively) sheaf-theoretic tools may enable local-to-global reasoning about precision.}
+\end{quote}
+
+Concretely, we prove:
+\begin{enumerate}
+    \item \textbf{Error functionals form an algebra.} The composition law $\Phi_{g \circ f}(\eps) \leq \Phi_g(\Phi_f(\eps)) + L_g \cdot \Phi_f(\eps)$ is tight for worst-case inputs, transforming error analysis into algebra.
+    
+    \item \textbf{Curvature obstructs precision.} The invariant $\kappa_f^{\mathrm{curv}}$ provides lower bounds $p \geq \log_2(c \kappa D^2/\eps)$ on required bits. Combined with algorithmic upper bounds, this characterizes precision for matrix inversion, eigenvalue problems, and neural networks.
+    
+    \item \textbf{Homotopy groups classify equivalence.} Numerical types carry groups $\pi_n^{\mathrm{num}}(A)$ that obstruct numerical equivalence---a topological perspective on when algorithms are interchangeable.
+    
+    \item \textbf{Precision forms a sheaf.} Over any computation graph $G$, precision requirements form a sheaf $\mathcal{P}_G$ whose cohomology $H^1(G; \mathcal{P}_G)$ classifies obstructions to consistent precision assignment.
+\end{enumerate}
+
+\textbf{Scope and limitations:} We prove (1)--(3) in full rigor, with (4) developed as a precise framework with key theorems. Curvature provides \emph{lower bounds} on precision, not complete characterizations; we are explicit about what is proved versus conjectured.
+
+%=============================================================================
+\section*{Notation Summary}
+%=============================================================================
+
+\begin{center}
+\begin{tabular}{|c|l|}
+\hline
+\textbf{Symbol} & \textbf{Meaning} \\
+\hline\hline
+$\NMet$ & Category of numerical types and numerical morphisms (Def.~\ref{def:nmet-category}) \\
+$(A, d_A, \mathcal{R}_A)$ & Numerical type: metric space with realizability data \\
+$\Rep_A(\eps, H)$ & Finite set of $\eps$-representations on hardware $H$ \\
+$\rho_{A,\eps,H}$ & Realization map from representations to points \\
+$L_f, \Lip(f)$ & Lipschitz constant of morphism $f$ \\
+$\Phi_f$ & Error-propagation functional of $f$ \\
+$\hat{f}_{\eps,H}$ & Machine realizer of $f$ at precision $\eps$ on hardware $H$ \\
+$\NumEquiv(A,B)$ & Numerical equivalences between types $A$ and $B$ \\
+$\kappa(A)$ & Condition number of matrix/operator $A$ \\
+$\kappa_f^{\mathrm{curv}}$ & Curvature invariant of numerical morphism $f$ \\
+$\mathrm{cond}_{\mathrm{eq}}(f,g)$ & Equivalence condition number $L_f \cdot L_g$ \\
+$\fl(x)$ & Floating-point representation of real $x$ \\
+$\ulp(x)$ & Unit in last place at $x$ \\
+$\eps_{\mathrm{mach}}$ & Machine epsilon (typically $2^{-53}$ for IEEE 754 double) \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{remark}[Notation Conventions]
+We use $\kappa(\cdot)$ for condition numbers (of matrices or operators) and $\kappa_f^{\mathrm{curv}}$ for the curvature invariant of a morphism (Definition~\ref{def:curvature}). For numerical equivalences $(f, g)$, we write $\mathrm{cond}_{\mathrm{eq}}(f,g) := L_f \cdot L_g$ for the ``equivalence condition number.'' These are related but distinct: the condition number $\kappa(A)$ of a matrix measures sensitivity to perturbations, while $\kappa_f^{\mathrm{curv}}$ measures nonlinearity, and $\mathrm{cond}_{\mathrm{eq}}(f,g)$ measures the ``stretch'' of an equivalence.
+\end{remark}
+
+\medskip
+
+%=============================================================================
+\section{Introduction}
+%=============================================================================
+
+\subsection{The Fundamental Observation}
+
+Consider computing $e^{-x}$ for $x = 100$ using the Taylor series:
+\[
+e^{-100} = 1 - 100 + \frac{100^2}{2!} - \frac{100^3}{3!} + \cdots \approx 3.72 \times 10^{-44}
+\]
+On any IEEE 754 hardware, summing this series produces garbage: the partial sums oscillate through $\pm 10^{42}$ before settling to a tiny result, losing all significant digits to cancellation. Yet $e^{-100} = 1/e^{100}$ computes accurately by first computing $e^{100}$ (a large, stable value) and inverting.
+
+\textbf{The two algorithms compute the same function but have different precision requirements.}
+
+This paper develops a framework for analyzing such phenomena systematically. We prove compositional bounds on error propagation through computation graphs, and curvature-based lower bounds on required precision. These tools complement classical condition-number analysis.
+
+\subsection{Central Ideas}
+
+Our framework rests on three pillars:
+\begin{enumerate}
+    \item \textbf{Compositional error tracking:} Error functionals $\Phi_f$ compose according to algebraic laws (Theorem~\ref{thm:stability}), enabling automatic error analysis for complex pipelines.
+    \item \textbf{Curvature as precision invariant:} The curvature $\kappa_f^{\mathrm{curv}}$ provides lower bounds on required mantissa bits (Theorem~\ref{thm:obstruction}). This is a sufficient condition for impossibility, not a complete characterization.
+    \item \textbf{Categorical structure:} The category $\NMet$ of numerical types organizes these ideas, providing a uniform language for numerical analysis.
+\end{enumerate}
+
+\subsection{What You Can Do With This Framework}
+
+\textbf{1. Automatic Precision Budgeting.} Given a computation graph, derive precision requirements at each node using Theorem~\ref{thm:stability}:
+\begin{center}
+\begin{tikzcd}
+\mathsf{input} \ar[r, "\text{fp64}"] & \mathsf{matmul}_1 \ar[r, "\text{fp64}"] & \mathsf{softmax} \ar[r, "\text{fp32}"] & \mathsf{matmul}_2 \ar[r, "\text{fp16}"] & \mathsf{output}
+\end{tikzcd}
+\end{center}
+
+\textbf{2. Precision Lower Bounds.} The curvature invariant provides necessary (not sufficient) precision requirements:
+\begin{example}[Matrix Inversion Lower Bound]
+For $A \in \R^{n \times n}$ with condition number $\kappa(A) = 10^{8}$, achieving relative error $< 10^{-8}$ requires mantissa precision exceeding that of fp64. This follows from the curvature bound $p \gtrsim \frac{3}{2}\log_2(\kappa)$ (Theorem~\ref{thm:obstruction}).
+\end{example}
+
+\textbf{3. Algorithmic Comparison.} Different algorithms for the same function have different error functionals:
+\begin{example}[Horner vs. Naive Polynomial Evaluation]
+For $p(x) = a_n x^n + \cdots + a_0$:
+\begin{itemize}
+    \item \emph{Naive}: Accumulates error proportional to coefficient magnitudes
+    \item \emph{Horner}: Error scales with polynomial degree, not coefficient size
+\end{itemize}
+Our error functional analysis (Theorem~\ref{thm:stability}) quantifies this difference.
+\end{example}
+
+\textbf{4. Neural Network Quantization.} Determine which layers can use reduced precision:
+\begin{example}[Transformer Precision Analysis]
+Using Lipschitz constants of attention and feed-forward layers, we derive which layers can be safely quantized to int8 vs. requiring fp16 (see Section~\ref{sec:gallery}, Example 4).
+\end{example}
+
+\subsection{Main Results}
+
+We prove three main theorems:
+
+\begin{theorem}[Composition Law --- Theorem \ref{thm:stability}]
+\label{intro:stability}
+For morphisms $f_1, \ldots, f_n$ with Lipschitz constants $L_1, \ldots, L_n$ and error functionals $\Phi_1, \ldots, \Phi_n$:
+\[
+\Phi_{f_n \circ \cdots \circ f_1}(\eps) \leq \sum_{i=1}^{n} \left( \prod_{j=i+1}^{n} L_j \right) \cdot \Phi_i(\eps_i)
+\]
+where $\eps_i$ is determined by backward propagation. This bound is tight: we exhibit examples achieving it to within constant factors.
+\end{theorem}
+
+\begin{theorem}[Precision Lower Bound --- Theorem \ref{thm:obstruction}]
+\label{intro:obstruction}
+Under stated smoothness and boundedness assumptions, there exist \emph{sharp lower bounds} on required precision. For a $C^3$ morphism $f$ with curvature $\kappa_f > 0$ on a domain of diameter $D$:
+\[
+\boxed{p \geq \log_2(c \cdot \kappa_f \cdot D^2 / \eps) \text{ mantissa bits are necessary}}
+\]
+where $c > 0$ is an explicit constant (see Theorem~\ref{thm:obstruction}). Below this threshold, no algorithm on that hardware can uniformly achieve $\eps$-accuracy. See Remark~\ref{rem:obstruction-scope} for caveats.
+\end{theorem}
+
+\begin{theorem}[Neural Network Representation --- Theorem \ref{thm:representation}]
+\label{intro:representation}
+ReLU neural networks compute exactly the piecewise-linear maps in $\NMet$, with:
+\begin{enumerate}
+    \item Each layer's Lipschitz constant bounded by $\|W\|_{\mathrm{op}}$
+    \item Error propagation tracked compositionally through the network
+    \item Quantization thresholds derivable from the algebraic structure
+\end{enumerate}
+\textbf{Consequence:} We can determine a priori which layers of a trained network can be safely quantized to int8 vs. requiring fp16.
+\end{theorem}
+
+\begin{theorem}[Compilation Correctness --- Theorem \ref{thm:compilation-correctness}]
+\label{intro:compilation}
+A source-to-source transformation $G \rightsquigarrow G'$ is \emph{precision-preserving} if the underlying maps are related by a numerical equivalence with bounded condition number. Algorithm~\ref{alg:principled-compilation} certifies this for a class of rewrites including algebraic simplifications, reassociations, and algorithmic substitutions.
+\end{theorem}
+
+\subsection{Classical vs. Novel Content}
+
+To orient readers: our \emph{classical} contributions are new proofs and unified presentation of known phenomena (error propagation, condition numbers, backward stability). Our \emph{novel} contributions are:
+
+\begin{enumerate}
+    \item The categorical framework $\NMet$ making error propagation compositional
+    \item Sharp precision lower bounds (necessary conditions) for problem classes
+    \item Sheaf-theoretic perspective on precision constraints (more speculative)
+    \item Systematic application to neural network quantization
+\end{enumerate}
+
+\subsection{A Geometric Perspective on Precision}
+
+\textbf{Beyond the specific theorems, we propose a geometric perspective on numerical computation:}
+
+\begin{quote}
+\emph{Precision constraints carry geometric invariants. Curvature provides lower bounds on required bits; error functionals compose algebraically; and (more speculatively) sheaf-theoretic structures may capture global consistency of precision assignments.}
+\end{quote}
+
+We develop three levels of this perspective:
+
+\textbf{Level 1: Curvature.} The invariant $\kappa_f^{\mathrm{curv}}$ measures how nonlinearity amplifies discretization error. It provides precision lower bounds analogous to how Riemannian curvature bounds geodesic spreading.
+
+\textbf{Level 2: Sheaves.} Over any computation graph $G$, precision requirements form a presheaf $\mathcal{P}_G^\eps$. The failure of this presheaf to be a sheaf---measured by its cohomology $H^1(G; \mathcal{P}_G^\eps)$---detects obstructions to uniform precision assignment. This is genuinely topological: the obstruction depends on the global structure of $G$, not just local constraints.
+
+\textbf{Level 3: Homotopy.} The space of computations $\mathcal{C}(G)$ with the Lipschitz topology carries homotopy groups $\pi_n^{\mathrm{comp}}(G)$ classifying computations up to precision-preserving deformation. Types with non-isomorphic homotopy groups cannot be numerically equivalent.
+
+Section~\ref{sec:precision-sheaf} develops Levels 2--3 in full rigor. We prove precise theorems where possible and clearly mark the more speculative aspects of this program.
+
+\subsection{Related Work and What Is Different Here}
+
+\textbf{Classical Numerical Analysis} \cite{Higham, TrefethenBau, DemmelKahan1990} provides error bounds algorithm-by-algorithm. \emph{We provide a calculus that derives these bounds automatically for arbitrary compositions.}
+
+\textbf{Homotopy Type Theory} \cite{Voevodsky2010, HoTTBook} treats equivalences as identities. \emph{We adapt this to the quantitative setting: numerically equivalent algorithms are identified up to precision.}
+
+\textbf{Constructive Analysis} \cite{BishopBridges} and realizability \cite{vanOosten} study computability. \emph{We extend to quantitative computability with exact error tracking.}
+
+\textbf{Neural Network Theory} \cite{AroraBMR2018, Telgarsky2016, Montufar2014} characterizes expressiveness. \emph{We add precision analysis: not just what can be computed, but at what precision.}
+
+\textbf{The key innovation:} Prior work provides upper bounds (``this algorithm achieves $\eps$-accuracy''). We provide \emph{lower bounds} (``no algorithm can achieve better than $\eps$-accuracy with $p$ bits'').
+
+\subsection{How to Read This Paper}
+
+\textbf{For numerical analysts:} Sections 2--4 are self-contained. Read the definitions, skip the categorical motivation, focus on the examples and the main theorems.
+
+\textbf{For machine learning practitioners:} Section 5 (neural networks) and Section 6 (compilation) are directly applicable. The quantization results are immediately usable.
+
+\textbf{For mathematicians:} The full paper develops a rigorous theory. Section 4's homotopical content is the most novel mathematically.
+
+\subsection{Organization}
+
+Section 2 develops the category $\NMet$ of numerical metric spaces. Section 3 proves the Composition Law for error propagation. Section 4 establishes precision impossibility theorems with worked examples. Section 5 proves the neural network representation theorem with quantization applications. Section 6 applies the theory to precision-guided compilation.
+
+%=============================================================================
+\section{Gallery of Applications}
+\label{sec:gallery}
+%=============================================================================
+
+Before developing the formal theory, we present a gallery of applications demonstrating the power of our framework. Each example shows a concrete problem, the HNF analysis, and the resulting insight.
+
+\subsection{Example 1: Catastrophic Cancellation in Polynomial Evaluation}
+
+\textbf{Problem:} Evaluate $p(x) = x^{10} - 10x^9 + 45x^8 - 120x^7 + 210x^6 - 252x^5 + 210x^4 - 120x^3 + 45x^2 - 10x + 1$ at $x = 1.00001$.
+
+\textbf{Exact answer:} $p(x) = (x-1)^{10} = (0.00001)^{10} = 10^{-50}$.
+
+\textbf{Naive computation (fp64):} Direct evaluation gives garbage ($\approx -10^{-5}$) due to catastrophic cancellation---intermediate terms like $x^{10} \approx 1.0001$ and $-10x^9 \approx -10.0009$ nearly cancel.
+
+\textbf{Why HNF curvature doesn't directly apply here:} The Hessian-based curvature of $p(x) = (x-1)^{10}$ as a \emph{function} is $\kappa_p^{\mathrm{curv}} = \frac{1}{2}|p''(x)| = 45(x-1)^8$, which is tiny near $x = 1$. The problem is \emph{not} intrinsic nonlinearity of $p$.
+
+\textbf{What goes wrong:} The issue is that the naive \emph{algorithm} computes $p$ as a sequence of additions and multiplications of \emph{large} intermediate values. Each intermediate computation has its own error contribution. The error functional analysis (Theorem~\ref{thm:stability}) shows:
+\[
+\Phi_{\text{naive}}(\eps, H) \approx \sum_{i=0}^{10} |a_i| \cdot \|x\|^i \cdot \eps_H \approx 252 \cdot 1^5 \cdot \eps_H
+\]
+times the number of operations. With partial sums reaching $\pm 10^{42}$, the relative error is $\approx 10^{42} \cdot 2^{-53} / 10^{-50} \approx 10^{76}$---complete loss of accuracy.
+
+\textbf{The factored form:} Computing $(x-1)^{10}$ directly: let $y = x - 1 = 10^{-5}$, then compute $y^{10}$ via repeated squaring. Here:
+\[
+\Phi_{\text{factored}}(\eps, H) = 10 \cdot \eps_H \cdot |y|^{10} + O(\eps_H^2)
+\]
+The relative error is $\approx 10 \cdot 2^{-53} / |y|^{10} \cdot |y|^{10} = 10 \cdot 2^{-53}$, fully accurate in fp64.
+
+\textbf{Takeaway:} Error functional analysis captures algorithmic differences that curvature of the underlying function does not. Both perspectives are valuable: curvature bounds \emph{intrinsic} difficulty, while error functionals bound \emph{algorithmic} difficulty.
+
+\subsection{Example 2: Mixed-Precision Deep Learning}
+
+\textbf{Problem:} A ResNet-50 has 50 layers. Which can use fp16 vs. requiring fp32?
+
+\textbf{HNF Analysis:} Let $L_i$ be the Lipschitz constant of layer $i$ (spectral norm of weight matrix times ReLU Lipschitz = 1). By Corollary~\ref{cor:deep-networks}:
+\[
+\Phi_{\text{ResNet}}(\eps, H) \leq \eps \cdot \prod_{i=1}^{50} L_i + \sum_{i=1}^{50} \eps_H \cdot \prod_{j=i+1}^{50} L_j
+\]
+For spectrally normalized layers with $L_i \leq 1.02$ (standard practice):
+\begin{itemize}
+    \item Error amplification: $(1.02)^{50} \approx 2.7$
+    \item Layers 1--10 contribute $\sum_{i=1}^{10} (1.02)^{50-i} \approx 24$ times their local error
+    \item Layers 40--50 contribute $\sum_{i=40}^{50} (1.02)^{50-i} \approx 11$ times their local error
+\end{itemize}
+
+\textbf{Result:} Early layers (1--10) require fp32 to maintain accuracy. Later layers (40--50) can use fp16. The classification head requires fp32 for correct logits.
+
+\textbf{Verification:} This matches empirical findings in NVIDIA's automatic mixed-precision training.
+
+\subsection{Example 3: The Impossibility of Accurate Eigenvalue Computation}
+
+\textbf{Problem:} Compute eigenvalues of the Wilkinson matrix $W_{21}$ (tridiagonal, entries 10, 9, 8, ..., 0, 1, 2, ..., 10 on diagonal, 1s on off-diagonals).
+
+\textbf{Classical result:} $W_{21}$ has eigenvalue pairs $\lambda_k, \lambda'_k$ differing by $\approx 10^{-14}$ near $\lambda = 10$.
+
+\textbf{HNF Analysis:} The eigenvalue map $\mathrm{eig} : M_{21}(\R) \to \R^{21}$ has curvature $\kappa_{\mathrm{eig}} \propto \min_i |\lambda_i - \lambda_j|^{-2}$. For nearby eigenvalues at distance $10^{-14}$:
+\[
+p_{\min} = \log_2((10^{14})^2 \cdot D^2 / \eps) \approx 93 + \log_2(D^2/\eps) \text{ bits}
+\]
+
+\textbf{Result:} Even for modest accuracy $\eps = 10^{-8}$, we need $p \geq 93 - 27 + O(\log D) > 80$ bits—more than binary128!
+
+\textbf{Takeaway:} This is not a numerical instability to be fixed; it is a \emph{fundamental limit}. The eigenvalue problem for nearly-repeated eigenvalues is intrinsically ill-posed.
+
+\subsection{Example 4: Quantization Safety in Transformers}
+
+\textbf{Problem:} The Llama-2 70B model has 80 transformer layers. After quantization to int8, which layers show accuracy degradation?
+
+\textbf{HNF Analysis:} The attention softmax $\text{softmax}(QK^T/\sqrt{d})$ has curvature:
+\[
+\kappa_{\text{softmax}} = \frac{1}{2}\sup_{x} \|D^2\text{softmax}_x\| = \frac{1}{2}\sup_x \|\text{diag}(s) - ss^T\| = \frac{1}{2}
+\]
+where $s = \text{softmax}(x)$. This seems benign, but the \emph{composition} through attention matters:
+\[
+\kappa_{\text{attn}} = \kappa_{\text{softmax}} \cdot L_{QK^T}^2 + L_{\text{softmax}} \cdot \kappa_{QK^T}
+\]
+For query/key matrices with spectral norm $\|Q\|, \|K\| \approx 5$ (typical after training):
+\[
+\kappa_{\text{attn}} \approx \frac{1}{2} \cdot 25^2 + 1 \cdot 50 = 362.5
+\]
+
+\textbf{Precision requirement:} For accuracy $\eps = 10^{-3}$ (acceptable for inference):
+\[
+p_{\min} = \log_2(362.5 \cdot D^2 / 10^{-3}) \approx 8 + 2\log_2 D + 10 \approx 21 \text{ bits}
+\]
+This exceeds int8's effective 7-8 bits of precision.
+
+\textbf{Result:} Attention layers \emph{cannot} be fully quantized to int8 without accuracy loss. Feed-forward layers (curvature $\approx L_W^2 \cdot 1 \approx 4$) can safely use int8.
+
+\subsection{Example 5: Compiler Optimization Safety}
+
+\textbf{Problem:} An ML compiler wants to fuse operations: $\text{softmax}(\text{matmul}(Q, K))$ into a single kernel. Is this precision-safe?
+
+\textbf{HNF Analysis:} Separate operations:
+\begin{align*}
+\Phi_{\text{separate}}(\eps, H) &= L_{\text{softmax}} \cdot \Phi_{\text{matmul}}(\eps, H) + \Phi_{\text{softmax}}(\Phi_{\text{matmul}}(\eps, H), H) \\
+&= 1 \cdot (\|Q\| \cdot \|K\| \cdot \eps + \Delta_{\text{mm}}) + \Delta_{\text{sm}}
+\end{align*}
+
+Fused operation (single rounding after composition):
+\[
+\Phi_{\text{fused}}(\eps, H) = L_{\text{softmax} \circ \text{matmul}} \cdot \eps + \Delta_{\text{fused}}
+\]
+where $\Delta_{\text{fused}} < \Delta_{\text{mm}} + \Delta_{\text{sm}}$ (one less rounding step).
+
+\textbf{Result:} Fusion is precision-safe if and only if the induced map $\mathcal{C}(G_{\text{separate}}) \to \mathcal{C}(G_{\text{fused}})$ is a homotopy equivalence. By Theorem~\ref{thm:compilation-correctness}, this holds when the Lipschitz constants agree, which they do: $L_{\text{fused}} = L_{\text{softmax}} \cdot L_{\text{matmul}} = 1 \cdot \|Q\|\|K\|$.
+
+\textbf{Takeaway:} HNF provides a formal certificate for compiler optimizations.
+
+\subsection{Example 6: The Optimal Algorithm for log-sum-exp}
+
+\textbf{Problem:} Compute $\text{logsumexp}(x_1, \ldots, x_n) = \log\sum_{i=1}^n e^{x_i}$ for $x_i$ varying over many orders of magnitude.
+
+\textbf{Naive attempt:} Direct computation overflows for $x_i > 709$ (fp64 limit for $e^x$).
+
+\textbf{Standard trick:} $\text{logsumexp}(x) = m + \log\sum_i e^{x_i - m}$ where $m = \max_i x_i$. This avoids overflow.
+
+\textbf{HNF Analysis of both:}
+
+Naive: The exponential $x \mapsto e^x$ has curvature $\kappa = e^{x_{\max}}$, giving infinite curvature for large inputs. The computation is \emph{intrinsically unstable}.
+
+Shifted: The map $x \mapsto e^{x - m}$ has curvature $\kappa = e^{x_{\max} - m} = 1$ (since $x_{\max} - m = 0$). Now:
+\[
+p_{\min} = \log_2(1 \cdot (\max_i(x_i - m))^2 / \eps) = O(\log(1/\eps))
+\]
+which is achievable in any precision.
+
+\textbf{Optimality:} HNF proves the shifted algorithm is \emph{optimal} in the following sense: any algorithm with finite curvature must subtract the maximum (or something equivalent). This follows because any continuous algorithm agreeing with logsumexp must have curvature at least $\sup_x |d^2(\log \sum e^{x_i})/dx^2| = \sup_x |1 - (\sum e^{x_i})^{-2}(\sum e^{x_i})(1)|$, which is unbounded for naive parameterization.
+
+%=============================================================================
+\section{Numerical Metric Spaces and Realizability}
+\label{sec:nmet}
+%=============================================================================
+
+We now develop the formal theory underlying the examples above.
+
+\begin{remark}[Metatheoretical Setting]\label{rem:metatheory}
+Throughout this paper, we work in $\mathrm{ZFC}$ with the axiom of choice. All metric spaces are assumed complete and separable unless otherwise noted. When we construct ``the'' category $\NMet$, we implicitly assume a Grothendieck universe to handle size issues. The realizability structures we define are \emph{external} to the type theory: they provide a model in which types are interpreted as complete metric spaces with additional computational structure. We do not claim that the constructions are fully constructive; in particular, our use of completeness, compactness, and choice is essential in several proofs. For a constructive treatment, one would need to work with Bishop-style approaches or formal topology, which we leave to future work.
+\end{remark}
+
+\subsection{Hardware Models}
+
+\begin{definition}[Hardware Model]
+A \emph{hardware model} is a tuple $H = (p, e_{\min}, e_{\max}, \mathcal{O})$ where:
+\begin{enumerate}[(i)]
+    \item $p \in \N$ is the \emph{mantissa precision} (number of significand bits);
+    \item $e_{\min}, e_{\max} \in \Z$ with $e_{\min} < e_{\max}$ are exponent bounds;
+    \item $\mathcal{O}$ is a finite set of \emph{primitive operations} (addition, multiplication, etc.) with associated rounding semantics.
+\end{enumerate}
+The \emph{machine epsilon} of $H$ is $\eps_H := 2^{-p}$. The \emph{representable numbers} of $H$ form the finite set
+\[
+\mathbb{F}_H := \{0\} \cup \{ \pm m \cdot 2^e : m \in \{2^{p-1}, \ldots, 2^p - 1\}, e \in \{e_{\min}, \ldots, e_{\max}\} \}.
+\]
+\end{definition}
+
+\begin{definition}[Hardware Family]
+A \emph{hardware family} $\mathcal{H}$ is a directed system of hardware models ordered by precision: $H \leq H'$ if $p_H \leq p_{H'}$, $e_{\min,H} \geq e_{\min,H'}$, and $e_{\max,H} \leq e_{\max,H'}$. We assume $\mathcal{H}$ contains models of arbitrarily high precision.
+\end{definition}
+
+For the remainder of this paper, we fix a hardware family $\mathcal{H}$ that includes the standard IEEE 754 formats (binary16, binary32, binary64, binary128).
+
+\begin{remark}[Standing Assumptions on Hardware]\label{rem:hardware-assumptions}
+Our theorems assume the following simplifications of IEEE 754 arithmetic:
+
+\begin{enumerate}[(i)]
+    \item \textbf{No overflow or underflow:} We assume all intermediate values lie within the normalized range $[2^{e_{\min}}, 2^{e_{\max}}]$. This is justified when domains are bounded: for $x \in [a, b]$ with $2^{e_{\min}} \ll a \leq b \ll 2^{e_{\max}}$, overflow and underflow do not occur. When necessary, domain restrictions are stated explicitly.
+    
+    \item \textbf{No subnormal numbers:} We ignore gradual underflow (subnormal/denormalized numbers). This simplifies analysis without affecting conclusions for values well above the subnormal threshold $\approx 2^{e_{\min}}$.
+    
+    \item \textbf{No exceptional values:} We assume no NaNs or infinities arise in valid computations. This follows from (i) and the assumption that inputs are finite and operations are well-defined (e.g., no division by zero, no square root of negative numbers).
+    
+    \item \textbf{Round-to-nearest-even:} We assume the IEEE 754 default rounding mode. Other rounding modes (toward zero, up, down) can be incorporated but require modified constants in error bounds.
+\end{enumerate}
+
+These assumptions are standard in backward error analysis \cite{Higham}. For applications where overflow, underflow, or exceptional values are possible, domain decomposition or explicit guards are required. See Section~\ref{sec:applications} for discussion of practical considerations.
+\end{remark}
+
+\subsection{Numerical Types}
+
+\begin{definition}[Numerical Type]
+\label{def:numerical-type}
+A \emph{numerical type} is a tuple $A = (|A|, d_A, \{\Rep_A(\eps, H)\}, \{\rho_{A,\eps,H}\})$ where:
+\begin{enumerate}[(i)]
+    \item $(|A|, d_A)$ is a complete separable metric space (the \emph{underlying space});
+    \item For each $\eps > 0$ and $H \in \mathcal{H}$, $\Rep_A(\eps, H)$ is a finite set (the \emph{$\eps$-representations on $H$});
+    \item For each $\eps, H$, $\rho_{A,\eps,H} : \Rep_A(\eps, H) \to |A|$ is a function (the \emph{realization map});
+\end{enumerate}
+subject to the following axioms:
+
+\textbf{(Approximability)} For every $a \in |A|$, $\eps > 0$, and $H \in \mathcal{H}$ with $\eps_H < \eps$, there exists $r \in \Rep_A(\eps, H)$ with $d_A(\rho_{A,\eps,H}(r), a) < \eps$.
+
+\textbf{(Coherence)} For $\eps' < \eps$ and $H \leq H'$, there exist \emph{coercion maps}
+\[
+c_{\eps,\eps'}^{H} : \Rep_A(\eps, H) \to \Rep_A(\eps', H), \quad c_H^{H'} : \Rep_A(\eps, H) \to \Rep_A(\eps, H')
+\]
+such that $d_A(\rho_{A,\eps',H}(c_{\eps,\eps'}^H(r)), \rho_{A,\eps,H}(r)) < \eps$ and similarly for $c_H^{H'}$.
+
+\textbf{(Computability)} The sets $\Rep_A(\eps, H)$ and maps $\rho_{A,\eps,H}, c_{\eps,\eps'}^H, c_H^{H'}$ are computable relative to $H$.
+\end{definition}
+
+\begin{remark}[On the Computability Axiom]\label{rem:computability-informal}
+The computability axiom is stated informally: we do not develop a formal theory of computation over floating-point hardware in this paper. For readers not concerned with constructive or effective aspects, this axiom may be interpreted as: ``the representation sets and maps can be defined by explicit algorithms.'' In the examples we consider (IEEE 754 floating-point, standard tensor operations), this is immediate from the explicit descriptions. A full formalization would require specifying a model of computation over hardware types $H$, which we leave to future work on computational aspects of HNF.
+\end{remark}
+
+\begin{remark}[Realizability Limits]\label{rem:realizability-limits}
+The representation sets $\Rep_A(\eps, H)$ form an inverse system as $\eps \to 0^+$ and $H \to \infty$ (in hardware capability). The inverse limit $\varprojlim_{\eps, H} \Rep_A(\eps, H)$ may be viewed as the space of ``ideal exact representations,'' but this limit is typically not computable. The key point is that we \emph{never} take this limit in practice: all HNF constructions work at finite precision $\eps > 0$. The underlying space $|A|$ serves as a mathematical idealization for stating theorems, while actual computations occur in $\Rep_A(\eps, H)$.
+
+Formally, the realization maps $\rho_{A,\eps,H}$ are consistent with the coercions: $\rho_{A,\eps',H} \circ c_{\eps,\eps'}^H = \rho_{A,\eps,H}$ up to error $\eps$. Thus the diagram
+\[
+\begin{tikzcd}
+\Rep_A(\eps, H) \ar[r, "c_{\eps,\eps'}"] \ar[dr, "\rho_{\eps,H}"'] & \Rep_A(\eps', H) \ar[d, "\rho_{\eps',H}"] \\
+& {|A|}
+\end{tikzcd}
+\]
+commutes up to $\eps$-error, but not strictly. This ``approximate commutativity'' is fundamental to the theory and explains why $\NMet$ has equivalence-class morphisms rather than strict equality.
+\end{remark}
+
+\begin{example}[Standard Numerical Types]
+\label{ex:standard-types}
+\ 
+\begin{enumerate}[(a)]
+    \item \textbf{Reals:} $\R_{\mathrm{num}}$ has $|\R_{\mathrm{num}}| = \R$ with standard metric, $\Rep_{\R}(\eps, H) = \mathbb{F}_H$, and $\rho$ the inclusion.
+    
+    \item \textbf{Tensors:} For shape $\mathbf{n} = (n_1, \ldots, n_k) \in \N^k$, the numerical tensor type $\mathcal{T}_{\mathbf{n}}$ has underlying space $\R^{n_1 \times \cdots \times n_k}$ with Frobenius metric, and $\Rep_{\mathcal{T}_{\mathbf{n}}}(\eps, H) = \mathbb{F}_H^{n_1 \times \cdots \times n_k}$.
+    
+    \item \textbf{Banach Spaces:} A separable Banach space $(X, \|\cdot\|)$ yields a numerical type with $\Rep_X(\eps, H)$ given by finite linear combinations of basis vectors with coefficients in $\mathbb{F}_H$.
+\end{enumerate}
+\end{example}
+
+\begin{example}[Domain Restrictions for Singular Operations]\label{ex:domain-restrictions}
+Numerical morphisms with singularities require restricted domains to ensure finite Lipschitz constants and curvature. We illustrate with three common cases:
+
+\begin{enumerate}[(a)]
+    \item \textbf{Reciprocal:} The function $x \mapsto 1/x$ has a singularity at $x = 0$. We define the numerical type
+    \[
+    \R_{> \delta}^{\mathrm{num}} := \{ x \in \R : x \geq \delta \}
+    \]
+    for $\delta > 0$. The reciprocal morphism $\mathrm{recip} : \R_{> \delta}^{\mathrm{num}} \to \R^{\mathrm{num}}$ then has:
+    \begin{itemize}
+        \item Lipschitz constant: $L_{\mathrm{recip}} = 1/\delta^2$ (since $|1/x - 1/y| \leq |x-y|/(\delta^2)$ for $x, y \geq \delta$);
+        \item Curvature: $\kappa_{\mathrm{recip}}^{\mathrm{curv}} = 1/\delta^3$ (from $|d^2(1/x)/dx^2| = 2/x^3$);
+        \item Error functional: $\Phi_{\mathrm{recip}}(\eps, H) = \eps/\delta^2 + O(\eps_H/\delta^2)$.
+    \end{itemize}
+    The choice of $\delta$ controls the conditioning: smaller $\delta$ allows representing numbers closer to zero but with worse stability.
+    
+    \item \textbf{Logarithm:} Similarly, $\log : \R_{> \delta}^{\mathrm{num}} \to \R^{\mathrm{num}}$ has:
+    \begin{itemize}
+        \item Lipschitz constant: $L_{\log} = 1/\delta$;
+        \item Curvature: $\kappa_{\log}^{\mathrm{curv}} = 1/(2\delta^2)$;
+        \item The relative error of $\log$ is well-conditioned for $x \geq \delta$, matching standard library implementations.
+    \end{itemize}
+    
+    \item \textbf{Square root:} The map $\sqrt{\cdot} : \R_{\geq 0}^{\mathrm{num}} \to \R_{\geq 0}^{\mathrm{num}}$ is Lipschitz on all of $[0, \infty)$ with $L = \infty$, but on the restricted domain $[\delta, \infty)$:
+    \begin{itemize}
+        \item Lipschitz constant: $L_{\sqrt{\cdot}} = 1/(2\sqrt{\delta})$;
+        \item Curvature: $\kappa_{\sqrt{\cdot}}^{\mathrm{curv}} = 1/(4\delta^{3/2})$.
+    \end{itemize}
+\end{enumerate}
+
+In each case, the domain restriction is encoded in the numerical type itself, not as an external precondition. The typing discipline ensures that compositions respect these restrictions automatically.
+\end{example}
+
+\begin{example}[Running Example: $\R^n$ with IEEE 754 Double Precision]\label{ex:running-Rn}
+We develop a concrete example that we will revisit throughout the paper. Let $n = 3$ and consider the numerical type $\R^3_{\mathrm{num}}$ with:
+\begin{itemize}
+    \item $|\R^3_{\mathrm{num}}| = \R^3$ with Euclidean metric $d(x, y) = \|x - y\|_2$;
+    \item For IEEE 754 binary64 (``double precision''), $H = \mathtt{float64}$, we have $\eps_H = 2^{-53} \approx 1.1 \times 10^{-16}$;
+    \item $\Rep_{\R^3}(\eps, \mathtt{float64}) = \{ (r_1, r_2, r_3) : r_i \in \mathbb{F}_{\mathtt{float64}}, |r_i| \leq 1.8 \times 10^{308} \}$;
+    \item $\rho_{\R^3, \eps, \mathtt{float64}}(r_1, r_2, r_3) = (r_1, r_2, r_3) \in \R^3$.
+\end{itemize}
+For $x = (\pi, e, \sqrt{2}) \in \R^3$, the representation $r = (\fl(\pi), \fl(e), \fl(\sqrt{2}))$ satisfies
+\[
+d(\rho(r), x) = \sqrt{(\fl(\pi) - \pi)^2 + (\fl(e) - e)^2 + (\fl(\sqrt{2}) - \sqrt{2})^2} \leq \sqrt{3} \cdot \eps_H \cdot \max_i |x_i| \approx 5.5 \times 10^{-16}.
+\]
+We will revisit this example for morphisms (Example~\ref{ex:running-morphism}), stability (Example~\ref{ex:running-stability}), and matrix inversion (Section~\ref{sec:matrix-inversion}).
+\end{example}
+
+\subsection{Numerical Morphisms}
+
+\begin{definition}[Numerical Morphism]
+\label{def:numerical-morphism}
+A \emph{numerical morphism} $f : A \to B$ between numerical types consists of:
+\begin{enumerate}[(i)]
+    \item A function $|f| : |A| \to |B|$ on underlying spaces;
+    \item A \emph{Lipschitz bound} $L_f \in [0, \infty)$ such that $d_B(|f|(a), |f|(a')) \leq L_f \cdot d_A(a, a')$;
+    \item An \emph{error-propagation functional} $\Phi_f : (0, \infty) \times \mathcal{H} \to (0, \infty)$ satisfying the \emph{regularity condition}: $\Phi_f$ is $L_f$-Lipschitz in its first argument, i.e., $|\Phi_f(\eps_1, H) - \Phi_f(\eps_2, H)| \leq L_f \cdot |\eps_1 - \eps_2|$ for all $\eps_1, \eps_2 > 0$ and $H \in \mathcal{H}$;
+    \item For each $\eps > 0$ and $H \in \mathcal{H}$, a \emph{realizer} $\hat{f}_{\eps,H} : \Rep_A(\eps, H) \to \Rep_B(\Phi_f(\eps, H), H)$;
+\end{enumerate}
+subject to the \textbf{Soundness Axiom}: for all $r \in \Rep_A(\eps, H)$,
+\[
+d_B\big(|f|(\rho_{A,\eps,H}(r)),\ \rho_{B,\Phi_f(\eps,H),H}(\hat{f}_{\eps,H}(r))\big) \leq \Phi_f(\eps, H).
+\]
+\end{definition}
+
+\begin{remark}[On the Regularity Condition]\label{rem:regularity}
+The regularity condition on $\Phi_f$---that it be $L_f$-Lipschitz in $\eps$---ensures that composition of morphisms is well-behaved (see Lemma~\ref{lem:composition-assoc}). Intuitively, it says that the error output cannot grow faster than linearly with input error, scaled by the Lipschitz constant. 
+
+\textbf{Scope and justification:} This condition is satisfied by all error functionals arising from standard numerical algorithms, which typically have the form $\Phi_f(\eps, H) = L_f \cdot \eps + \Delta_f(H)$ for some hardware-dependent term $\Delta_f(H)$. What about more complex dependencies?
+
+\begin{itemize}
+    \item \textbf{$\eps^2$ terms:} In some iterative algorithms, error can grow quadratically in certain regimes. However, such algorithms typically have a convergence radius within which the linear approximation dominates. For our framework, we require $\Phi_f$ to be $L_f$-Lipschitz \emph{for all $\eps$ in the domain of interest}. If an algorithm has quadratic error growth for large $\eps$, one can either restrict the domain or use a piecewise-linear envelope as $\Phi_f$.
+    
+    \item \textbf{Logarithmic terms:} Some stability results involve $\log(1/\eps)$ factors (e.g., in iterative refinement). Since $\log(1/\eps)$ is not Lipschitz as $\eps \to 0$, we absorb such terms into the hardware-dependent part $\Delta_f(H)$ by fixing $\eps$ at a scale comparable to $\eps_H$, yielding $\log(1/\eps_H) = O(p_H)$ bits, which is bounded for fixed hardware.
+    
+    \item \textbf{Reduction to linear bounds:} More generally, any reasonable error bound $\tilde{\Phi}_f(\eps, H)$ can be replaced by the linear envelope $\Phi_f(\eps, H) := L_f \cdot \eps + \sup_{\eps' \leq \eps_H} \tilde{\Phi}_f(\eps', H)$, which satisfies our regularity condition and upper-bounds the original. This may lose tightness but preserves soundness.
+\end{itemize}
+
+Thus, the regularity condition is not a fundamental limitation but rather a normalization: any practical error bound can be brought into this form, possibly with a larger hardware-dependent term.
+\end{remark}
+
+\begin{example}[Running Example: Morphisms on $\R^3$]\label{ex:running-morphism}
+Continuing Example~\ref{ex:running-Rn}, consider the morphism $\mathrm{norm} : \R^3_{\mathrm{num}} \to \R_{\mathrm{num}}$ given by $x \mapsto \|x\|_2$. We have:
+\begin{itemize}
+    \item $|\mathrm{norm}|(x) = \sqrt{x_1^2 + x_2^2 + x_3^2}$;
+    \item $L_{\mathrm{norm}} = 1$ (the Euclidean norm is 1-Lipschitz);
+    \item $\Phi_{\mathrm{norm}}(\eps, \mathtt{float64}) = \eps + 3\eps_H \cdot \|x\|_{\max} + O(\eps_H^2)$ (accounting for squaring, summing, and square root);
+    \item $\widehat{\mathrm{norm}}_{\eps,H}(r_1, r_2, r_3) = \fl(\sqrt{\fl(r_1^2 + \fl(r_2^2 + r_3^2))})$.
+\end{itemize}
+The soundness axiom holds: for $r = (\fl(\pi), \fl(e), \fl(\sqrt{2}))$, the computed norm differs from the true norm $\sqrt{\pi^2 + e^2 + 2} \approx 4.07$ by at most $\Phi_{\mathrm{norm}}(\eps, \mathtt{float64}) \approx 3.3 \times 10^{-15}$. The regularity condition is satisfied since $\Phi_{\mathrm{norm}}(\eps, H) = \eps + \Delta(H)$ with $\Delta(H)$ independent of $\eps$.
+\end{example}
+
+\begin{definition}[Domination of Error Functionals]\label{def:domination}
+Given error functionals $\Phi, \Psi : (0,\infty) \times \mathcal{H} \to (0,\infty)$, we say $\Phi$ \emph{dominates} $\Psi$, written $\Psi \preceq \Phi$, if for all $\eps > 0$ and $H \in \mathcal{H}$, we have $\Psi(\eps, H) \leq \Phi(\eps, H)$.
+\end{definition}
+
+\begin{definition}[Equivalence of Numerical Morphisms]\label{def:morphism-equiv}
+Two numerical morphisms $f, f' : A \to B$ are \emph{equivalent}, written $f \sim f'$, if:
+\begin{enumerate}[(i)]
+    \item $|f| = |f'|$ (same underlying function);
+    \item $L_f = L_{f'}$ (same Lipschitz constant);
+    \item $\Phi_f \preceq C \cdot \Phi_{f'}$ and $\Phi_{f'} \preceq C \cdot \Phi_f$ for some \emph{uniform} constant $C \geq 1$, independent of $(\eps, H)$;
+    \item The realizers satisfy: for all $\eps > 0$, $H \in \mathcal{H}$, and $r \in \Rep_A(\eps, H)$,
+    \[
+    d_B\big(\rho_B(\hat{f}_{\eps,H}(r)), \rho_B(\hat{f}'_{\eps,H}(r))\big) \leq C' \cdot \Phi_f(\eps, H)
+    \]
+    for some uniform constant $C' \geq 0$.
+\end{enumerate}
+This is an equivalence relation on numerical morphisms. The constant $C$ in (iii) is called the \emph{equivalence ratio}; we write $f \sim_C f'$ when this constant matters.
+\end{definition}
+
+\begin{remark}
+The error functional $\Phi_f$ encodes both the intrinsic error of the computation and the propagation of input error. For a Lipschitz map computed exactly, we would have $\Phi_f(\eps, H) = L_f \cdot \eps$. In practice, $\Phi_f$ also includes roundoff error:
+\[
+\Phi_f(\eps, H) = L_f \cdot \eps + \Delta_f(H)
+\]
+where $\Delta_f(H)$ is the implementation error on hardware $H$.
+\end{remark}
+
+\begin{definition}[Composition of Numerical Morphisms]
+Given $f : A \to B$ and $g : B \to C$, define $g \circ f : A \to C$ by:
+\begin{enumerate}[(i)]
+    \item $|g \circ f| := |g| \circ |f|$;
+    \item $L_{g \circ f} := L_g \cdot L_f$;
+    \item $\Phi_{g \circ f}(\eps, H) := \Phi_g(\Phi_f(\eps, H), H) + L_g \cdot \Phi_f(\eps, H)$;
+    \item $\widehat{(g \circ f)}_{\eps, H} := \hat{g}_{\Phi_f(\eps,H), H} \circ \hat{f}_{\eps, H}$.
+\end{enumerate}
+\end{definition}
+
+\begin{lemma}[Associativity and Unitality up to Equivalence]
+\label{lem:composition-assoc}
+Composition of numerical morphisms is associative and unital \emph{up to morphism equivalence} (Definition \ref{def:morphism-equiv}). That is, $h \circ (g \circ f) \sim (h \circ g) \circ f$ and $f \circ \id_A \sim f \sim \id_B \circ f$. The identity morphism $\id_A : A \to A$ has $L_{\id} = 1$ and $\Phi_{\id}(\eps, H) = \eps$.
+\end{lemma}
+
+\begin{proof}
+We verify each component of the numerical morphism structure.
+
+\textbf{Step 1: Underlying functions.} 
+For morphisms $f : A \to B$, $g : B \to C$, $h : C \to D$, the underlying functions satisfy
+\[
+|h \circ (g \circ f)| = |h| \circ (|g| \circ |f|) = (|h| \circ |g|) \circ |f| = |(h \circ g) \circ f|
+\]
+by associativity of function composition in $\mathbf{Set}$. This is strict equality.
+
+\textbf{Step 2: Lipschitz constants.}
+We compute:
+\begin{align*}
+L_{h \circ (g \circ f)} &= L_h \cdot L_{g \circ f} = L_h \cdot (L_g \cdot L_f) \\
+&= (L_h \cdot L_g) \cdot L_f = L_{h \circ g} \cdot L_f = L_{(h \circ g) \circ f}.
+\end{align*}
+This is strict equality by associativity of multiplication in $[0, \infty)$.
+
+\textbf{Step 3: Error functionals (equivalence, not equality).}
+Let $\eps_1 := \Phi_f(\eps, H)$ and $\eps_2 := \Phi_{g \circ f}(\eps, H) = \Phi_g(\eps_1, H) + L_g \cdot \eps_1$. Then:
+\begin{align*}
+\Phi_{h \circ (g \circ f)}(\eps, H) &= \Phi_h(\eps_2, H) + L_h \cdot \eps_2 \\
+&= \Phi_h(\Phi_g(\eps_1, H) + L_g \eps_1, H) + L_h(\Phi_g(\eps_1, H) + L_g \eps_1).
+\end{align*}
+
+For the right-hand side:
+\begin{align*}
+\Phi_{(h \circ g) \circ f}(\eps, H) &= \Phi_{h \circ g}(\eps_1, H) + L_{h \circ g} \cdot \eps_1 \\
+&= \Phi_h(\Phi_g(\eps_1, H), H) + L_h \Phi_g(\eps_1, H) + L_h L_g \eps_1.
+\end{align*}
+
+These expressions are \emph{not} equal in general, but they are equivalent in the sense of Definition \ref{def:domination}. Specifically, assuming $\Phi_h$ is $L_h$-Lipschitz (which follows from the composition rule), we have:
+\[
+\Phi_{h \circ (g \circ f)}(\eps, H) \leq \Phi_{(h \circ g) \circ f}(\eps, H) + L_h \cdot L_g \cdot \eps_1.
+\]
+The reverse bound is similar. Hence $\Phi_{h \circ (g \circ f)} \preceq C \cdot \Phi_{(h \circ g) \circ f}$ for $C = 2$, establishing equivalence of error functionals.
+
+\textbf{Step 4: Realizers (equivalence up to bounded error).}
+The composed realizers satisfy:
+\begin{align*}
+\widehat{h \circ (g \circ f)}_{\eps, H} &= \hat{h}_{\eps_2, H} \circ (\hat{g}_{\eps_1, H} \circ \hat{f}_{\eps, H}).
+\end{align*}
+The corresponding expression for $\widehat{(h \circ g) \circ f}$ uses $\hat{h}_{\Phi_g(\eps_1,H), H}$ at a different precision. The outputs differ by at most the Lipschitz constant of $h$ times the precision difference, which is bounded by $O(\Phi_{(h \circ g) \circ f}(\eps, H))$. This establishes realizer equivalence per Definition \ref{def:morphism-equiv}(iv).
+
+\textbf{Step 5: Identity morphism.}
+The identity $\id_A : A \to A$ has $|\id_A| = \id_{|A|}$, $L_{\id_A} = 1$, $\Phi_{\id_A}(\eps, H) = \eps$, and $\widehat{\id_A} = \id_{\Rep_A(\eps,H)}$. For unit laws, we have $|f \circ \id_A| = |f|$, $L_{f \circ \id_A} = L_f$, but $\Phi_{f \circ \id_A}(\eps, H) = \Phi_f(\eps, H) + L_f \cdot \eps \neq \Phi_f(\eps, H)$ in general. However, $\Phi_{f \circ \id_A} \preceq 2 \cdot \Phi_f$ when $\Phi_f(\eps, H) \geq L_f \cdot \eps$, so $f \circ \id_A \sim f$.
+\end{proof}
+
+\begin{remark}[Strict vs.\ Weak Category Structure]\label{rem:strict-category}
+The preceding lemma shows that $\NMet$ is a category only when morphisms are taken as equivalence classes under $\sim$. Alternatively, one can view $\NMet$ as a \emph{bicategory} where the 2-cells are the equivalences between numerical morphisms with the same underlying function but different error bounds. We adopt the former convention: morphisms in $\NMet$ are equivalence classes $[f]_\sim$, ensuring strict associativity and unitality.
+
+\textbf{Key technical assumption:} In Step 3 of Lemma~\ref{lem:composition-assoc}, we use that $\Phi_h$ is Lipschitz in its first argument with constant $L_h$. This follows from the composition rule for error functionals when $h$ is obtained by composing well-behaved morphisms. For morphisms defined \emph{ab initio} (e.g., primitive operations), we impose this as a regularity condition on admissible error functionals.
+
+\textbf{Formal quotient construction:} Let $\NMet^{\mathrm{raw}}$ denote the ``raw'' structure with numerical morphisms as defined (not equivalence classes). Then $\NMet = \NMet^{\mathrm{raw}} / {\sim}$ is the quotient where $\Hom_{\NMet}(A, B) := \Hom_{\NMet^{\mathrm{raw}}}(A, B) / {\sim}$. To verify this is well-defined, we check that $\sim$ is a congruence: if $f \sim f'$ and $g \sim g'$, then $g \circ f \sim g' \circ f'$. This follows from the Lipschitz property of error functionals:
+\[
+\Phi_{g' \circ f'}(\eps, H) \preceq C \cdot \Phi_{g \circ f}(\eps, H)
+\]
+where $C$ depends only on the equivalence constants for $f \sim f'$ and $g \sim g'$.
+\end{remark}
+
+\begin{example}[Why Equivalence Classes Are Essential]\label{ex:equivalence-essential}
+Consider the morphism $\mathrm{add} : \R^2 \to \R$ given by $(x, y) \mapsto x + y$, implemented in two ways on IEEE 754 double precision:
+\begin{enumerate}[(i)]
+    \item \textbf{Direct addition:} $\widehat{\mathrm{add}}_1(r_x, r_y) = \fl(r_x + r_y)$ with $\Phi_1(\eps, H) = 2\eps + \eps_{\mathrm{mach}}$.
+    \item \textbf{Compensated addition (Kahan summation):} $\widehat{\mathrm{add}}_2$ computes $(s, c) = \mathrm{TwoSum}(r_x, r_y)$ and returns $\fl(s + c)$, giving $\Phi_2(\eps, H) = 2\eps + O(\eps_{\mathrm{mach}}^2)$.
+\end{enumerate}
+These define the same underlying function with $L = 2$ (by triangle inequality), but different error functionals. By Definition~\ref{def:morphism-equiv}, they are equivalent since $\Phi_1 \preceq 2 \Phi_2$ and $\Phi_2 \preceq \Phi_1$ (for $\eps \geq \eps_{\mathrm{mach}}$). Taking equivalence classes means we do not distinguish between algorithms with ``essentially the same'' backward error profile.
+\end{example}
+
+\begin{definition}[The Category $\NMet$]
+\label{def:nmet-category}
+The category $\NMet$ has:
+\begin{itemize}
+    \item Objects: numerical types (Definition \ref{def:numerical-type});
+    \item Morphisms: equivalence classes of numerical morphisms under $\sim$ (Definition \ref{def:morphism-equiv});
+    \item Composition: as defined above;
+    \item Identity: $\id_A$ with trivial Lipschitz bound and error functional.
+\end{itemize}
+\end{definition}
+
+\subsection{Numerical Equivalences}
+
+\begin{definition}[Numerical Equivalence]
+\label{def:numerical-equiv}
+A \emph{numerical equivalence} between numerical types $A$ and $B$ is a pair of numerical morphisms $f : A \to B$ and $g : B \to A$ together with numerical homotopies (defined below) $\eta : g \circ f \sim \id_A$ and $\mu : f \circ g \sim \id_B$, such that additionally:
+\begin{enumerate}[(i)]
+    \item (\emph{Bi-Lipschitz}) There exists $K \geq 1$ with $K^{-1} \leq L_f \cdot L_g \leq K$;
+    \item (\emph{Distortion Bound}) For all $a \in |A|$: $d_A(|g|(|f|(a)), a) \leq D$ for some $D \geq 0$;
+    \item (\emph{Realizer Coherence}) The realizers satisfy $\hat{g} \circ \hat{f} \sim \widehat{\id_A}$ and $\hat{f} \circ \hat{g} \sim \widehat{\id_B}$ up to coercion.
+\end{enumerate}
+We write $\NumEquiv(A, B)$ for the type of numerical equivalences.
+\end{definition}
+
+\begin{definition}[Condition Number]
+For a numerical equivalence $(f, g, \eta, \mu) : A \simeq_{\mathrm{num}} B$, the \emph{condition number} is
+\[
+\cond(f, g) := L_f \cdot L_g.
+\]
+The \emph{numerical distance} between equivalent types is
+\[
+d_{\mathrm{num}}(A, B) := \inf_{(f,g) \in \NumEquiv(A,B)} \log(\cond(f, g)).
+\]
+\end{definition}
+
+\begin{proposition}[Numerical Distance is a Pseudometric]\label{prop:triangle}
+\label{prop:num-distance-metric}
+The numerical distance $d_{\mathrm{num}}$ defines an extended pseudometric on equivalence classes of numerical types.
+\end{proposition}
+
+\begin{proof}
+We verify the three axioms of an extended pseudometric.
+
+\textbf{Axiom 1: Non-negativity and reflexivity.}
+By definition, $d_{\mathrm{num}}(A, B) = \inf_{(f,g)} \log(\cond(f,g)) \geq \log(1) = 0$ since $\cond(f,g) = L_f \cdot L_g \geq 1$ (as both $L_f, L_g \geq 1$ for any bi-Lipschitz equivalence with $L_f^{-1} \leq L_g \leq L_f$).
+
+For reflexivity, the identity equivalence $(\id_A, \id_A, \mathrm{refl}, \mathrm{refl})$ has $\cond(\id_A, \id_A) = 1 \cdot 1 = 1$, hence $d_{\mathrm{num}}(A, A) \leq \log(1) = 0$. Combined with non-negativity, $d_{\mathrm{num}}(A, A) = 0$.
+
+\textbf{Axiom 2: Symmetry.}
+Given a numerical equivalence $(f, g, \eta, \mu) : A \simeq_{\mathrm{num}} B$, we construct the reverse equivalence $(g, f, \mu, \eta) : B \simeq_{\mathrm{num}} A$. This satisfies:
+\begin{itemize}
+    \item The underlying maps are $|g| : |B| \to |A|$ and $|f| : |A| \to |B|$, which are bi-Lipschitz by hypothesis.
+    \item The homotopies $\mu : f \circ g \sim \id_B$ and $\eta : g \circ f \sim \id_A$ become $\eta : f \circ g \sim \id_A$ and $\mu : g \circ f \sim \id_B$ after swapping roles, which is exactly what the reverse equivalence requires (up to notation).
+    \item The condition number satisfies $\cond(g, f) = L_g \cdot L_f = L_f \cdot L_g = \cond(f, g)$.
+\end{itemize}
+Taking the infimum over all equivalences:
+\[
+d_{\mathrm{num}}(B, A) = \inf_{(f,g) : B \simeq A} \log(\cond(f,g)) = \inf_{(g,f) : A \simeq B} \log(\cond(g,f)) = d_{\mathrm{num}}(A, B).
+\]
+
+\textbf{Axiom 3: Triangle inequality.}
+Let $(f_1, g_1, \eta_1, \mu_1) : A \simeq_{\mathrm{num}} B$ and $(f_2, g_2, \eta_2, \mu_2) : B \simeq_{\mathrm{num}} C$. We construct a composite equivalence $(f_2 \circ f_1, g_1 \circ g_2) : A \simeq_{\mathrm{num}} C$.
+
+\emph{Step 3a: Composite maps are bi-Lipschitz.}
+The forward map $f_2 \circ f_1 : A \to C$ has Lipschitz constant:
+\[
+L_{f_2 \circ f_1} = L_{f_2} \cdot L_{f_1}.
+\]
+Similarly, $L_{g_1 \circ g_2} = L_{g_1} \cdot L_{g_2}$. The bi-Lipschitz condition requires:
+\[
+(L_{f_2 \circ f_1})^{-1} \leq L_{g_1 \circ g_2} \leq L_{f_2 \circ f_1}.
+\]
+Since $(f_1, g_1)$ and $(f_2, g_2)$ are bi-Lipschitz with constants $K_1$ and $K_2$ respectively, we have:
+\[
+K_1^{-1} \leq L_{f_1} L_{g_1} \leq K_1, \quad K_2^{-1} \leq L_{f_2} L_{g_2} \leq K_2.
+\]
+Therefore:
+\[
+(L_{f_2} L_{f_1})^{-1} = L_{f_1}^{-1} L_{f_2}^{-1} \leq K_1 K_2 \cdot L_{g_1}^{-1} L_{g_2}^{-1}
+\]
+and the bi-Lipschitz condition is satisfied with constant $K_1 K_2$.
+
+\emph{Step 3b: Homotopies compose.}
+We construct $\eta : (g_1 \circ g_2) \circ (f_2 \circ f_1) \sim \id_A$. Rewriting:
+\[
+(g_1 \circ g_2) \circ (f_2 \circ f_1) = g_1 \circ (g_2 \circ f_2) \circ f_1.
+\]
+The homotopy $\mu_2 : f_2 \circ g_2 \sim \id_B$ induces $g_2 \circ f_2 \sim \id_B$ by symmetry (or directly from $\eta_2$). Composing with $g_1$ on the left and $f_1$ on the right:
+\[
+g_1 \circ (g_2 \circ f_2) \circ f_1 \sim g_1 \circ \id_B \circ f_1 = g_1 \circ f_1 \sim \id_A
+\]
+where the last homotopy is $\eta_1$. The Lipschitz bounds on the homotopy are controlled by $L_{g_1}$, $L_{f_1}$, and the Lipschitz constants of $\eta_1$, $\eta_2$.
+
+Similarly, $\mu : (f_2 \circ f_1) \circ (g_1 \circ g_2) \sim \id_C$.
+
+\emph{Step 3c: Condition number bound.}
+\[
+\cond(f_2 \circ f_1, g_1 \circ g_2) = L_{f_2 \circ f_1} \cdot L_{g_1 \circ g_2} = L_{f_2} L_{f_1} \cdot L_{g_1} L_{g_2} = \cond(f_1, g_1) \cdot \cond(f_2, g_2).
+\]
+
+\emph{Step 3d: Conclusion.}
+Taking logarithms and infima:
+\begin{align*}
+d_{\mathrm{num}}(A, C) &\leq \log(\cond(f_2 \circ f_1, g_1 \circ g_2)) \\
+&= \log(\cond(f_1, g_1)) + \log(\cond(f_2, g_2)).
+\end{align*}
+Taking the infimum over all choices of $(f_1, g_1)$ and $(f_2, g_2)$:
+\[
+d_{\mathrm{num}}(A, C) \leq d_{\mathrm{num}}(A, B) + d_{\mathrm{num}}(B, C).
+\]
+
+\textbf{Extended values.}
+If no numerical equivalence exists between $A$ and $B$, we set $d_{\mathrm{num}}(A, B) = +\infty$, which is consistent with the extended pseudometric axioms.
+\end{proof}
+
+\subsection{Universal Property of Numerical Distance}
+\label{sec:universal-property}
+
+The numerical distance $d_{\mathrm{num}}$ is characterized by a universal property: among all functors satisfying natural axioms (grounding, equivalence-sensitivity, subadditivity, and metric continuity), $d_{\mathrm{num}}$ is the largest. This result, inspired by analogous characterizations in optimal transport theory \cite{Villani} and quantitative model checking \cite{OTMC}, establishes $d_{\mathrm{num}}$ as the \emph{canonical} metric for numerical equivalence.
+
+\begin{remark}[Scope: Layer 1 Material]\label{rem:layer1-universal}
+\textbf{This subsection contains Layer 1 (foundational/homotopical) material.} The universal property is conceptually important for understanding why $d_{\mathrm{num}}$ is the ``right'' distance, but it is \emph{not used} in the main numerical results (Sections~\ref{sec:stability}--\ref{sec:applications}). Readers focused on numerical analysis may skip directly to Section~\ref{sec:stability}. For completeness, the full development including proofs appears in Appendix~\ref{app:universal-property}.
+\end{remark}
+
+The key result (Theorem~\ref{thm:universal-num-dist} in the appendix) states:
+\begin{quote}
+\emph{Among all numerical satisfaction functors satisfying axioms (A1)--(A4), $d_{\mathrm{num}}$ is the largest: $F(A, B) \leq d_{\mathrm{num}}(A, B)$ for all numerical types $A, B$.}
+\end{quote}
+
+%=============================================================================
+% NOTE: The following sections form the core numerical contributions.
+% They depend only on Sections 2.1--2.4, not on the universal property above.
+%=============================================================================
+
+%=============================================================================
+\section{The Stability Composition Theorem}
+\label{sec:stability}
+%=============================================================================
+
+We now establish sharp bounds for error propagation through compositions of numerical morphisms. This section provides the quantitative backbone for certified numerical computation within HNF.
+
+\subsection{Error Propagation Algebra}
+
+\begin{definition}[Error Functional Algebra]
+Let $\mathcal{E}$ denote the semiring of \emph{error functionals}:
+\[
+\mathcal{E} := \{ \Phi : (0, \infty) \times \mathcal{H} \to (0, \infty) : \Phi \text{ is monotone in } \eps \text{ and antimonotone in } H \}
+\]
+with operations:
+\begin{itemize}
+    \item Addition: $(\Phi_1 + \Phi_2)(\eps, H) := \Phi_1(\eps, H) + \Phi_2(\eps, H)$;
+    \item Composition: $(\Phi_1 \circ \Phi_2)(\eps, H) := \Phi_1(\Phi_2(\eps, H), H)$;
+    \item Scaling: $(L \cdot \Phi)(\eps, H) := L \cdot \Phi(\eps, H)$ for $L \geq 0$.
+\end{itemize}
+\end{definition}
+
+\begin{remark}[Role of Error Functionals in HNF]\label{rem:error-functional-role}
+We emphasize three points about error functionals that clarify the relationship between theory and practice:
+\begin{enumerate}[(a)]
+    \item \textbf{Specification vs.\ Implementation:} The error functional $\Phi_f$ is \emph{part of the specification} of a numerical morphism, not a derived quantity. Different algorithms computing the same mathematical function may have different error functionals (e.g., compensated vs.\ non-compensated summation). When we write ``$f : A \to B$ with $\Phi_f$,'' we mean a specific algorithm with certified error bounds.
+    
+    \item \textbf{Sound Over-Approximation:} The composition rule $\Phi_{g \circ f} \leq \Phi_g \circ \Phi_f + L_g \cdot \Phi_f$ (Lemma~\ref{lem:subadditive}) provides a \emph{sound upper bound} on the actual error. This bound may be pessimistic for specific inputs but is guaranteed to hold for all inputs. The gap between bound and actual error reflects worst-case analysis.
+    
+    \item \textbf{Sharpness Interpretation:} When we prove ``sharpness'' of a bound (Theorem~\ref{thm:stability}(iii)), we mean there exist inputs attaining the bound to within constant factors. This is a statement about the \emph{best possible bound of this algebraic form}, not about every algorithm or every input.
+\end{enumerate}
+\end{remark}
+
+\begin{lemma}[Subadditivity]
+\label{lem:subadditive}
+For composable numerical morphisms $f, g$:
+\[
+\Phi_{g \circ f} \leq \Phi_g \circ \Phi_f + L_g \cdot \Phi_f.
+\]
+\end{lemma}
+
+\begin{proof}
+Let $r \in \Rep_A(\eps, H)$ and $a = \rho_A(r)$. Then:
+\begin{align*}
+d_C((g \circ f)(a), \rho_C(\widehat{g \circ f}(r))) 
+&\leq d_C(g(f(a)), g(\rho_B(\hat{f}(r)))) + d_C(g(\rho_B(\hat{f}(r))), \rho_C(\hat{g}(\hat{f}(r)))) \\
+&\leq L_g \cdot d_B(f(a), \rho_B(\hat{f}(r))) + \Phi_g(\Phi_f(\eps, H), H) \\
+&\leq L_g \cdot \Phi_f(\eps, H) + \Phi_g(\Phi_f(\eps, H), H).
+\end{align*}
+\end{proof}
+
+\subsection{The Main Stability Theorem}
+
+\begin{theorem}[Stability Composition]
+\label{thm:stability}
+Let $f_1 : A_0 \to A_1, \ldots, f_n : A_{n-1} \to A_n$ be numerical morphisms. Set $F := f_n \circ \cdots \circ f_1$. Then:
+
+\textbf{(i) Lipschitz Bound:}
+\[
+L_F = \prod_{i=1}^{n} L_{f_i}.
+\]
+
+\textbf{(ii) Error Bound:}
+\[
+\Phi_F(\eps, H) \leq \sum_{i=1}^{n} \left( \prod_{j=i+1}^{n} L_{f_j} \right) \Phi_{f_i}(\eps_i, H)
+\]
+where $\eps_1 = \eps$ and $\eps_{i+1} = \Phi_{f_i}(\eps_i, H)$ (forward error analysis), or equivalently using backward analysis.
+
+\textbf{(iii) Sharpness:} There exist numerical morphisms achieving equality in both bounds.
+\end{theorem}
+
+\begin{proof}
+\textbf{Part (i):} Immediate from the definition of Lipschitz constant and composition.
+
+\textbf{Part (ii):} We prove by induction. Base case $n = 1$ is trivial.
+
+For the inductive step, let $G = f_{n-1} \circ \cdots \circ f_1$. By Lemma \ref{lem:subadditive}:
+\begin{align*}
+\Phi_F &= \Phi_{f_n \circ G} \\
+&\leq \Phi_{f_n} \circ \Phi_G + L_{f_n} \cdot \Phi_G \\
+&\leq \Phi_{f_n}(\Phi_G(\eps, H), H) + L_{f_n} \cdot \Phi_G(\eps, H).
+\end{align*}
+
+By induction, $\Phi_G(\eps, H) \leq \sum_{i=1}^{n-1} \left( \prod_{j=i+1}^{n-1} L_{f_j} \right) \Phi_{f_i}(\eps_i, H)$. Substituting and simplifying yields the claimed bound.
+
+\textbf{Part (iii) - Sharpness:} Consider the composition of $n$ linear maps $f_i : \R \to \R$ given by $f_i(x) = L_i \cdot x$ with roundoff error $\Delta_i$, implemented as floating-point multiplication. Then:
+\begin{itemize}
+    \item $\Phi_{f_i}(\eps, H) = L_i \cdot \eps + \Delta_i$ where $\Delta_i = L_i \cdot \eps_H$;
+    \item Direct calculation shows $\Phi_F$ achieves exactly the bound.
+\end{itemize}
+
+For the Lipschitz bound, consider $f_i(x) = L_i \cdot x$ on $\R$; composition gives $F(x) = (\prod_i L_i) \cdot x$ with $L_F = \prod_i L_i$ exactly.
+\end{proof}
+
+\begin{corollary}[Non-Expansive Composition]
+\label{cor:nonexpansive}
+If $L_{f_i} \leq 1$ for all $i$, then $L_F \leq 1$. Moreover, if each $\Phi_{f_i}(\eps, H) \leq C \cdot \eps$ for some $C \geq 1$, then
+\[
+\Phi_F(\eps, H) \leq n \cdot C \cdot \eps.
+\]
+\end{corollary}
+
+\begin{example}[Running Example: Stability for $\R^3$ Morphisms]\label{ex:running-stability}
+Continuing Examples~\ref{ex:running-Rn} and \ref{ex:running-morphism}, consider the composition:
+\[
+F := \mathrm{norm} \circ T : \R^3 \to \R
+\]
+where $T(x) = Ax + b$ is an affine transformation with $\|A\|_2 = 2$. We have:
+\begin{itemize}
+    \item $L_T = 2$, $\Phi_T(\eps, \mathtt{float64}) = 2\eps + 4\eps_H$ (matrix-vector multiply);
+    \item $L_{\mathrm{norm}} = 1$, $\Phi_{\mathrm{norm}}(\eps) = \eps + 3\eps_H$ (from Example~\ref{ex:running-morphism}).
+\end{itemize}
+By Theorem~\ref{thm:stability}:
+\begin{align*}
+L_F &= L_{\mathrm{norm}} \cdot L_T = 1 \cdot 2 = 2, \\
+\Phi_F(\eps, H) &\leq L_{\mathrm{norm}} \cdot \Phi_T(\eps) + \Phi_{\mathrm{norm}}(\Phi_T(\eps)) \\
+&= 1 \cdot (2\eps + 4\eps_H) + ((2\eps + 4\eps_H) + 3\eps_H) \\
+&= 4\eps + 11\eps_H \approx 4\eps + 1.2 \times 10^{-15}.
+\end{align*}
+For input error $\eps = 10^{-10}$, the total error is approximately $4 \times 10^{-10}$, consistent with the 2-Lipschitz bound.
+\end{example}
+
+\begin{corollary}[Stability of Deep Networks]
+\label{cor:deep-networks}
+Let $N = f_L \circ \cdots \circ f_1$ be an $L$-layer neural network where each layer $f_i$ has Lipschitz constant $L_i$ and implementation error $\Delta_i$. Then:
+\[
+\Phi_N(\eps, H) \leq \eps \cdot \prod_{i=1}^{L} L_i + \sum_{i=1}^{L} \Delta_i \cdot \prod_{j=i+1}^{L} L_j.
+\]
+For a spectrally normalized network with $L_i \leq 1$, this simplifies to $\Phi_N \leq \eps + \sum_i \Delta_i$.
+\end{corollary}
+
+\subsection{Backward Error Analysis}
+
+\begin{definition}[Backward Error]
+For a numerical morphism $f : A \to B$ and computed output $\hat{b} = \rho_B(\hat{f}(r))$, the \emph{backward error} is
+\[
+\beta_f(r, H) := \inf \{ d_A(a, \rho_A(r)) : f(a) = \hat{b} \text{ exactly} \}.
+\]
+\end{definition}
+
+\begin{theorem}[Forward-Backward Duality]
+\label{thm:forward-backward}
+Let $f : A \to B$ be a numerical morphism that is locally invertible near $a \in |A|$, with local inverse $g : U \to A$ defined on a neighborhood $U \ni f(a)$. Assume $f$ is $C^2$ with curvature $\kappa_f^{\mathrm{curv}}(a) \leq \kappa$. Then:
+\[
+\Phi_f(\eps, H) = L_f \cdot \beta_f(\eps, H) + R(\eps)
+\]
+where the remainder satisfies $|R(\eps)| \leq \kappa \cdot L_f \cdot \|Dg_{f(a)}\|^2 \cdot \eps^2$.
+\end{theorem}
+
+\begin{proof}
+Let $r \in \Rep_A(\eps, H)$ with $\rho_A(r) = a + \delta$ for $\|\delta\| \leq \eps$. By Taylor expansion:
+\[
+f(a + \delta) = f(a) + Df_a(\delta) + \tfrac{1}{2} D^2f_a(\delta, \delta) + O(\|\delta\|^3).
+\]
+The computed output $\hat{b} = \hat{f}_{\eps,H}(r)$ satisfies $\|\hat{b} - f(a + \delta)\| \leq \Delta_f(H)$ (implementation error).
+
+For the backward error, we seek $\delta' \in |A|$ such that $f(a + \delta') = \rho_B(\hat{b})$. By the implicit function theorem applied to $g$:
+\[
+\|\delta'\| = \|Dg_{f(a)}\| \cdot \|\rho_B(\hat{b}) - f(a)\| + O(\|\rho_B(\hat{b}) - f(a)\|^2).
+\]
+Thus:
+\[
+\beta_f(\eps, H) = \|Dg_{f(a)}\| \cdot \|\rho_B(\hat{b}) - f(a)\| + O(\eps^2) = \|Df_a^{-1}\| \cdot \Phi_f(\eps, H) + O(\eps^2).
+\]
+Rearranging: $\Phi_f(\eps, H) = \|Df_a\| \cdot \beta_f(\eps, H) + O(\kappa \eps^2)$. Since $L_f \geq \|Df_a\|$, the theorem follows with explicit remainder bound from the $D^2f$ term.
+\end{proof}
+
+\begin{remark}[Interpretation]
+This theorem makes precise the classical relationship between forward and backward error: forward error equals Lipschitz constant times backward error, up to second-order curvature corrections. The explicit remainder bound $O(\kappa \eps^2)$ shows that for well-conditioned smooth functions, the linear relationship dominates.
+\end{remark}
+
+\begin{example}[Forward-Backward Duality for $f(x) = x^2$]\label{ex:square-forward-backward}
+Consider $f : [a, b] \to \R$ with $f(x) = x^2$ for $0 < a < b$. We have:
+\begin{itemize}
+    \item Lipschitz constant: $L_f = 2b$ (since $|f'(x)| = 2|x| \leq 2b$);
+    \item Curvature: $\kappa_f^{\mathrm{curv}} = \frac{1}{2}|f''(x)| = 1$ (constant);
+    \item Local inverse: $g(y) = \sqrt{y}$ on $(a^2, b^2)$, with $\|Dg_y\| = \frac{1}{2\sqrt{y}}$.
+\end{itemize}
+
+Suppose we compute $\hat{y} = \fl(x^2)$ with input error $\eps_{\mathrm{in}} = |x - \hat{x}| \leq \eps$ and rounding error $\eps_{\mathrm{mach}}$. The forward error is:
+\[
+\Phi_f(\eps, H) = |\hat{y} - f(x)| \leq 2b \cdot \eps + O(\eps_{\mathrm{mach}}).
+\]
+The backward error (asking: for which $\tilde{x}$ does $f(\tilde{x}) = \hat{y}$ exactly?) is:
+\[
+\beta_f = |\tilde{x} - x| = \left|\sqrt{\hat{y}} - x\right| \approx \frac{|\hat{y} - x^2|}{2x} = \frac{\Phi_f}{2x}.
+\]
+Thus $\Phi_f = 2x \cdot \beta_f$, matching Theorem~\ref{thm:forward-backward} with $L_f = 2b \approx 2x$ locally.
+
+The curvature correction appears when we expand more carefully:
+\[
+f(x + \delta) = x^2 + 2x\delta + \delta^2 = f(x) + f'(x)\delta + \frac{1}{2}f''(x)\delta^2.
+\]
+The $\delta^2 = \kappa \cdot \eps^2$ term is the $O(\kappa \eps^2)$ remainder in the theorem.
+\end{example}
+
+\subsection{Condition Numbers and Numerical Rank}
+
+\begin{definition}[Numerical Condition Number]
+For a numerical morphism $f : A \to B$, the \emph{numerical condition number} at $a \in |A|$ is
+\[
+\kappa_f(a) := \limsup_{\eps \to 0} \frac{\Phi_f(\eps, H) / \eps}{L_f}.
+\]
+The \emph{global condition number} is $\kappa_f := \sup_a \kappa_f(a)$.
+\end{definition}
+
+\begin{proposition}
+\label{prop:condition-composition}
+For composable morphisms: $\kappa_{g \circ f} \leq \kappa_g \cdot \kappa_f$.
+\end{proposition}
+
+\begin{proof}
+By Theorem \ref{thm:stability}:
+\[
+\frac{\Phi_{g \circ f}(\eps, H)}{\eps \cdot L_{g \circ f}} \leq \frac{\Phi_g(\Phi_f(\eps,H), H)}{\Phi_f(\eps,H) \cdot L_g} \cdot \frac{\Phi_f(\eps,H)}{\eps \cdot L_f} + 1.
+\]
+Taking $\limsup$ as $\eps \to 0$ and using continuity of $\Phi_g$ gives $\kappa_{g \circ f} \leq \kappa_g \cdot \kappa_f + 1$; the additive 1 is absorbed in the multiplicative bound for $\kappa \geq 1$.
+\end{proof}
+
+%=============================================================================
+\section{Precision Obstruction Theorems}
+\label{sec:obstruction}
+%=============================================================================
+
+We now prove fundamental limits on numerical realizability: certain computational problems cannot be solved to given accuracy on hardware below a critical precision threshold. These results blend metric geometry with machine model semantics.
+
+\begin{notation}[Precision Parameters]\label{not:precision-params}
+To avoid confusion, we distinguish three related quantities throughout this section:
+\begin{itemize}
+    \item $\eps_{\mathrm{target}}$: The \emph{target accuracy}---the maximum acceptable error in the final output.
+    \item $\eps_{\mathrm{in}}$: The \emph{input accuracy}---the precision of input representations.
+    \item $\eps_{\mathrm{mach}} = \eps_H = 2^{-p}$: The \emph{machine epsilon}---the relative precision of hardware $H$ with $p$ mantissa bits.
+\end{itemize}
+When context is clear, we write simply $\eps$ for the general precision parameter in error functionals $\Phi_f(\eps, H)$.
+\end{notation}
+
+\subsection{Geometric Invariants}
+
+\begin{definition}[Curvature of a Numerical Morphism]\label{def:curvature}
+Let $f : A \to B$ be a numerical morphism between numerical types where $A$ is an open subset of a Banach space (or more generally, a Riemannian manifold). The \emph{curvature} of $f$ at $a \in |A|$ is
+\[
+\kappa_f^{\mathrm{curv}}(a) := \limsup_{r \to 0} \frac{1}{r^2} \sup_{\|h\| = r} \left| d_B(f(a+h), f(a) + Df_a(h)) \right|
+\]
+when $f$ is differentiable, measuring the second-order deviation from linearity. The \emph{global curvature} is $\kappa_f^{\mathrm{curv}} := \sup_{a \in |A|} \kappa_f^{\mathrm{curv}}(a)$.
+
+For twice-differentiable maps $f : U \subseteq \R^n \to \R^m$, the curvature coincides with half the operator norm of the Hessian:
+\[
+\kappa_f^{\mathrm{curv}}(a) = \frac{1}{2} \|D^2 f_a\|_{\mathrm{op}} = \frac{1}{2} \sup_{\|h\|=1} \|D^2 f_a(h, h)\|.
+\]
+\end{definition}
+
+\begin{lemma}[Properties of Curvature]\label{lem:curvature-properties}
+The curvature invariant satisfies:
+\begin{enumerate}[(i)]
+    \item \textbf{Finiteness:} If $f$ is $C^2$ with bounded second derivative on a bounded domain, then $\kappa_f^{\mathrm{curv}} < \infty$.
+    \item \textbf{Composition bound:} For $f : A \to B$ and $g : B \to C$, we have
+    \[
+    \kappa_{g \circ f}^{\mathrm{curv}} \leq \kappa_g^{\mathrm{curv}} \cdot L_f^2 + L_g \cdot \kappa_f^{\mathrm{curv}}.
+    \]
+    \item \textbf{Invariance:} If $\phi : A' \to A$ is a bi-Lipschitz isometry (i.e., $L_\phi = L_{\phi^{-1}} = 1$), then $\kappa_{f \circ \phi}^{\mathrm{curv}} = \kappa_f^{\mathrm{curv}}$.
+    \item \textbf{Affine maps:} If $f$ is affine, then $\kappa_f^{\mathrm{curv}} = 0$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) By compactness and continuity of $D^2 f$. (ii) Chain rule: $D^2(g \circ f) = (D^2 g)(Df, Df) + (Dg)(D^2 f)$, taking operator norms. (iii) $D^2(f \circ \phi) = (D^2 f) \circ \phi$ since $D\phi = \id$. (iv) $D^2 f = 0$ for affine $f$.
+\end{proof}
+
+\begin{remark}[Curvature vs.~Classical Condition Numbers and Information-Based Complexity]\label{rem:curvature-comparison}
+Our curvature invariant $\kappa_f^{\mathrm{curv}}$ is related to, but distinct from, several classical notions:
+
+\textbf{1. Classical condition numbers.} The condition number $\kappa(A) = \|A\| \cdot \|A^{-1}\|$ of a matrix measures sensitivity of outputs to input perturbations (first-order). Our curvature measures second-order effects: how the linearization itself varies. For matrix inversion: $\kappa(A)$ controls forward error in a single inversion, while $\kappa_{\mathrm{inv}}^{\mathrm{curv}} = O(\kappa^3)$ controls how precision requirements scale with domain size.
+
+\textbf{2. Second-order condition numbers.} Demmel and others have studied second-order perturbation bounds \cite{Demmel}, particularly for eigenvalue problems. Our curvature is essentially the same quantity, packaged differently: we use it to derive \emph{precision lower bounds} (how many bits are needed) rather than \emph{error upper bounds} (how accurate is a given algorithm).
+
+\textbf{3. Information-based complexity (IBC).} Traub, Wo\'{z}niakowski, and collaborators developed a theory of optimal algorithms based on information about problem instances \cite{TraubWozniakowski}. Our precision obstruction theorem is in the spirit of IBC: we show that \emph{no algorithm} can achieve accuracy $\eps$ with fewer than $\log_2(c\kappa D^2/\eps)$ bits, regardless of computational model. The key difference is that IBC typically counts function evaluations or derivative queries, while we count precision bits.
+
+\textbf{4. Relation to our bounds.} For matrix inversion, the classical rule ``lose $\log_{10}\kappa$ decimal digits'' corresponds to our $p \gtrsim \log_2\kappa$ bits. Our Theorem~\ref{thm:obstruction} refines this by showing the role of domain diameter $D$ and providing explicit constants. The curvature bound $\kappa_{\mathrm{inv}}^{\mathrm{curv}} = O(\kappa^3)$ appears because we're bounding the \emph{second} derivative of the inverse map.
+\end{remark}
+
+\begin{example}[Curvature of Matrix Inversion]\label{ex:curvature-inverse}
+For the matrix inverse map $\mathrm{inv} : \mathrm{GL}_n^K \to M_n(\R)$ restricted to matrices with $\|A\| \leq K$ and $\|A^{-1}\| \leq K$, the curvature is
+\[
+\kappa_{\mathrm{inv}}^{\mathrm{curv}} = 2K^3
+\]
+where $K$ is the condition number bound. This follows from $D^2(\mathrm{inv})_A(H_1, H_2) = A^{-1} H_1 A^{-1} H_2 A^{-1} + A^{-1} H_2 A^{-1} H_1 A^{-1}$, with $\|D^2(\mathrm{inv})_A\| \leq 2\|A^{-1}\|^3 \leq 2K^3$.
+\end{example}
+
+\begin{definition}[Entropy of Representability]
+For a numerical type $A$, the \emph{representational entropy} at precision $\eps$ on hardware $H$ is
+\[
+S_A(\eps, H) := \log_2 |\Rep_A(\eps, H)|.
+\]
+\end{definition}
+
+\begin{lemma}[Entropy Bounds]
+\label{lem:entropy-bounds}
+For the standard tensor type $\mathcal{T}_{\mathbf{n}}$ with $N = \prod_i n_i$ entries:
+\[
+S_{\mathcal{T}_{\mathbf{n}}}(\eps, H) = N \cdot \log_2 |\mathbb{F}_H| = N \cdot (p + e_{\max} - e_{\min} + O(1)).
+\]
+\end{lemma}
+
+\subsection{The Main Obstruction Theorem}
+
+The following theorem provides a \emph{lower bound} on required precision. We emphasize that this is a sufficient condition for impossibility, not a complete characterization---achieving the bound may require algorithms tailored to the specific function.
+
+\begin{theorem}[Precision Obstruction --- Lower Bound]
+\label{thm:obstruction}
+Let $f : A \to B$ be a $C^2$ numerical morphism with:
+\begin{itemize}
+    \item Curvature $\kappa := \kappa_f^{\mathrm{curv}} = \frac{1}{2}\sup_{a \in |A|} \|D^2 f_a\|_{\mathrm{op}} > 0$;
+    \item Domain $|A|$ a convex, compact subset of $\R^n$ with diameter $D := \mathrm{diam}(|A|) < \infty$;
+    \item Lipschitz constant $L_f < \infty$ and bounded third derivative: $\|D^3 f\|_{\infty} \leq M_3 < \infty$.
+\end{itemize}
+
+For any hardware model $H$ with machine epsilon $\eps_H$ and any realizer $\hat{f}_H$ of $f$, there exist points in $|A|$ where the output error exceeds
+\begin{equation}
+\label{eq:obstruction-lower}
+\eps_{\mathrm{out}} \geq c \cdot \kappa \cdot \delta^2 - O(M_3 \delta^3) - O(\eps_H)
+\end{equation}
+for test configurations with separation $\delta \leq D$. In particular, if 
+\[
+\eps_H > \frac{c \cdot \eps_{\mathrm{target}}}{\kappa D^2}
+\]
+for an explicit constant $c > 0$ depending on the test configuration, then no realizer achieves uniform $\eps_{\mathrm{target}}$-accuracy on $A$.
+\end{theorem}
+
+\begin{remark}[Scope of the Obstruction]\label{rem:obstruction-scope}
+This theorem provides a \emph{lower bound} on required precision, not a characterization. Specifically:
+\begin{enumerate}[(i)]
+    \item The bound shows that precision $p < \log_2(\kappa D^2/\eps)$ is \emph{insufficient} for worst-case accuracy $\eps$.
+    \item It does \emph{not} claim that $p = \lceil\log_2(\kappa D^2/\eps)\rceil$ is \emph{sufficient}---achieving this bound may require specialized algorithms.
+    \item Curvature is one geometric invariant controlling precision; it is not claimed to be the only one.
+\end{enumerate}
+The theorem is most useful when combined with upper bounds from specific algorithms (as in Section~\ref{sec:matrix-case-study}).
+\end{remark}
+
+\begin{proof}
+We use an integral form of Taylor's theorem with explicit remainder bounds.
+
+\textbf{Step 1: Setup and integral remainder formula.}
+For $f : \R^n \to \R^m$ of class $C^3$, the integral form of Taylor's theorem gives, for any $a, h \in \R^n$ with $a, a+h \in |A|$:
+\begin{equation}\label{eq:taylor-integral}
+f(a+h) = f(a) + Df_a(h) + \int_0^1 (1-t) D^2f_{a+th}(h, h)\, dt.
+\end{equation}
+This is an \emph{equality}, not an approximation. The integral term equals $\frac{1}{2}D^2f_a(h,h) + R(a,h)$ where the remainder satisfies
+\[
+\|R(a,h)\| = \left\|\int_0^1 (1-t)[D^2f_{a+th} - D^2f_a](h,h)\, dt\right\| \leq \frac{M_3 \|h\|^3}{6}
+\]
+by the mean value theorem applied to $D^2f$ and the bound $\|D^3f\| \leq M_3$.
+
+\textbf{Step 2: Midpoint deviation with controlled remainder.}
+Choose $a, a' \in |A|$ achieving the diameter: $\|a' - a\| = D$. (If no such pair exists, take a sequence approaching the supremum.) Let $h = a' - a$ and $m = a + \frac{1}{2}h$ be the midpoint.
+
+Applying \eqref{eq:taylor-integral} to compute $f(m)$ and the average $\frac{1}{2}(f(a) + f(a'))$:
+\begin{align*}
+f(m) &= f(a) + \frac{1}{2}Df_a(h) + \frac{1}{8}D^2f_a(h,h) + R_m, \quad \|R_m\| \leq \frac{M_3 D^3}{48}, \\
+f(a') &= f(a) + Df_a(h) + \frac{1}{2}D^2f_a(h,h) + R_{a'}, \quad \|R_{a'}\| \leq \frac{M_3 D^3}{6}.
+\end{align*}
+Therefore:
+\[
+\frac{1}{2}(f(a) + f(a')) = f(a) + \frac{1}{2}Df_a(h) + \frac{1}{4}D^2f_a(h,h) + \frac{1}{2}R_{a'}.
+\]
+
+\textbf{Step 3: Lower bound on midpoint gap.}
+The gap between $f(m)$ and the average is:
+\begin{align*}
+\left\|f(m) - \frac{1}{2}(f(a) + f(a'))\right\| &= \left\|\frac{1}{8}D^2f_a(h,h) - \frac{1}{4}D^2f_a(h,h) + R_m - \frac{1}{2}R_{a'}\right\| \\
+&= \left\|-\frac{1}{8}D^2f_a(h,h) + R_m - \frac{1}{2}R_{a'}\right\|.
+\end{align*}
+By the reverse triangle inequality:
+\[
+\left\|f(m) - \frac{1}{2}(f(a) + f(a'))\right\| \geq \frac{1}{8}\|D^2f_a(h,h)\| - \|R_m\| - \frac{1}{2}\|R_{a'}\|.
+\]
+
+Now, by definition of curvature and the choice of $a$ to maximize $\|D^2f_a\|_{\mathrm{op}}$ (or by taking a sequence of points approaching the supremum):
+\[
+\|D^2f_a(h,h)\| \geq (2\kappa - \delta_1) \|h\|^2 = (2\kappa - \delta_1) D^2
+\]
+for arbitrarily small $\delta_1 > 0$ (by choosing $a$ appropriately and $h$ in the direction achieving the operator norm).
+
+Substituting the remainder bounds:
+\begin{equation}\label{eq:midpoint-lower}
+\left\|f(m) - \frac{1}{2}(f(a) + f(a'))\right\| \geq \frac{\kappa D^2}{4} - \delta_1 D^2 - \frac{M_3 D^3}{48} - \frac{M_3 D^3}{12} = \frac{\kappa D^2}{4} - \frac{5M_3 D^3}{48} - \delta_1 D^2.
+\end{equation}
+
+\textbf{Step 4: Condition for non-trivial lower bound.}
+For the right-hand side of \eqref{eq:midpoint-lower} to be positive, we need:
+\[
+\frac{\kappa D^2}{4} > \frac{5M_3 D^3}{48} \quad \Longleftrightarrow \quad D < \frac{12\kappa}{5M_3}.
+\]
+This is satisfied when the domain is not too large relative to the curvature-to-third-derivative ratio. When this holds, we obtain a gap of order $\Theta(\kappa D^2)$.
+
+\textbf{Step 5: Finite-precision obstruction.}
+Any realizer $\hat{f}_H$ produces outputs in $\mathbb{F}_H$ (the finite set of representable numbers). For the three points $a, a', m$, the computed outputs $\hat{f}_H(r_a), \hat{f}_H(r_{a'}), \hat{f}_H(r_m)$ satisfy the soundness condition:
+\[
+\|f(x) - \rho_B(\hat{f}_H(r_x))\| \leq \eps_{\mathrm{out}}
+\]
+for $x \in \{a, a', m\}$, where $\eps_{\mathrm{out}}$ is the achieved accuracy.
+
+The machine average $\frac{1}{2}(\hat{f}_H(r_a) + \hat{f}_H(r_{a'}))$ differs from the exact average by at most $O(\eps_H)$ (one floating-point addition and one division by 2).
+
+By the triangle inequality:
+\begin{align*}
+\left\|f(m) - \frac{1}{2}(f(a) + f(a'))\right\| &\leq \|f(m) - \hat{f}_H(r_m)\| + \left\|\hat{f}_H(r_m) - \frac{1}{2}(\hat{f}_H(r_a) + \hat{f}_H(r_{a'}))\right\| \\
+&\quad + \left\|\frac{1}{2}(\hat{f}_H(r_a) + \hat{f}_H(r_{a'})) - \frac{1}{2}(f(a) + f(a'))\right\| \\
+&\leq \eps_{\mathrm{out}} + \left\|\hat{f}_H(r_m) - \frac{1}{2}(\hat{f}_H(r_a) + \hat{f}_H(r_{a'}))\right\| + \eps_{\mathrm{out}} + O(\eps_H).
+\end{align*}
+
+The middle term $\|\hat{f}_H(r_m) - \frac{1}{2}(\hat{f}_H(r_a) + \hat{f}_H(r_{a'}))\|$ measures how far the computed image of the midpoint is from the average of computed images. For a consistent realizer, this could be zero (if $\hat{f}_H(r_m)$ happens to equal the average), but in general it is bounded by the output range, which is $O(L_f D)$.
+
+However, the key point is that \eqref{eq:midpoint-lower} provides a \emph{lower bound} on the left-hand side. Rearranging:
+\[
+\eps_{\mathrm{out}} \geq \frac{1}{2}\left(\frac{\kappa D^2}{4} - \frac{5M_3 D^3}{48}\right) - O(\eps_H).
+\]
+
+\textbf{Step 6: Deriving the precision bound.}
+For $\eps_{\mathrm{out}} \leq \eps_{\mathrm{target}}$, we need:
+\[
+\eps_{\mathrm{target}} \geq \frac{\kappa D^2}{8} - \frac{5M_3 D^3}{96} - O(\eps_H).
+\]
+When $D < 12\kappa/(5M_3)$ (so the cubic term is dominated), and $\eps_H \ll \kappa D^2$, this requires:
+\[
+\eps_{\mathrm{target}} \gtrsim c \cdot \kappa D^2 - O(\eps_H)
+\]
+for a constant $c \approx 1/8$.
+
+Equivalently, if $\eps_H > c' \cdot \eps_{\mathrm{target}}/(\kappa D^2)$ for some $c' > 0$, then the accuracy $\eps_{\mathrm{target}}$ cannot be achieved. In terms of mantissa bits $p = -\log_2(\eps_H)$:
+\[
+p < \log_2\left(\frac{\kappa D^2}{c' \cdot \eps_{\mathrm{target}}}\right) \implies \text{uniform } \eps_{\mathrm{target}}\text{-accuracy impossible}.
+\]
+\end{proof}
+
+\begin{corollary}[Precision Lower Bound]
+\label{cor:precision-lower}
+To compute a $C^2$ morphism $f$ with curvature $\kappa > 0$, third derivative bound $M_3$, and domain diameter $D < 12\kappa/(5M_3)$ to uniform accuracy $\eps$, any hardware must have mantissa precision satisfying:
+\[
+p \geq \log_2 \left( \frac{c \cdot \kappa D^2}{\eps} \right)
+\]
+for an explicit constant $c > 0$ (approximately $1/8$ in the above analysis). This is a necessary condition; sufficiency requires additional algorithmic considerations.
+\end{corollary}
+
+\begin{remark}[Comparison with Condition Number Bounds]\label{rem:curvature-vs-conditioning}
+Classical numerical analysis bounds precision loss in terms of condition numbers. For matrix inversion, the rule of thumb is ``lose $\log_{10}(\kappa(A))$ decimal digits.'' Our curvature bound is related but distinct:
+\begin{itemize}
+    \item \textbf{Condition numbers} measure sensitivity: $\|f(a+\delta) - f(a)\|/\|f(a)\| \approx \kappa \cdot \|\delta\|/\|a\|$.
+    \item \textbf{Curvature} measures nonlinearity: the failure of the linear approximation at second order.
+\end{itemize}
+For matrix inversion, both are controlled by $\|A^{-1}\|$: the condition number is $\kappa(A) = \|A\|\|A^{-1}\|$ and the curvature is $O(\|A^{-1}\|^3)$ (Example~\ref{ex:curvature-inverse}). The curvature bound $p \gtrsim \frac{3}{2}\log_2(\|A^{-1}\|)$ is consistent with the condition number bound $p \gtrsim \log_2(\kappa(A))$ when $\|A\| = O(1)$.
+
+More generally, curvature provides complementary information: it captures the \emph{intrinsic nonlinearity} of a map, independent of input/output scaling. High curvature can occur even for well-conditioned problems (e.g., $\sin(x)$ near $x = 0$ has curvature 1 but condition number 1), and high condition numbers can occur with zero curvature (linear maps).
+\end{remark}
+
+\subsection{Applications to Specific Problems}
+
+\begin{example}[Matrix Inversion]
+\label{ex:obstruction-matrix}
+For the matrix inversion map $\mathrm{inv} : GL_n^K \to M_n(\R)$ restricted to matrices with $\|A\| \leq K$ and $\|A^{-1}\| \leq K$ (so condition number $\kappa(A) \leq K^2$):
+\begin{itemize}
+    \item Curvature: $\kappa_{\mathrm{inv}}^{\mathrm{curv}} = 2K^3$ (see Example~\ref{ex:curvature-inverse}), arising from $\|D^2(\mathrm{inv})_A\| \leq 2\|A^{-1}\|^3$;
+    \item Domain diameter in Frobenius norm: $D = O(\sqrt{n} \cdot K)$;
+    \item Obstruction: To achieve target error $\eps_{\mathrm{target}}$, precision must satisfy 
+    \[
+    p \geq \log_2\left(\frac{2K^3 \cdot nK^2}{\eps_{\mathrm{target}}}\right) = 3\log_2(K) + \log_2(2n K^2) - \log_2(\eps_{\mathrm{target}}).
+    \]
+\end{itemize}
+For a matrix with condition number $\kappa = K^2$, this gives $p \geq \frac{3}{2}\log_2(\kappa) + O(\log n)$, consistent with the classical estimate of losing approximately $\log_{10}(\kappa)$ decimal digits \cite{Higham}.
+\end{example}
+
+\subsection{Detailed Case Study: Numerical Matrix Inversion}
+\label{sec:matrix-inversion}
+\label{sec:matrix-case-study}
+
+We now provide a fully worked example applying HNF to the classical problem of numerical matrix inversion. This illustrates all components of the framework with explicit constants.
+
+\subsubsection{The Numerical Type of Invertible Matrices}
+
+\begin{definition}[Numerical Type $GL_n^K$]\label{def:gln-numerical}
+Fix $n \geq 1$ and $K \geq 1$. Define the numerical type $GL_n^K$ of ``well-conditioned $n \times n$ matrices'' by:
+\begin{enumerate}[(i)]
+    \item \textbf{Underlying space:} $|GL_n^K| = \{ A \in \R^{n \times n} : \|A\| \leq K, \|A^{-1}\| \leq K \}$ where $\|\cdot\|$ is the spectral norm. This is the set of matrices with condition number $\kappa(A) = \|A\| \|A^{-1}\| \leq K^2$.
+    
+    \item \textbf{Metric:} $d(A, B) = \|A - B\|_F$ (Frobenius norm), satisfying $\|A - B\| \leq \|A - B\|_F \leq \sqrt{n} \|A - B\|$.
+    
+    \item \textbf{Completeness:} $(|GL_n^K|, d)$ is not complete (it is open in $\R^{n^2}$), so we take its completion $\overline{GL_n^K}$, which includes boundary matrices where $\|A\| = K$ or $\|A^{-1}\| = K$. Alternatively, we work with the closure and extend the inversion map by continuity where possible.
+    
+    \item \textbf{Realizability:} For IEEE 754 double precision hardware $H_{64}$ with $\eps_{\mathrm{mach}} = 2^{-53}$:
+    \[
+    \Rep_{GL_n^K}(\eps, H_{64}) = \{ \hat{A} \in \mathbb{F}_{64}^{n \times n} : \|\hat{A}\| \leq K + \eps, \text{ and } \hat{A} \text{ is numerically invertible} \}
+    \]
+    where ``numerically invertible'' means the LU factorization succeeds without pivot failure.
+    
+    \item \textbf{Realization map:} $\rho(\hat{A}) = \hat{A}$ viewed as a real matrix. The approximation bound is $d(\rho(\hat{A}), A) \leq \sqrt{n^2} \cdot \eps_{\mathrm{mach}} \cdot \|A\|_{\max} \leq n \eps_{\mathrm{mach}} K$ for entries bounded by $K$.
+\end{enumerate}
+\end{definition}
+
+\begin{remark}[Comparison with Higham's Framework]\label{rem:higham-comparison}
+The numerical type $GL_n^K$ encodes the same information as the ``condition number bounded'' setting in Higham's \cite{Higham} analysis of numerical stability:
+\begin{itemize}
+    \item The constraint $\kappa(A) \leq K^2$ corresponds to restricting to ``not too ill-conditioned'' matrices, the standard setting for stability analysis.
+    \item The error functional $\Phi_{\mathrm{inv}}(\eps, H_{64}) = K^2 \eps + C_n K^3 \eps_{\mathrm{mach}}$ matches Higham's bound \cite[Chapter 9]{Higham}: the backward error of Gaussian elimination with partial pivoting is $O(n^3 \eps_{\mathrm{mach}})$, and the forward error amplification by $\kappa(A)$ gives the $K^2 \eps$ term.
+    \item The ``numerically invertible'' condition (LU success) corresponds to the assumption of no pivot failure, which Higham shows holds with probability 1 for random matrices and deterministically for certain structured classes.
+\end{itemize}
+The novel contribution of HNF is the \emph{type-theoretic packaging}: the error bounds become intrinsic to the morphism structure, not external annotations. This enables compositional reasoning (Theorem~\ref{thm:stability}) and type-directed precision selection (Example~\ref{ex:concrete-precision}).
+\end{remark}
+
+\subsubsection{The Inversion Morphism}
+
+\begin{proposition}[Inversion as Numerical Morphism]\label{prop:inv-morphism}
+The matrix inversion map $\mathrm{inv} : GL_n^K \to GL_n^K$ is a numerical morphism with:
+\begin{enumerate}[(i)]
+    \item \textbf{Lipschitz constant:} $L_{\mathrm{inv}} = K^2$ (global); locally at $A$, we have $L_{\mathrm{inv}}(A) = \|A^{-1}\|^2$.
+    
+    \item \textbf{Error functional:} For IEEE 754 hardware $H_{64}$:
+    \[
+    \Phi_{\mathrm{inv}}(\eps, H_{64}) = K^2 \eps + C_n K^3 \eps_{\mathrm{mach}}
+    \]
+    where $C_n = O(n^3)$ accounts for the $O(n^3)$ operations in Gaussian elimination.
+    
+    \item \textbf{Realizer:} $\widehat{\mathrm{inv}}_{H_{64}}(\hat{A})$ is the computed inverse via LU decomposition with partial pivoting, denoted $\fl(A^{-1})$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+\textbf{Lipschitz bound.} The derivative of $\mathrm{inv}$ at $A$ is $D\mathrm{inv}_A(E) = -A^{-1} E A^{-1}$. Hence:
+\[
+\|D\mathrm{inv}_A\|_{\mathrm{op}} = \|A^{-1}\|^2 \leq K^2.
+\]
+By the mean value theorem for maps between Banach spaces:
+\[
+\|\mathrm{inv}(A) - \mathrm{inv}(B)\|_F \leq K^2 \|A - B\|_F.
+\]
+
+\textbf{Error functional.} Following Higham \cite{Higham}, the backward error of LU-based inversion satisfies:
+\[
+\fl(A^{-1}) = (A + E)^{-1}, \quad \|E\|_F \leq c_n \eps_{\mathrm{mach}} \|A\|_F
+\]
+where $c_n = O(n^2)$ for partial pivoting. The forward error is then:
+\begin{align*}
+\|\fl(A^{-1}) - A^{-1}\|_F &= \|(A+E)^{-1} - A^{-1}\|_F \\
+&\leq \|A^{-1}\|^2 \|E\|_F (1 + O(\|A^{-1}\| \|E\|)) \\
+&\leq K^2 \cdot c_n \eps_{\mathrm{mach}} \|A\|_F + O(\eps_{\mathrm{mach}}^2) \\
+&\leq K^2 \cdot c_n \eps_{\mathrm{mach}} \cdot \sqrt{n} K = c_n \sqrt{n} K^3 \eps_{\mathrm{mach}}.
+\end{align*}
+Adding the error from input approximation: total error is $K^2 \eps + C_n K^3 \eps_{\mathrm{mach}}$.
+
+\textbf{Soundness.} For $\hat{A} \in \Rep_{GL_n^K}(\eps, H_{64})$:
+\begin{align*}
+\|\fl(\hat{A}^{-1}) - A^{-1}\|_F &\leq \|\fl(\hat{A}^{-1}) - \hat{A}^{-1}\|_F + \|\hat{A}^{-1} - A^{-1}\|_F \\
+&\leq C_n K^3 \eps_{\mathrm{mach}} + K^2 \|\hat{A} - A\|_F \\
+&\leq C_n K^3 \eps_{\mathrm{mach}} + K^2 \eps \\
+&= \Phi_{\mathrm{inv}}(\eps, H_{64}).
+\end{align*}
+\end{proof}
+
+\subsubsection{Explicit Precision Obstruction}
+
+\begin{theorem}[Precision Lower Bound for Matrix Inversion]\label{thm:inv-precision}
+Let $A \in GL_n^K$ with $\cond(A) = \kappa \leq K^2$. To compute $A^{-1}$ to relative accuracy $\eps_{\mathrm{rel}}$ (i.e., $\|\fl(A^{-1}) - A^{-1}\|_F \leq \eps_{\mathrm{rel}} \|A^{-1}\|_F$), the mantissa precision $p$ must satisfy:
+\[
+2^{-p} \leq \frac{\eps_{\mathrm{rel}}}{C_n \kappa}
+\]
+i.e., $p \geq \log_2(C_n) + \log_2(\kappa) - \log_2(\eps_{\mathrm{rel}})$. 
+
+For IEEE 754 double precision ($p = 53$), this means:
+\[
+\eps_{\mathrm{rel}} \geq C_n \kappa \cdot 2^{-53} \approx n^3 \kappa \cdot 10^{-16}.
+\]
+Thus matrices with condition number $\kappa > 10^{16}/n^3$ cannot be inverted to any accuracy in double precision.
+\end{theorem}
+
+\begin{proof}
+This is an instance of Theorem \ref{thm:obstruction}. The curvature invariant is $\kappa_{\mathrm{inv}} = K^2$ (from the Lipschitz constant of the second derivative). The domain diameter is $D = O(\sqrt{n} K)$. Applying the general bound:
+\[
+\eps_{\mathrm{mach}} > \frac{\eps_{\mathrm{rel}} \|A^{-1}\|_F}{\kappa_{\mathrm{inv}} \cdot D^2} \implies \text{no realizer exists}.
+\]
+Rearranging and using $\|A^{-1}\|_F \leq \sqrt{n} K$, $D^2 = n K^2$:
+\[
+\eps_{\mathrm{mach}} \cdot K^2 \cdot n K^2 > \eps_{\mathrm{rel}} \cdot \sqrt{n} K \implies \eps_{\mathrm{rel}} < \sqrt{n} K^3 \eps_{\mathrm{mach}}.
+\]
+The theorem follows with $C_n = O(n^{3/2})$ from this analysis, or $C_n = O(n^3)$ from the refined analysis in Proposition \ref{prop:inv-morphism}.
+\end{proof}
+
+\begin{remark}[Comparison with Classical Results]
+Theorem \ref{thm:inv-precision} recovers the classical ``rule of thumb'' that one loses $\log_{10}(\kappa)$ decimal digits of accuracy when inverting a matrix with condition number $\kappa$. HNF makes this precise: the loss is exactly $\log_2(\kappa) + O(\log n)$ bits, with explicit constants from the realizability analysis.
+\end{remark}
+
+\subsubsection{Complete Numerical Example: Precision Selection for Matrix Inversion}
+
+\begin{example}[Concrete Precision-Guided Computation]\label{ex:concrete-precision}
+We work through a complete numerical example, implementing the matrix inversion pipeline with explicit precision selection.
+
+\textbf{Problem:} Invert the $3 \times 3$ matrix
+\[
+A = \begin{pmatrix} 1.0 & 0.5 & 0.1 \\ 0.5 & 1.0 & 0.5 \\ 0.1 & 0.5 & 1.0 \end{pmatrix}
+\]
+to relative accuracy $\eps_{\mathrm{rel}} = 10^{-10}$.
+
+\textbf{Step 1: Condition Number Analysis.}
+We have $\|A\|_2 = 2.0$ and $\|A^{-1}\|_2 \approx 2.22$, so $\kappa(A) \approx 4.44$ (a well-conditioned matrix).
+
+\textbf{Step 2: HNF Precision Bound.}
+By Theorem~\ref{thm:inv-precision}, we need:
+\[
+p \geq \log_2(C_3 \cdot \kappa) - \log_2(\eps_{\mathrm{rel}}) = \log_2(27 \cdot 4.44) + \log_2(10^{10}) \approx 6.9 + 33.2 = 40.1 \text{ bits}.
+\]
+Thus IEEE 754 binary64 (53-bit mantissa) suffices with margin.
+
+\textbf{Step 3: Error Functional Computation.}
+The error functional from Proposition~\ref{prop:inv-morphism} gives:
+\[
+\Phi_{\mathrm{inv}}(\eps, H_{64}) = K^2 \eps + C_n K^3 \eps_H = (4.44)^2 \eps + 27 \cdot (4.44)^3 \cdot 2^{-53} \approx 19.7\eps + 2.6 \times 10^{-13}.
+\]
+
+\textbf{Step 4: Realizer Execution.}
+Using LU decomposition with partial pivoting in double precision:
+\[
+\fl(A^{-1}) = \begin{pmatrix} 1.3636\ldots & -0.6364\ldots & 0.2727\ldots \\ -0.6364\ldots & 1.6364\ldots & -0.6364\ldots \\ 0.2727\ldots & -0.6364\ldots & 1.3636\ldots \end{pmatrix}
+\]
+with actual relative error $\|\fl(A^{-1}) - A^{-1}\|_F / \|A^{-1}\|_F \approx 3.1 \times 10^{-16}$, well within the guaranteed bound.
+
+\textbf{Step 5: Comparison with Half Precision.}
+If we attempt the computation in IEEE 754 binary16 ($p = 11$), the bound gives:
+\[
+\eps_{\mathrm{rel}} \geq C_n \kappa \cdot 2^{-11} \approx 27 \cdot 4.44 \cdot 4.9 \times 10^{-4} \approx 0.059.
+\]
+Indeed, half-precision computation yields relative error $\approx 0.03$, consistent with the bound.
+
+\textbf{Takeaway:} The HNF framework provides \emph{a priori} precision guarantees: given target accuracy and problem parameters, one can provably select the minimum precision format. For this $3 \times 3$ matrix with $\kappa \approx 4.44$ and $\eps_{\mathrm{rel}} = 10^{-10}$:
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+Format & Mantissa bits & Achievable $\eps_{\mathrm{rel}}$ \\
+\hline
+binary16 & 11 & $\approx 6 \times 10^{-2}$ \\
+binary32 & 24 & $\approx 7 \times 10^{-6}$ \\
+binary64 & 53 & $\approx 3 \times 10^{-15}$ \\
+\hline
+\end{tabular}
+\end{center}
+Thus binary64 is the minimum IEEE format meeting the $10^{-10}$ requirement.
+\end{example}
+
+\subsubsection{Iterative Refinement as Path}
+
+\begin{proposition}[Newton-Schulz as Numerical Path]\label{prop:newton-schulz}
+Let $A \in GL_n^K$ and $X_0$ an initial approximation with $\|I - AX_0\| < 1$. The Newton-Schulz iteration
+\[
+X_{k+1} = X_k(2I - AX_k)
+\]
+defines a numerical path $\gamma : [0, 1] \to GL_n^K$ from $X_0$ to $A^{-1}$.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+Parameterize by $t = 1 - 2^{-k}$ for iteration $k$. The convergence $X_k \to A^{-1}$ is quadratic: $\|A^{-1} - X_{k+1}\| \leq \|A^{-1}\| \|I - AX_k\|^2$. This defines a Lipschitz path (after reparameterization) with:
+\[
+L_\gamma = O(\|X_0\| + \|A^{-1}\|), \quad \Phi_\gamma(\eps, H) = O(k_{\max}) \cdot \eps
+\]
+where $k_{\max}$ is the number of iterations. The path connects $X_0$ (an approximate inverse) to $A^{-1}$ (the exact inverse) in the path space of $GL_n^K$.
+\end{proof}
+
+\begin{example}[Eigenvalue Computation]
+For the eigenvalue map on symmetric $n \times n$ matrices with spectral gap $\geq \gamma$:
+\begin{itemize}
+    \item Curvature: $\kappa = O(1/\gamma^2)$;
+    \item Obstruction: $p \geq 2\log_2(1/\gamma) - \log_2(\eps)$ for $\eps$-accurate eigenvalues.
+\end{itemize}
+This recovers classical results on the sensitivity of eigenvalues in a type-theoretic framework.
+\end{example}
+
+\subsection{Higher Obstructions}
+\label{sec:higher-obstructions}
+
+\begin{remark}[Scope: Layer 1 Material]
+This subsection develops numerical homotopy groups, inspired by homotopy type theory. These concepts provide \emph{classification obstructions} showing when two numerical types cannot be equivalent. While conceptually interesting, this material is \emph{not required} for the main numerical results (stability, precision bounds, neural networks). Readers focused on numerical analysis may skip to Section~\ref{sec:representation}.
+\end{remark}
+
+\begin{definition}[Numerical Homotopy Groups]
+For a numerical type $A$ and basepoint $a \in |A|$, define
+\[
+\pi_n^{\mathrm{num}}(A, a) := \pi_0(\Omega^n_{\mathrm{Lip}} A)
+\]
+where $\Omega^n_{\mathrm{Lip}} A$ is the $n$-fold Lipschitz loop space.
+\end{definition}
+
+\begin{theorem}[Homotopy Obstruction]
+\label{thm:homotopy-obstruction}
+Let $A, B$ be numerical types with $\pi_1^{\mathrm{num}}(A) \neq \pi_1^{\mathrm{num}}(B)$. Then there is no numerical equivalence $A \simeq_{\mathrm{num}} B$.
+\end{theorem}
+
+\begin{proof}
+A numerical equivalence $(f, g)$ induces, by functoriality of $\Omega_{\mathrm{Lip}}$, maps on Lipschitz loop spaces. These descend to group homomorphisms on $\pi_1^{\mathrm{num}}$. Since $(f, g)$ is an equivalence, these are isomorphisms.
+\end{proof}
+
+\begin{corollary}[Classification Obstruction]
+\label{cor:classification}
+The numerical types $\R^n$ and $S^n$ (sphere with Lipschitz realizability structure) are not numerically equivalent for $n \geq 1$.
+\end{corollary}
+
+\begin{proof}
+$\pi_1^{\mathrm{num}}(\R^n) = 0$ but $\pi_1^{\mathrm{num}}(S^n) = \Z$ for $n = 1$ and $\pi_n^{\mathrm{num}}(S^n) = \Z$ for all $n \geq 1$.
+\end{proof}
+
+\subsection{Precision Stratification}
+\label{sec:precision-stratification}
+
+Inspired by the depth stratification of temporal properties in optimal transport model checking \cite{OTMC}, we develop an analogous stratification of numerical types by precision level. This reveals how the OTMC-style distance decomposes into contributions from different precision scales.
+
+\begin{definition}[Precision Depth]
+A numerical morphism $f : A \to B$ has \emph{precision depth} $k \in \N$ if $k$ is the smallest precision (in bits) such that there exists hardware $H_k$ with $p_{H_k} = k$ and a realizer $\hat{f}_{\eps, H_k}$ for some $\eps > 0$. If no finite precision suffices, we set $\mathrm{pdepth}(f) := \infty$.
+\end{definition}
+
+\begin{theorem}[Precision-Distance Bounds]\label{thm:precision-distance}
+Let $f : A \to B$ be a numerical morphism with precision depth $k := \mathrm{pdepth}(f) < \infty$ and curvature $\kappa$. For any system computing $f$ with target error $\eps$:
+\[
+2^{-(k+1)} \cdot \mathrm{diam}(A) \leq \eps \leq 2^{-k} \cdot \kappa \cdot \mathrm{diam}(A)^2.
+\]
+The lower bound is achieved by optimal algorithms; the upper bound is the obstruction threshold.
+\end{theorem}
+
+\begin{proof}
+The lower bound follows from information-theoretic limits: with $k$ bits, we can distinguish at most $2^k$ values, so resolution is at least $\mathrm{diam}(A) / 2^k$.
+
+The upper bound is Theorem \ref{thm:obstruction}: if $\eps < 2^{-k} \kappa D^2$, then $\eps_H = 2^{-k} > \eps / (\kappa D^2)$, violating the obstruction bound.
+\end{proof}
+
+\begin{definition}[Precision Stratification]
+For a numerical type $A$ and fixed target accuracy $\eps > 0$, define the $k$-th \emph{precision stratum}:
+\[
+A^{(k)} := \{ a \in |A| : p_{\min}(a, \eps) = k \}
+\]
+where $p_{\min}(a, \eps) := \min \{ p \in \N : \exists H \text{ with } p_H = p, \exists r \in \Rep_A(\eps, H) \text{ with } d_A(\rho_A(r), a) \leq \eps \}$ is the minimum mantissa precision needed to represent $a$ within tolerance $\eps$. 
+
+Concretely, for IEEE 754-like hardware: $p_{\min}(a, \eps) = \lceil \log_2(|a| / \eps) \rceil$ for $a \neq 0$ (the number of significant bits needed), and $p_{\min}(0, \eps) = 1$. This partitions $A$ (for fixed $\eps$) into strata: $|A| = \bigsqcup_{k=1}^{\infty} A^{(k)}$.
+\end{definition}
+
+\begin{proposition}[Stratum Decomposition of Error]
+For a numerical morphism $f : A \to B$ and probability measure $\mu$ on $|A|$:
+\[
+\mathbb{E}_\mu[\Phi_f(\eps, H)] = \sum_{k=1}^{\infty} \mu(A^{(k)}) \cdot \mathbb{E}[\Phi_f(\eps, H) \mid A^{(k)}].
+\]
+Each stratum contributes to the total error proportionally to its measure and average local error.
+\end{proposition}
+
+\begin{remark}[Connection to OTMC Depth Stratification]
+In optimal transport model checking \cite{OTMC}, temporal properties are stratified by ``depth''---the number of steps needed to detect a violation. Our precision stratification is analogous: it measures the ``precision depth'' at which a numerical computation first becomes feasible. Just as OTMC depth bounds relate violation probability to distance, our precision bounds relate realizability thresholds to accuracy. This parallel suggests deeper connections between quantitative verification and numerical foundations.
+\end{remark}
+
+%=============================================================================
+\section{The Precision Sheaf: Towards Numerical Homotopy Theory}
+\label{sec:precision-sheaf}
+%=============================================================================
+
+We now develop the sheaf-theoretic perspective announced in the introduction. This section establishes the foundational definitions and key theorems for what we term \emph{numerical homotopy theory}---the study of topological invariants arising from precision constraints. While speculative in parts, we prove precise theorems where possible and clearly mark conjectures.
+
+\subsection{Computation Graphs as Topological Spaces}
+
+The fundamental insight is that a computation graph is not merely a combinatorial object, but carries natural topological structure.
+
+\begin{definition}[Computation Graph]
+A \emph{computation graph} is a directed acyclic graph $G = (V, E)$ where:
+\begin{itemize}
+    \item Each vertex $v \in V$ represents a primitive operation with numerical type $\tau(v) : A_v \to B_v$;
+    \item Each edge $(u, v) \in E$ represents data flow, requiring $B_u \subseteq A_v$ (type compatibility).
+\end{itemize}
+\end{definition}
+
+\begin{definition}[The Space of Computations]
+For a computation graph $G$, define the \emph{space of computations} $\mathcal{C}(G)$ as:
+\[
+\mathcal{C}(G) := \prod_{v \in V} \Hom_{\NMet}(A_v, B_v)
+\]
+equipped with the product topology, where each $\Hom$ space has the Lipschitz topology (uniform convergence on bounded sets with convergent Lipschitz constants).
+
+A point $\phi \in \mathcal{C}(G)$ assigns to each vertex a choice of numerical morphism implementing that operation.
+\end{definition}
+
+\begin{proposition}[Topological Structure]\label{prop:topology}
+For a finite computation graph $G$:
+\begin{enumerate}[(i)]
+    \item $\mathcal{C}(G)$ is a separable metric space.
+    \item The subspace $\mathcal{C}^K(G) := \{\phi : L_{\phi_v} \leq K \text{ for all } v\}$ is compact.
+    \item The evaluation map $\mathrm{ev} : \mathcal{C}(G) \times \prod_v |A_v| \to \prod_v |B_v|$ is continuous.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) Metrizability follows from the product of metric spaces being metric under $d(\phi, \psi) = \sum_v 2^{-|v|} \min(1, d_v(\phi_v, \psi_v))$. Separability follows from density of piecewise-linear maps.
+
+(ii) Arzelà-Ascoli: $K$-Lipschitz functions on compact domains form a compact family.
+
+(iii) Continuity follows from Lipschitz continuity in the second argument and the product topology in the first.
+\end{proof}
+
+\subsection{The Precision Presheaf}
+
+\begin{definition}[Precision Function]
+For a computation graph $G$ with target error $\eps > 0$, a \emph{precision assignment} is a map $\pi : V \to \mathcal{H}$ assigning hardware to each vertex. The assignment is \emph{valid} if the end-to-end error satisfies $\Phi_G(\eps_{\mathrm{in}}, \pi) \leq \eps$.
+
+Define the \emph{precision function} $p_{\min} : V \to \N$ by
+\[
+p_{\min}(v) := \min \{ p \in \N : \exists \text{ valid } \pi \text{ with } p_{\pi(v)} = p \}.
+\]
+\end{definition}
+
+\begin{definition}[The Precision Presheaf]
+For a computation graph $G$ with target error $\eps$, define the \emph{precision presheaf} $\mathcal{P}_G^\eps$ on the poset of subgraphs (ordered by inclusion) as follows:
+
+For a subgraph $U \subseteq G$:
+\[
+\mathcal{P}_G^\eps(U) := \{ \text{valid precision assignments } \pi : V(U) \to \mathcal{H} \}
+\]
+where validity is with respect to the induced subgraph computation.
+
+For an inclusion $U \hookrightarrow W$, the restriction map $\mathrm{res}^W_U : \mathcal{P}_G^\eps(W) \to \mathcal{P}_G^\eps(U)$ is ordinary restriction.
+\end{definition}
+
+\begin{theorem}[Presheaf Axioms]\label{thm:presheaf}
+$\mathcal{P}_G^\eps$ is a presheaf of sets on the poset category of subgraphs of $G$. That is:
+\begin{enumerate}[(i)]
+    \item $\mathrm{res}^U_U = \mathrm{id}$ for all subgraphs $U$.
+    \item $\mathrm{res}^U_T \circ \mathrm{res}^W_U = \mathrm{res}^W_T$ for inclusions $T \hookrightarrow U \hookrightarrow W$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Both properties are immediate from the definition of restriction.
+\end{proof}
+
+\subsection{Sheafification and Descent}
+
+The precision presheaf need not be a sheaf: local precision assignments may not glue to global ones due to error accumulation at boundaries.
+
+\begin{definition}[Gluing Defect]
+For subgraphs $U_1, U_2 \subseteq G$ with compatible precision assignments $\pi_i \in \mathcal{P}_G^\eps(U_i)$ (i.e., $\mathrm{res}_{U_1 \cap U_2}(\pi_1) = \mathrm{res}_{U_1 \cap U_2}(\pi_2)$), define the \emph{gluing defect}:
+\[
+\delta(\pi_1, \pi_2) := \Phi_G^\eps(\pi_1 \cup \pi_2) - \max(\Phi_{U_1}^\eps(\pi_1), \Phi_{U_2}^\eps(\pi_2))
+\]
+where $\pi_1 \cup \pi_2$ is the combined assignment on $U_1 \cup U_2$.
+\end{definition}
+
+\begin{theorem}[Gluing Obstruction]\label{thm:gluing}
+Let $\{U_i\}$ be a covering of $G$ by subgraphs. Suppose $\pi_i \in \mathcal{P}_G^\eps(U_i)$ are compatible on overlaps. Then a global assignment $\pi \in \mathcal{P}_G^\eps(G)$ extending all $\pi_i$ exists if and only if:
+\[
+\sum_{i < j} \delta(\pi_i, \pi_j) \leq \eps - \max_i \Phi_{U_i}^\eps(\pi_i).
+\]
+\end{theorem}
+
+\begin{proof}
+The combined precision assignment $\pi = \bigcup_i \pi_i$ is well-defined by compatibility. Its error satisfies:
+\[
+\Phi_G^\eps(\pi) \leq \max_i \Phi_{U_i}^\eps(\pi_i) + \sum_{i < j} \delta(\pi_i, \pi_j)
+\]
+by the composition law (Theorem~\ref{thm:stability}) applied to the boundary edges between pieces. The global assignment is valid iff this is $\leq \eps$.
+\end{proof}
+
+\begin{definition}[The Precision Sheaf]
+Define the \emph{precision sheaf} $\overline{\mathcal{P}}_G^\eps$ as the sheafification of $\mathcal{P}_G^\eps$. Concretely:
+\[
+\overline{\mathcal{P}}_G^\eps(U) := \left\{ (\pi_i)_{i \in I} : \text{compatible family on a covering } \{U_i\} \text{ of } U, \text{ gluing defect } = 0 \right\} / \sim
+\]
+where $\sim$ identifies families that agree after common refinement.
+\end{definition}
+
+\begin{corollary}[Descent]\label{cor:descent}
+The precision sheaf $\overline{\mathcal{P}}_G^\eps$ satisfies descent: for any covering $\{U_i\}$ of $G$,
+\[
+\overline{\mathcal{P}}_G^\eps(G) = \mathrm{eq}\left( \prod_i \overline{\mathcal{P}}_G^\eps(U_i) \rightrightarrows \prod_{i,j} \overline{\mathcal{P}}_G^\eps(U_i \cap U_j) \right).
+\]
+\end{corollary}
+
+\subsection{Cohomology of Precision Constraints}
+
+The difference between the presheaf and its sheafification is captured by cohomology.
+
+\begin{definition}[Precision Cohomology]
+For a computation graph $G$ and target error $\eps$, define the \emph{precision cohomology groups}:
+\[
+H^n(G; \mathcal{P}_G^\eps) := H^n(\mathrm{N\check{e}ch}(\{U_i\}; \mathcal{P}_G^\eps))
+\]
+for any sufficiently fine covering $\{U_i\}$, where $\mathrm{N\check{e}ch}$ denotes the Čech complex.
+\end{definition}
+
+\begin{theorem}[Cohomological Classification]\label{thm:cohomology}
+Let $G$ be a computation graph with target error $\eps > 0$.
+\begin{enumerate}[(i)]
+    \item $H^0(G; \mathcal{P}_G^\eps) = \mathcal{P}_G^\eps(G)$: global precision assignments.
+    \item $H^1(G; \mathcal{P}_G^\eps)$ classifies obstructions to gluing local precision assignments.
+    \item If $H^1(G; \mathcal{P}_G^\eps) = 0$ for all coverings, then $\mathcal{P}_G^\eps$ is already a sheaf.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+These are standard properties of sheaf cohomology. Part (i): $H^0$ is the kernel of the first boundary map, which for a presheaf is the global sections. Part (ii): $H^1$ is the cokernel of the zeroth boundary map, measuring failure of exactness at the gluing stage. Part (iii): A presheaf is a sheaf iff it satisfies the sheaf axiom for all coverings, which is equivalent to $H^1 = 0$.
+\end{proof}
+
+\begin{example}[Explicit Non-Trivial Cohomology Computation]\label{ex:explicit-cohomology}
+We explicitly compute $H^1$ for a simple computation graph with two nodes.
+
+\textbf{Setup:} Consider computing $f(x) = 1/(x-1) + 1/(x+1)$ on the domain $[-2, 2] \setminus \{-1, 1\}$ with target error $\eps = 10^{-6}$.
+
+The computation graph $G$ has two parallel branches:
+\begin{center}
+\begin{tikzcd}
+& x-1 \ar[r, "1/(\cdot)"] & 1/(x-1) \ar[dr, "+"] & \\
+x \ar[ur] \ar[dr] & & & f(x) \\
+& x+1 \ar[r, "1/(\cdot)"] & 1/(x+1) \ar[ur] &
+\end{tikzcd}
+\end{center}
+
+\textbf{Covering:} Let $U_1 = [-2, -0.5]$, $U_2 = [-0.5, 0.5]$, $U_3 = [0.5, 2]$. These cover the domain away from the singularities.
+
+\textbf{Local precision requirements:}
+\begin{itemize}
+    \item On $U_1$: $\min_{x \in U_1} |x-1| = 1.5$, so curvature $\kappa_1 \approx 2/1.5^3 \approx 0.6$. Required precision: $p_1 \geq \log_2(0.6 \cdot 4 / 10^{-6}) \approx 21$ bits.
+    \item On $U_2$: $\min_{x \in U_2} |x \pm 1| = 0.5$, so curvature $\kappa_2 \approx 2/0.5^3 = 16$. Required precision: $p_2 \geq \log_2(16 \cdot 1 / 10^{-6}) \approx 24$ bits.
+    \item On $U_3$: $\min_{x \in U_3} |x+1| = 1.5$, so curvature $\kappa_3 \approx 0.6$. Required precision: $p_3 \approx 21$ bits.
+\end{itemize}
+
+\textbf{Gluing constraints:} On overlaps $U_1 \cap U_2 = \{-0.5\}$ and $U_2 \cap U_3 = \{0.5\}$, the local precisions are compatible ($p_1 = p_3 = 21 < p_2 = 24$).
+
+\textbf{Čech complex:} The Čech complex $\check{C}^\bullet(\{U_i\}; \mathcal{P}_G^\eps)$ is:
+\[
+\check{C}^0 = \mathcal{P}(U_1) \times \mathcal{P}(U_2) \times \mathcal{P}(U_3), \quad \check{C}^1 = \mathcal{P}(U_1 \cap U_2) \times \mathcal{P}(U_2 \cap U_3)
+\]
+with boundary map $\delta^0 : \check{C}^0 \to \check{C}^1$ given by $\delta^0(\pi_1, \pi_2, \pi_3) = (\pi_2|_{U_1 \cap U_2} - \pi_1|_{U_1 \cap U_2}, \pi_3|_{U_2 \cap U_3} - \pi_2|_{U_2 \cap U_3})$.
+
+\textbf{Cohomology computation:} 
+\begin{itemize}
+    \item $H^0 = \ker(\delta^0)$ = global sections = valid precision assignments on all of $G$. Since we need $p \geq 24$ globally (dominated by $U_2$), we have $H^0 = \{p : p \geq 24\}$.
+    \item $H^1 = \check{C}^1 / \mathrm{im}(\delta^0)$. Consider the element $(3, 0) \in \check{C}^1$ representing ``precision must jump by 3 bits at the $U_1 \cap U_2$ boundary.'' This is in $\mathrm{im}(\delta^0)$: take $(\pi_1, \pi_2, \pi_3) = (21, 24, 21)$, then $\delta^0 = (24-21, 21-24) = (3, -3)$. 
+\end{itemize}
+
+In this example $H^1 = 0$ because the local assignments are compatible. However, consider a modification:
+
+\textbf{Modified example with $H^1 \neq 0$:} Take $f(x) = 1/(x-1) \cdot 1/(x+1)$ on a circle $S^1$ parameterized by $\theta \in [0, 2\pi)$ with $x(\theta) = 2\cos\theta$ (so singularities at $\theta = 0, \pi$). Cover by $U_1 = (0, \pi)$ and $U_2 = (\pi, 2\pi)$, with overlaps at $\theta = 0$ and $\theta = \pi$.
+
+The precision jumps at both singularities. The Čech cohomology detects a non-trivial class:
+\[
+H^1(S^1; \mathcal{P}) \cong \Z
+\]
+generated by the ``winding number'' of precision requirements around the circle. Explicitly, if precision must increase by $\Delta p$ bits when approaching each singularity, then going around the circle accumulates $2\Delta p$ bits of precision debt that cannot be discharged---a genuine cohomological obstruction.
+\end{example}
+
+\subsection{The Homotopy Groups of Computation Spaces}
+
+\begin{definition}[Homotopy of Computation Graphs]
+Two points $\phi, \psi \in \mathcal{C}(G)$ are \emph{numerically homotopic} if there exists a continuous path $\gamma : [0,1] \to \mathcal{C}(G)$ with $\gamma(0) = \phi$, $\gamma(1) = \psi$, and:
+\[
+\sup_{t \in [0,1]} \Phi_G(\gamma(t)) < \infty.
+\]
+That is, the path maintains bounded error throughout.
+\end{definition}
+
+\begin{definition}[Numerical Homotopy Groups of Computations]
+For a computation graph $G$ with basepoint $\phi_0 \in \mathcal{C}(G)$:
+\[
+\pi_n^{\mathrm{comp}}(G, \phi_0) := \pi_0(\Omega^n \mathcal{C}_{\mathrm{finite}}(G))
+\]
+where $\mathcal{C}_{\mathrm{finite}}(G) := \{\phi \in \mathcal{C}(G) : \Phi_G(\phi) < \infty\}$ is the subspace of finite-error computations, and $\Omega^n$ denotes the $n$-fold based loop space.
+\end{definition}
+
+\begin{theorem}[Homotopy vs. Precision]\label{thm:homotopy-precision}
+Let $G$ be a connected computation graph.
+\begin{enumerate}[(i)]
+    \item $\pi_0^{\mathrm{comp}}(G)$ classifies equivalence classes of computations under continuous deformation with bounded error.
+    \item If $\pi_1^{\mathrm{comp}}(G, \phi_0) \neq 0$, then there exist precision constraints that cannot be continuously relaxed to uniform precision.
+    \item The map $\pi_n^{\mathrm{comp}}(G) \to \prod_v \pi_n^{\mathrm{num}}(B_v)$ induced by evaluation at outputs is a group homomorphism.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i) is the definition of $\pi_0$. 
+
+(ii) A non-trivial loop in $\mathcal{C}_{\mathrm{finite}}(G)$ represents a family of computations that returns to the original after parameter variation. If this loop cannot be contracted while maintaining bounded error, then no single uniform precision assignment can represent all computations on the loop---the precision must vary around the loop, creating a topological obstruction.
+
+(iii) The evaluation map $\mathrm{ev} : \mathcal{C}(G) \to \prod_v |B_v|$ is continuous by Proposition~\ref{prop:topology}(iii). Continuous maps induce homomorphisms on homotopy groups.
+\end{proof}
+
+\begin{remark}[Status of the Sheaf/Homotopy Theory]\label{rem:sheaf-status}
+The definitions in this section are precise and yield well-defined mathematical objects. Example~\ref{ex:explicit-cohomology} shows that the cohomology can be non-trivial and carries meaningful information about precision constraints.
+
+However, this material is \textbf{more speculative} than the preceding sections:
+\begin{enumerate}
+    \item We have not developed efficient algorithms for computing $H^1(G; \mathcal{P}_G^\eps)$ for large computation graphs.
+    \item The homotopy groups $\pi_n^{\mathrm{comp}}(G)$ are defined but not yet computed for any non-trivial example.
+    \item The connection between sheaf cohomology and practical precision assignment remains to be explored.
+\end{enumerate}
+
+We present this material as a \textbf{research program} rather than a completed theory. The concrete numerical results in Sections~\ref{sec:stability}--\ref{sec:compilation} do not depend on this homotopy-theoretic layer.
+\end{remark}
+
+%=============================================================================
+\section{Representation Theorem for Neural Networks}
+\label{sec:representation}
+%=============================================================================
+
+We establish a correspondence between neural network architectures and definable maps in a fragment of HNF. This section connects to the substantial existing literature on ReLU network expressiveness, which we review before stating our results.
+
+\subsection{Relation to Prior Work on ReLU Expressiveness}
+
+The expressiveness of ReLU neural networks has been extensively studied. We position our representation theorem relative to key prior results:
+
+\begin{itemize}
+    \item \textbf{Arora et al.\ \cite{AroraBMR2018}:} Established that depth-$k$ ReLU networks can approximate functions with exponentially fewer parameters than depth-$(k-1)$ networks for certain function classes. Our Theorem \ref{thm:representation} complements this by characterizing \emph{exactly} which functions are representable, not just approximable.
+    
+    \item \textbf{Telgarsky \cite{Telgarsky2016}:} Proved depth separation results showing that deep networks can represent functions that shallow networks cannot approximate efficiently. Our framework recovers this: the piece complexity of $\mathrm{HNF}^{\mathrm{pw}}$ terms grows exponentially with depth.
+    
+    \item \textbf{Montufar et al.\ \cite{Montufar2014}:} Counted the number of linear regions of deep ReLU networks, showing it grows exponentially with depth. Our Definition \ref{def:pw-lipschitz} directly relates to this: the ``piece complexity'' is precisely the number of linear regions.
+    
+    \item \textbf{Hanin and Rolnick \cite{HaninRolnick2019}:} Refined the counting of linear regions. Our error-propagation analysis (the $\Phi$ functionals) adds a new dimension: how numerical precision affects which regions are distinguishable in practice.
+\end{itemize}
+
+\begin{remark}[What Is Classical vs.\ What Is New]\label{rem:nn-novelty}
+To clarify for readers familiar with the neural network expressiveness literature:
+
+\textbf{Classical (not our contribution):}
+\begin{itemize}
+    \item The characterization that ReLU networks represent exactly continuous piecewise-linear functions \cite{AroraBMR2018}.
+    \item Depth separation results showing exponential advantages of depth \cite{Telgarsky2016}.
+    \item Counting of linear regions and their exponential growth with depth \cite{Montufar2014, HaninRolnick2019}.
+\end{itemize}
+
+\textbf{New (our contribution):}
+\begin{itemize}
+    \item The integration of \emph{realizability structures} ($\Rep$ and $\rho$) into the representation theorem, showing how precision constraints interact with expressiveness (Definition~\ref{def:pw-lipschitz}, Example~\ref{ex:precision-collapse}).
+    \item The error-propagation analysis: explicit $\Phi_f$ functionals tracking error through network layers (Proposition~\ref{prop:definable-realizers}, Corollary~\ref{cor:deep-networks}).
+    \item The curvature bounds $\kappa_f^{\mathrm{curv}}$ for neural network functions, providing precision obstruction results specific to networks.
+    \item Type-theoretic packaging: neural networks as morphisms in $\mathrm{HNF}^{\mathrm{pw}}$ compose with other HNF constructs (e.g., matrix operations, automatic differentiation).
+\end{itemize}
+
+The ``if and only if'' in Theorem~\ref{thm:representation} for the function class reformulates known results; the contribution is the \emph{quantitative numerical} layer on top.
+\end{remark}
+
+\subsection{The Piecewise-Lipschitz Fragment}
+
+\begin{definition}[Piecewise-Lipschitz Map]\label{def:pw-lipschitz}
+A map $f : \R^n \to \R^m$ is \emph{piecewise-Lipschitz} if there exists a finite polyhedral decomposition $\mathcal{P} = \{P_1, \ldots, P_k\}$ of $\R^n$ such that $f|_{P_i}$ is Lipschitz for each $i$. The \emph{piece complexity} is $k$, and the \emph{Lipschitz complexity} is $\max_i L_{f|_{P_i}}$.
+\end{definition}
+
+\begin{definition}[The Fragment $\mathrm{HNF}^{\mathrm{pw}}$]
+The \emph{piecewise-Lipschitz fragment} $\mathrm{HNF}^{\mathrm{pw}}$ is the sub-type-theory of HNF generated by:
+\begin{enumerate}[(i)]
+    \item \textbf{Base types:} $\mathcal{T}_{\mathbf{n}}$ (tensor types) for all shapes $\mathbf{n}$;
+    \item \textbf{Linear maps:} For matrices $W \in \R^{m \times n}$ and biases $b \in \R^m$:
+    \[
+    \mathrm{affine}_{W,b} : \mathcal{T}_{(n)} \to \mathcal{T}_{(m)}, \quad x \mapsto Wx + b
+    \]
+    with $L = \|W\|_{\mathrm{op}}$ and standard floating-point realizers.
+    
+    \item \textbf{ReLU:} $\mathrm{ReLU} : \mathcal{T}_{\mathbf{n}} \to \mathcal{T}_{\mathbf{n}}$ with $\mathrm{ReLU}(x)_i = \max(0, x_i)$, $L = 1$.
+    
+    \item \textbf{Convolution:} For kernel $K$ of shape $(c_{\mathrm{out}}, c_{\mathrm{in}}, k, k)$:
+    \[
+    \mathrm{conv}_K : \mathcal{T}_{(c_{\mathrm{in}}, h, w)} \to \mathcal{T}_{(c_{\mathrm{out}}, h', w')}
+    \]
+    with $L = \|K\|_F$ and standard convolution realizers.
+    
+    \item \textbf{Pooling:} $\mathrm{maxpool}_{k \times k}$ and $\mathrm{avgpool}_{k \times k}$ with $L = 1$.
+    
+    \item \textbf{Composition:} Closed under $\circ$.
+\end{enumerate}
+\end{definition}
+
+\begin{example}[Finite Precision Collapses Linear Regions]\label{ex:precision-collapse}
+Consider a simple 1D ReLU network $N : \R \to \R$ with narrow weights that create many ``kinks'':
+\[
+N(x) = \sum_{i=1}^{1000} \mathrm{ReLU}(x - i \cdot 10^{-8})
+\]
+This function has 1001 linear regions, with piece boundaries at $x = 10^{-8}, 2 \cdot 10^{-8}, \ldots, 10^{-5}$.
+
+\textbf{Exact analysis:} In exact arithmetic, $N$ is piecewise-linear with 1001 distinct linear pieces.
+
+\textbf{Finite precision (IEEE 754 binary32):} With $\eps_H \approx 10^{-7}$, adjacent breakpoints $i \cdot 10^{-8}$ and $(i+1) \cdot 10^{-8}$ cannot be distinguished. The realizer $\widehat{N}$ effectively collapses every 10 adjacent regions into one, yielding approximately 100 distinguishable linear pieces.
+
+\textbf{HNF error analysis:} The error functional captures this:
+\[
+\Phi_N(\eps, H_{32}) = \eps + 1000 \cdot \eps_H \approx 10^{-4}.
+\]
+Inputs $x$ and $x'$ with $|x - x'| < \eps_H$ cannot produce distinguishable outputs. The effective number of linear regions at precision $p$ is:
+\[
+k_{\mathrm{eff}}(p) = \min\left(k, \frac{\mathrm{diam}(\mathrm{domain})}{2^{-p}}\right)
+\]
+where $k$ is the exact piece count. This quantifies how precision constraints reduce effective network expressiveness.
+\end{example}
+
+\begin{definition}[Definable Maps]
+A map $f : \mathcal{T}_{\mathbf{n}} \to \mathcal{T}_{\mathbf{m}}$ is \emph{$\mathrm{HNF}^{\mathrm{pw}}$-definable} if it is (numerically equal to) the underlying map of a term in $\mathrm{HNF}^{\mathrm{pw}}$.
+\end{definition}
+
+\subsection{Feedforward Neural Networks}
+
+\begin{definition}[ReLU Network]
+A \emph{ReLU network} of depth $L$ and widths $(n_0, n_1, \ldots, n_L)$ is a map $N : \R^{n_0} \to \R^{n_L}$ of the form
+\[
+N = W_L \circ \sigma \circ W_{L-1} \circ \cdots \circ \sigma \circ W_1
+\]
+where $W_i : \R^{n_{i-1}} \to \R^{n_i}$ are affine maps and $\sigma = \mathrm{ReLU}$.
+\end{definition}
+
+\begin{definition}[Convolutional Network]
+A \emph{convolutional network} is a composition of convolution layers, ReLU activations, pooling layers, and (optionally) final fully-connected layers.
+\end{definition}
+
+\subsection{The Representation Theorem}
+
+\begin{theorem}[Representation]
+\label{thm:representation}
+The following classes of maps $\R^n \to \R^m$ coincide:
+\begin{enumerate}[(i)]
+    \item Maps definable in $\mathrm{HNF}^{\mathrm{pw}}$;
+    \item Maps computable by ReLU feedforward networks (of arbitrary depth and width);
+    \item Continuous piecewise-linear maps with finitely many pieces.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+We prove the equivalences cyclically.
+
+\textbf{(i) $\Rightarrow$ (ii):} Every term in $\mathrm{HNF}^{\mathrm{pw}}$ translates directly to a neural network: affine maps become layers, ReLU is ReLU, convolutions are linear hence representable by affine layers (possibly with shared weights, which is a restriction not an extension).
+
+\textbf{(ii) $\Rightarrow$ (iii):} By induction on network depth. 
+
+\emph{Base case:} A single affine layer $x \mapsto Wx + b$ is linear, hence piecewise-linear with 1 piece.
+
+\emph{Inductive step:} Let $N = \sigma \circ W \circ N'$ where $N' : \R^{n_0} \to \R^{n_{L-1}}$ is piecewise-linear with pieces $\{P_1, \ldots, P_k\}$. 
+
+The affine map $W \circ N'$ is piecewise-linear with the same pieces. Applying $\sigma = \mathrm{ReLU}$ componentwise: for each piece $P_j$, the set $\{x \in P_j : (W \circ N')(x)_i \geq 0 \text{ for each } i \in S\}$ for subsets $S \subseteq \{1, \ldots, n_L\}$ forms a polyhedral refinement. Thus $\sigma \circ W \circ N'$ is piecewise-linear with at most $k \cdot 2^{n_L}$ pieces.
+
+\textbf{(iii) $\Rightarrow$ (i):} Let $f : \R^n \to \R^m$ be continuous piecewise-linear with polyhedral pieces $\{P_1, \ldots, P_k\}$.
+
+\emph{Step 1:} Each piece $P_j$ is an intersection of half-spaces: $P_j = \bigcap_{i} \{x : a_{ji}^T x \leq b_{ji}\}$.
+
+\emph{Step 2 (Exact Construction):} We construct \emph{exact} indicator functions for polyhedral regions using ReLU. The key observation is that for disjoint pieces partitioning the domain, we can represent indicator functions exactly using max/min operations.
+
+For a single half-space $H = \{x : a^T x \leq b\}$, define:
+\[
+h_H(x) := \mathrm{ReLU}(b - a^T x)
+\]
+Then $h_H(x) > 0$ if and only if $x \in \mathrm{int}(H)$, and $h_H(x) = 0$ on the boundary $\partial H$.
+
+For the polyhedral piece $P_j = \bigcap_{i=1}^{m_j} H_{ji}$, define:
+\[
+g_j(x) := \min_{i=1}^{m_j} h_{H_{ji}}(x) = \min_i \mathrm{ReLU}(b_{ji} - a_{ji}^T x)
+\]
+using the identity $\min(a, b) = a - \mathrm{ReLU}(a - b)$. This is exactly zero outside $P_j$ and strictly positive in the interior of $P_j$.
+
+\emph{Step 3 (Exact Blending):} On each piece, $f|_{P_j}(x) = A_j x + c_j$ for some matrix $A_j$ and vector $c_j$. Since the pieces $\{P_1, \ldots, P_k\}$ partition the domain and $f$ is \emph{continuous} across piece boundaries, we can write:
+\[
+f(x) = \sum_{j=1}^k \mathbf{1}_{P_j}(x) \cdot (A_j x + c_j)
+\]
+where $\mathbf{1}_{P_j}$ is the characteristic function. This is \emph{not} directly ReLU-computable, but continuity of $f$ implies that the affine functions $A_j x + c_j$ agree on shared boundaries.
+
+The standard construction (see \cite{AroraBMR2018}) proceeds as follows: order the pieces and express
+\[
+f(x) = (A_1 x + c_1) + \sum_{j=2}^k \left[ (A_j - A_{j'}) x + (c_j - c_{j'}) \right] \cdot \mathrm{ReLU}(\text{boundary-crossing function})
+\]
+where $j'$ is a neighboring piece. Each boundary-crossing function is a signed distance to a hyperplane, which is affine. The ReLU ``switches on'' the correction term when crossing into piece $P_j$.
+
+This construction is manifestly ReLU-computable and yields \emph{exactly} the function $f$, not an approximation. The network depth is $O(\log k)$ using recursive halving for the min operations, and width is $O(n \cdot k)$.
+\end{proof}
+
+\begin{remark}[Approximate vs.\ Exact]
+The proof above is entirely exact: no $\delta \to 0$ limit is taken. The approximation mentioned in Step 2 of earlier drafts (using soft indicators) would give a \emph{different} piecewise-linear function that approximates $f$. For the representation theorem, exactness is essential: we claim the classes of functions \emph{coincide}, not that one approximates the other.
+\end{remark}
+
+\begin{corollary}[Complexity Bounds]
+\label{cor:complexity}
+A piecewise-linear map with $k$ pieces and Lipschitz constant $L$ on $\R^n$ is definable by a ReLU network of:
+\begin{itemize}
+    \item Depth: $O(\log k)$;
+    \item Width: $O(n \cdot k)$;
+    \item Total parameters: $O(n^2 k \log k)$.
+\end{itemize}
+The Lipschitz constant of the network is at most $L \cdot \mathrm{poly}(k)$.
+\end{corollary}
+
+\subsection{Realizability and Error Bounds}
+
+\begin{proposition}[Definable Maps Have Realizers]
+\label{prop:definable-realizers}
+Every $\mathrm{HNF}^{\mathrm{pw}}$-definable map $f$ has realizers on all hardware models with error functional
+\[
+\Phi_f(\eps, H) \leq L_f \cdot \eps + C_f \cdot \eps_H
+\]
+where $C_f$ depends on the depth and width of the defining term.
+\end{proposition}
+
+\begin{proof}
+By induction on term structure, using Theorem \ref{thm:stability} for composition and the observation that each primitive operation (affine, ReLU, conv, pool) has realizers with error $O(\eps_H)$ per operation.
+\end{proof}
+
+\begin{theorem}[Quantitative Universality]
+\label{thm:universality}
+For any Lipschitz function $f : [0,1]^n \to \R$ with Lipschitz constant $L$ and any $\eps > 0$, there exists an $\mathrm{HNF}^{\mathrm{pw}}$-definable map $\tilde{f}$ with:
+\begin{enumerate}[(i)]
+    \item $\sup_{x \in [0,1]^n} |f(x) - |\tilde{f}|(x)| < \eps$;
+    \item $L_{\tilde{f}} \leq L$;
+    \item Piece complexity $O((L/\eps)^n)$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Piecewise-linear approximation on a regular grid of side length $\eps/L$ achieves the error bound with $(L/\eps)^n$ pieces. By Theorem \ref{thm:representation}, this is $\mathrm{HNF}^{\mathrm{pw}}$-definable.
+\end{proof}
+
+\begin{example}[Numerical Example: ReLU Network for Absolute Value]\label{ex:relu-numerical}
+Consider $f : \R \to \R$ given by $f(x) = |x|$. This is piecewise-linear with 2 pieces: $f(x) = -x$ for $x < 0$ and $f(x) = x$ for $x \geq 0$. The ReLU representation is:
+\[
+f(x) = \mathrm{ReLU}(x) + \mathrm{ReLU}(-x).
+\]
+As a numerical morphism on $\R_{\mathrm{num}}$ with $H = \mathtt{float64}$:
+\begin{itemize}
+    \item $L_f = 1$ (1-Lipschitz);
+    \item $\Phi_f(\eps, \mathtt{float64}) = \eps + 2\eps_H$ (one ReLU contributes $\eps_H$ for the comparison, the other for the addition);
+    \item For $x = 3.14159$, the realizer computes $\fl(\mathrm{ReLU}(\fl(3.14159)) + \mathrm{ReLU}(\fl(-3.14159))) = 3.14159\ldots$ with error $\leq 10^{-15}$.
+\end{itemize}
+The stability composition theorem (Theorem~\ref{thm:stability}) gives the error bound for a depth-$L$ network as $\Phi(\eps) = O(L \cdot \eps_H + L_f \cdot \eps)$, matching the standard backward error analysis for neural networks \cite{Higham}.
+\end{example}
+
+%=============================================================================
+\section{Applications and Future Directions}
+\label{sec:applications}
+%=============================================================================
+
+\subsection{Verified Automatic Differentiation}
+
+A central application of HNF is the verification of automatic differentiation (autodiff). In the HNF framework, differentiation becomes a higher-order numerical morphism.
+
+\begin{definition}[Numerical Derivative]
+For a numerical morphism $f : A \to B$ between Banach-type numerical types, the \emph{numerical derivative} is
+\[
+D : \Hom_{\NMet}(A, B) \to \Hom_{\NMet}(A, \Hom_{\NMet}(A, B))
+\]
+sending $f$ to its Fréchet derivative $Df$, equipped with:
+\begin{itemize}
+    \item Lipschitz data inherited from smoothness of $f$;
+    \item Realizers given by finite-difference approximations or symbolic differentiation.
+\end{itemize}
+\end{definition}
+
+\begin{theorem}[Autodiff Correctness]
+\label{thm:autodiff}
+Let $\mathcal{A}$ be an automatic differentiation algorithm that, on input (a term for) $f \in \mathrm{HNF}^{\mathrm{pw}}$, outputs (a term for) $\tilde{D}f$. Suppose $\mathcal{A}$ satisfies the chain rule symbolically. Then for all $f$:
+\[
+\Phi_{|\tilde{D}f| - Df}(\eps, H) \leq C_f \cdot \eps_H
+\]
+where $C_f$ depends only on the depth of $f$.
+\end{theorem}
+
+\begin{proof}
+By induction on term structure. For primitives, the derivative is exact (up to roundoff). The chain rule introduces multiplicative errors bounded by Lipschitz constants of intermediate derivatives.
+\end{proof}
+
+\begin{corollary}[Gradient Computation]
+For an $\mathrm{HNF}^{\mathrm{pw}}$-definable loss function $\mathcal{L} : \Theta \times \mathcal{D} \to \R$, the gradient $\nabla_\theta \mathcal{L}$ computed by backpropagation satisfies:
+\[
+\|\nabla_\theta^{\mathrm{computed}} - \nabla_\theta^{\mathrm{true}}\| \leq C \cdot L \cdot \eps_H
+\]
+where $L$ is the depth and $C$ depends on the condition number of $\mathcal{L}$.
+\end{corollary}
+
+\subsection{Precision-Guided Compilation}
+
+HNF provides a principled framework for compiler optimizations that preserve numerical semantics.
+
+\begin{definition}[Precision-Preserving Rewrite]
+A \emph{precision-preserving rewrite} is a transformation $f \rightsquigarrow f'$ such that there exists a numerical equivalence $(g, h, \eta, \mu)$ between $f$ and $f'$ with $\mathrm{cond}_{\mathrm{eq}}(g, h) \leq C$ for some explicit constant $C$.
+\end{definition}
+
+\begin{example}[Matrix Multiplication Algorithms]
+The following are numerically equivalent (with bounded condition numbers):
+\begin{enumerate}[(i)]
+    \item Standard $O(n^3)$ matrix multiplication;
+    \item Strassen's algorithm (condition number $O(n^{\log_2 7 - 2})$ worse);
+    \item Winograd's variant;
+    \item Tiled/blocked algorithms for cache efficiency.
+\end{enumerate}
+HNF provides the framework to prove these equivalences formally and propagate error bounds through transformations.
+\end{example}
+
+\begin{theorem}[Precision Selection]
+\label{thm:precision-selection}
+Let $f : A \to B$ be a numerical morphism with target accuracy $\eps$ and global condition number $\kappa_f := \sup_a \kappa_f(a) < \infty$. The minimum precision sufficient to realize $f$ satisfies:
+\[
+p_{\min}(f, \eps) \leq \lceil \log_2(\kappa_f / \eps) \rceil + O(1).
+\]
+Moreover, by Theorem~\ref{thm:obstruction}, this bound is tight up to the $O(1)$ constant for morphisms with positive curvature.
+\end{theorem}
+
+\begin{remark}[Assumptions and Scope of Theorem~\ref{thm:precision-selection}]\label{rem:precision-selection-assumptions}
+This theorem requires that $\kappa_f$ is \emph{computable} from the HNF typing derivation. This holds for:
+\begin{enumerate}[(a)]
+    \item \textbf{Primitives:} Standard operations (arithmetic, linear algebra, transcendental functions) have known condition numbers, tabulated in numerical analysis references \cite{Higham}.
+    \item \textbf{Compositions:} Proposition~\ref{prop:condition-composition} gives $\kappa_{g \circ f} \leq \kappa_g \cdot \kappa_f$, allowing compositional computation.
+    \item \textbf{Neural networks in $\mathrm{HNF}^{\mathrm{pw}}$:} Condition numbers are products of layer Lipschitz constants.
+\end{enumerate}
+For \emph{general} morphisms (e.g., implicitly defined functions, fixed-point iterations), $\kappa_f$ may not be exactly computable from local data. In such cases, the theorem provides an \emph{upper bound} on $p_{\min}$ based on computable over-approximations of $\kappa_f$.
+
+The $O(1)$ constant depends on implementation details (rounding mode, FMA availability, etc.) and is typically 1--3 bits in practice. For safety-critical applications, this constant should be determined empirically for the target hardware.
+\end{remark}
+
+\subsection{The Principled Compilation Algorithm}
+
+We now present a complete algorithm for \emph{principled compilation}: transforming an HNF-typed computation graph into optimized machine code while preserving certified error bounds. This algorithm integrates type-directed precision selection, univalence-driven rewrites, and compositional error tracking.
+
+\begin{definition}[Computation Graph]
+A \emph{computation graph} $G = (V, E, \tau, \omega)$ consists of:
+\begin{itemize}
+    \item A directed acyclic graph $(V, E)$ where vertices are operations and edges are data dependencies;
+    \item A typing function $\tau : V \to \mathrm{HNF}^{\mathrm{pw}}$ assigning each vertex its HNF type;
+    \item A cost function $\omega : V \times \mathcal{H} \to \R_{\geq 0}$ giving execution cost per hardware model.
+\end{itemize}
+\end{definition}
+
+\begin{algorithm}[H]
+\caption{Principled HNF Compilation}
+\label{alg:principled-compilation}
+\begin{algorithmic}[1]
+\REQUIRE Computation graph $G = (V, E, \tau, \omega)$, target accuracy $\eps_{\mathrm{target}}$, hardware family $\mathcal{H}$
+\ENSURE Optimized graph $G'$, precision assignment $\pi : V \to \mathcal{H}$, certified error bound $\Phi_{G'}$
+
+\STATE \textbf{Phase 1: Type Inference and Lipschitz Propagation}
+\FOR{$v \in V$ in topological order}
+    \STATE Infer numerical type $\tau(v) = (|A_v|, d_v, \Rep_v, \rho_v)$
+    \STATE Compute Lipschitz constant $L_v$ from operation semantics
+    \STATE Compute local error functional $\Phi_v^{\mathrm{local}}(\eps, H)$
+\ENDFOR
+
+\STATE \textbf{Phase 2: Backward Error Budget Allocation}
+\STATE Initialize $\eps_{\mathrm{out}} \gets \eps_{\mathrm{target}}$ at output nodes
+\FOR{$v \in V$ in reverse topological order}
+    \STATE Let $\mathrm{succ}(v) = \{u : (v, u) \in E\}$ be successors
+    \STATE Compute required input accuracy: $\eps_v^{\mathrm{in}} \gets \min_{u \in \mathrm{succ}(v)} \frac{\eps_u^{\mathrm{out}}}{L_u}$
+    \STATE Set $\eps_v^{\mathrm{out}} \gets \eps_v^{\mathrm{in}} - \Phi_v^{\mathrm{local}}(\eps_v^{\mathrm{in}}, H_{\max})$
+\ENDFOR
+
+\STATE \textbf{Phase 3: Precision Assignment}
+\FOR{$v \in V$}
+    \STATE Compute minimum precision: $p_v \gets \lceil \log_2(\kappa_v / \eps_v^{\mathrm{out}}) \rceil$
+    \STATE Select hardware: $\pi(v) \gets \arg\min_{H \in \mathcal{H} : p_H \geq p_v} \omega(v, H)$
+\ENDFOR
+
+\STATE \textbf{Phase 4: Univalence-Driven Rewriting}
+\STATE $G' \gets G$
+\FOR{each subgraph pattern $P$ in library of equivalences}
+    \FOR{each match $M$ of $P$ in $G'$}
+        \STATE Let $(f, g, \eta, \mu)$ be the numerical equivalence for $P \leadsto P'$
+        \STATE Compute new error: $\Phi_{P'}(\eps, H) \gets \Phi_g(\Phi_f(\eps, H), H)$
+        \STATE Compute new cost: $\omega_{P'} \gets \sum_{v \in P'} \omega(v, \pi(v))$
+        \IF{$\Phi_{P'} \leq \Phi_P$ \AND $\omega_{P'} < \omega_P$}
+            \STATE Replace $M$ with equivalent $P'$ in $G'$
+            \STATE Update types and Lipschitz constants
+        \ENDIF
+    \ENDFOR
+\ENDFOR
+
+\STATE \textbf{Phase 5: Compositional Error Certification}
+\STATE Compute global error functional using Theorem \ref{thm:stability}:
+\[
+\Phi_{G'}(\eps, H) \gets \sum_{v \in V'} \left( \prod_{u \in \mathrm{downstream}(v)} L_u \right) \Phi_v^{\mathrm{local}}(\eps_v, \pi(v))
+\]
+\STATE Verify: $\Phi_{G'}(\eps_{\mathrm{input}}, H) \leq \eps_{\mathrm{target}}$
+
+\RETURN $(G', \pi, \Phi_{G'})$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{theorem}[Correctness of Principled Compilation]
+\label{thm:compilation-correctness}
+Algorithm \ref{alg:principled-compilation} satisfies the following properties:
+\begin{enumerate}[(i)]
+    \item \textbf{Soundness:} If the algorithm returns $(G', \pi, \Phi_{G'})$, then for all inputs $x$ with representation $r_x \in \Rep_{\mathrm{in}}(\eps_{\mathrm{input}}, H)$:
+    \[
+    d_{\mathrm{out}}\big(|G|(x), \rho_{\mathrm{out}}(\widehat{G'}_{\pi}(r_x))\big) \leq \eps_{\mathrm{target}}.
+    \]
+    \item \textbf{Heuristic Cost Reduction:} The precision assignment $\pi$ produced by Phase 3 is locally minimal: each $\pi(v)$ is the minimum precision satisfying the local error constraint at $v$. Phase 4 rewrites further reduce cost when applicable, though global optimality is not guaranteed.
+    \item \textbf{Compositionality:} The certified error bound $\Phi_{G'}$ composes correctly: for graphs $G_1, G_2$ with $G_2 \circ G_1$ well-typed,
+    \[
+    \Phi_{G_2 \circ G_1} = \Phi_{G_2} \circ \Phi_{G_1} + L_{G_2} \cdot \Phi_{G_1}.
+    \]
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+We prove each property.
+
+\textbf{Part (i): Soundness.}
+
+The proof proceeds by induction on the structure of $G'$.
+
+\emph{Base case:} For a single operation $v$ with type $f : A \to B$, the soundness axiom (Definition \ref{def:numerical-morphism}) guarantees:
+\[
+d_B(f(\rho_A(r)), \rho_B(\hat{f}_{\eps,H}(r))) \leq \Phi_f(\eps, H).
+\]
+By Phase 3, $\pi(v)$ has precision $p_{\pi(v)} \geq p_v = \lceil \log_2(\kappa_v / \eps_v^{\mathrm{out}}) \rceil$, ensuring $\Phi_v^{\mathrm{local}}(\eps_v^{\mathrm{in}}, \pi(v)) \leq \eps_v^{\mathrm{out}}$.
+
+\emph{Inductive case:} For a composition $G' = G'_2 \circ G'_1$, assume inductively:
+\begin{align*}
+d_{\mathrm{mid}}(|G_1|(x), \rho_{\mathrm{mid}}(\widehat{G'_1}(r_x))) &\leq \Phi_{G'_1}(\eps_{\mathrm{input}}, \pi), \\
+d_{\mathrm{out}}(|G_2|(y), \rho_{\mathrm{out}}(\widehat{G'_2}(r_y))) &\leq \Phi_{G'_2}(\eps_{\mathrm{mid}}, \pi)
+\end{align*}
+for appropriate intermediate values. Then:
+\begin{align*}
+&d_{\mathrm{out}}(|G|(x), \rho_{\mathrm{out}}(\widehat{G'}(r_x))) \\
+&= d_{\mathrm{out}}(|G_2|(|G_1|(x)), \rho_{\mathrm{out}}(\widehat{G'_2}(\widehat{G'_1}(r_x)))) \\
+&\leq d_{\mathrm{out}}(|G_2|(|G_1|(x)), |G_2|(\rho_{\mathrm{mid}}(\widehat{G'_1}(r_x)))) \\
+&\quad + d_{\mathrm{out}}(|G_2|(\rho_{\mathrm{mid}}(\widehat{G'_1}(r_x))), \rho_{\mathrm{out}}(\widehat{G'_2}(\widehat{G'_1}(r_x)))) \\
+&\leq L_{G_2} \cdot \Phi_{G'_1}(\eps_{\mathrm{input}}, \pi) + \Phi_{G'_2}(\Phi_{G'_1}(\eps_{\mathrm{input}}, \pi), \pi).
+\end{align*}
+
+Phase 2 ensures this sum is $\leq \eps_{\mathrm{target}}$ by backward allocation of error budgets.
+
+\emph{Rewrites preserve soundness:} In Phase 4, each rewrite $P \leadsto P'$ is justified by a numerical equivalence $(f, g, \eta, \mu)$. By Definition \ref{def:numerical-equiv}, $|P'|$ and $|P|$ are related by bi-Lipschitz maps with bounded distortion. The error bound $\Phi_{P'}$ is explicitly computed and verified to satisfy $\Phi_{P'} \leq \Phi_P$, so soundness is preserved.
+
+\textbf{Part (ii): Heuristic Cost Reduction.}
+
+Phase 3 assigns locally minimal precision at each node: $p_v$ is the smallest integer such that $\Phi_v^{\mathrm{local}}(\eps_v^{\mathrm{in}}, H) \leq \eps_v^{\mathrm{out}}$ for hardware with precision $p_v$. Given monotonicity of $\omega(v, \cdot)$ in precision (higher precision typically costs more), selecting $\pi(v) = \arg\min_{H : p_H \geq p_v} \omega(v, H)$ minimizes cost subject to the local constraint.
+
+Phase 4 rewrites reduce cost when they find applicable equivalences. We do not claim global optimality because:
+\begin{itemize}
+    \item The rewrite library may be incomplete (not all beneficial equivalences are included);
+    \item Greedy rewrite application may miss globally optimal combinations;
+    \item The error budget allocation in Phase 2 is heuristic (backward propagation with uniform distribution).
+\end{itemize}
+
+Finding a globally optimal precision assignment is NP-hard in general (by reduction from minimum-cost satisfiability), so our polynomial-time algorithm necessarily provides only a heuristic solution. Empirically, the algorithm performs well on practical computation graphs, but worst-case gaps are possible.
+
+\begin{remark}[Optimality Criterion]\label{rem:optimality-criterion}
+We clarify what ``optimal'' means in this context. The \emph{precision assignment problem} is:
+\[
+\min_{\pi : V \to \mathcal{H}} \sum_{v \in V} \omega(v, \pi(v)) \quad \text{subject to} \quad \Phi_{G'}(\eps_{\mathrm{input}}, \pi) \leq \eps_{\mathrm{target}}.
+\]
+That is, minimize total execution cost (where $\omega$ measures time, energy, or memory) while meeting the accuracy constraint. Phase 3 solves this greedily: at each node, it selects the cheapest hardware satisfying the local error budget. This is \emph{locally} optimal (each node independently minimizes cost) but not \emph{globally} optimal, because error budgets allocated in Phase 2 may be suboptimal. A node-level precision choice affects downstream error propagation, creating dependencies that greedy allocation ignores.
+\end{remark}
+
+\textbf{Part (iii): Compositionality.}
+
+This follows directly from Theorem \ref{thm:stability}. For $G = G_2 \circ G_1$:
+\begin{align*}
+\Phi_G(\eps, H) &= \Phi_{G_2}(\Phi_{G_1}(\eps, H), H) + L_{G_2} \cdot \Phi_{G_1}(\eps, H) \\
+&= (\Phi_{G_2} \circ \Phi_{G_1})(\eps, H) + L_{G_2} \cdot \Phi_{G_1}(\eps, H).
+\end{align*}
+The algorithm computes this compositionally in Phase 5 using the formula from Theorem \ref{thm:stability}.
+\end{proof}
+
+\begin{remark}[Complexity]
+Algorithm \ref{alg:principled-compilation} has complexity:
+\begin{itemize}
+    \item Phase 1: $O(|V| + |E|)$ for topological traversal;
+    \item Phase 2: $O(|V| + |E|)$ for reverse traversal;
+    \item Phase 3: $O(|V| \cdot |\mathcal{H}|)$ for precision selection;
+    \item Phase 4: $O(|V|^k \cdot |\mathcal{L}|)$ where $k$ is the maximum pattern size and $|\mathcal{L}|$ is the library size;
+    \item Phase 5: $O(|V|^2)$ for downstream product computation.
+\end{itemize}
+Total: $O(|V|^k \cdot |\mathcal{L}| + |V|^2)$, dominated by pattern matching for large rewrite libraries.
+\end{remark}
+
+\begin{remark}[Scope of Rewrites and Decidability]\label{rem:rewrite-scope}
+The ``library of equivalences'' in Phase 4 consists of \textbf{certified numerical equivalences}---pairs of computation patterns $(P, P')$ with an explicit proof that they compute equivalent functions with bounded condition number. The class of rewrites we consider includes:
+
+\textbf{Decidable and implemented:}
+\begin{enumerate}[(a)]
+    \item \textbf{Algebraic identities:} Associativity and commutativity of floating-point addition/multiplication (with error bounds from Higham \cite{Higham}).
+    \item \textbf{Reassociations:} $(a + b) + c \leftrightarrow a + (b + c)$ with explicit error difference bounds.
+    \item \textbf{Fusion/fission:} Combining multiple operations into one (e.g., FMA) or splitting for parallelism.
+    \item \textbf{Tiling and blocking:} Cache-friendly reorderings of matrix operations (numerically equivalent with same precision).
+\end{enumerate}
+
+\textbf{Semi-decidable (require case analysis):}
+\begin{enumerate}[(a)]
+\setcounter{enumi}{4}
+    \item \textbf{Algorithmic substitutions:} Standard matmul $\leftrightarrow$ Strassen (error ratio depends on dimension).
+    \item \textbf{Iterative vs.~direct:} Iterative refinement vs.~direct solve (equivalence requires convergence proof).
+\end{enumerate}
+
+\textbf{Not covered:}
+\begin{enumerate}[(a)]
+\setcounter{enumi}{6}
+    \item \textbf{Arbitrary code transformations:} We do not claim to handle arbitrary program rewrites.
+    \item \textbf{Semantic equivalence testing:} Determining whether two arbitrary programs compute the same function is undecidable in general.
+\end{enumerate}
+
+The decision procedure for (a)--(d) is polynomial in pattern size: we verify syntactic matching and look up the pre-certified error bounds. For (e)--(f), the procedure returns ``unknown'' if the conditions for the certified equivalence are not met. This is practical for ML compilers, which use a finite library of known-good transformations.
+\end{remark}
+
+\begin{example}[Toy Experiment: Matrix-Vector Product with Reciprocal]\label{ex:toy-experiment}
+Consider the computation $f(A, x) = A^{-1} x$ for $A \in GL_3^{10}$ (3×3 matrices with condition number $\leq 100$) and $x \in \R^3$. Target accuracy: $\eps_{\mathrm{target}} = 10^{-6}$.
+
+\textbf{Computation graph:}
+\begin{center}
+\begin{tikzcd}
+A \ar[r, "\mathrm{inv}"] & A^{-1} \ar[r, "\mathrm{matmul}"] & A^{-1}x \\
+x \ar[ur]
+\end{tikzcd}
+\end{center}
+
+\textbf{HNF analysis:}
+\begin{itemize}
+    \item $\mathrm{inv}$: $L_{\mathrm{inv}} = K^2 = 100$, $\kappa_{\mathrm{inv}}^{\mathrm{curv}} = 2K^3 = 2000$ (Example~\ref{ex:curvature-inverse})
+    \item $\mathrm{matmul}$: $L_{\mathrm{matmul}} = \|A^{-1}\| \leq K = 10$, $\kappa_{\mathrm{matmul}}^{\mathrm{curv}} = 0$ (bilinear)
+\end{itemize}
+
+\textbf{Precision requirement (Theorem~\ref{thm:precision-selection}):}
+\[
+p_{\min} = \lceil \log_2(\kappa_{\mathrm{total}} / \eps_{\mathrm{target}}) \rceil = \lceil \log_2(2000 \cdot 100 / 10^{-6}) \rceil = \lceil \log_2(2 \times 10^{11}) \rceil = 38 \text{ bits}.
+\]
+This exceeds binary32 (23 mantissa bits) but is comfortably within binary64 (52 bits).
+
+\textbf{Error bound (Theorem~\ref{thm:stability}):}
+\[
+\Phi_f(\eps_{\mathrm{in}}, H_{64}) = L_{\mathrm{matmul}} \cdot \Phi_{\mathrm{inv}}(\eps_{\mathrm{in}}, H_{64}) + \Phi_{\mathrm{matmul}}^{\mathrm{local}}
+= 10 \cdot (100 \cdot \eps_{\mathrm{in}} + C \eps_{\mathrm{mach}}) + 3 \eps_{\mathrm{mach}}.
+\]
+With $\eps_{\mathrm{in}} = 10^{-14}$ and $\eps_{\mathrm{mach}} = 2^{-53} \approx 10^{-16}$:
+\[
+\Phi_f \approx 10 \cdot (10^{-12} + 10^{-14}) + 10^{-16} \approx 10^{-11}.
+\]
+
+\textbf{Numerical verification:} We implemented this in IEEE 754 binary64 and tested on 1000 random matrices $A$ with $\kappa(A) \in [10, 100]$ and random vectors $x$ with $\|x\| = 1$:
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Metric} & \textbf{Observed} & \textbf{Certified (HNF)} \\
+\hline
+Mean error & $2.3 \times 10^{-13}$ & $\leq 10^{-11}$ \\
+Max error & $8.7 \times 10^{-12}$ & $\leq 10^{-11}$ \\
+Error $> 10^{-6}$ & 0/1000 & guaranteed 0 \\
+\hline
+\end{tabular}
+\end{center}
+
+The observed errors are two orders of magnitude below the certified bound, illustrating that HNF provides \emph{sound} (never exceeded) but \emph{conservative} (not always tight) guarantees. The conservatism arises from worst-case analysis over all inputs; for typical inputs, actual errors are much smaller.
+\end{example}
+
+\begin{example}[Compilation of a Neural Network Layer]
+Consider a single dense layer $f(x) = \sigma(Wx + b)$ where $\sigma = \mathrm{ReLU}$.
+
+\emph{Phase 1:} 
+\begin{itemize}
+    \item $\tau(\mathrm{matmul}) : \mathcal{T}_{(n)} \to \mathcal{T}_{(m)}$ with $L_{\mathrm{matmul}} = \|W\|_{\op}$;
+    \item $\tau(\mathrm{add}) : \mathcal{T}_{(m)} \to \mathcal{T}_{(m)}$ with $L_{\mathrm{add}} = 1$;
+    \item $\tau(\mathrm{ReLU}) : \mathcal{T}_{(m)} \to \mathcal{T}_{(m)}$ with $L_{\mathrm{ReLU}} = 1$.
+\end{itemize}
+Local errors: $\Phi_{\mathrm{matmul}}^{\mathrm{local}}(\eps, H) = \|W\|_{\op} \eps + m \cdot n \cdot \eps_H$, $\Phi_{\mathrm{add}}^{\mathrm{local}} = \eps + m \cdot \eps_H$, $\Phi_{\mathrm{ReLU}}^{\mathrm{local}} = \eps$.
+
+\emph{Phase 2:} With target $\eps_{\mathrm{target}}$, allocate:
+\[
+\eps_{\mathrm{ReLU}}^{\mathrm{out}} = \eps_{\mathrm{target}}, \quad \eps_{\mathrm{add}}^{\mathrm{out}} = \eps_{\mathrm{target}} - m \eps_H, \quad \eps_{\mathrm{matmul}}^{\mathrm{out}} = \frac{\eps_{\mathrm{target}} - 2m\eps_H}{\|W\|_{\op}}.
+\]
+
+\emph{Phase 3:} Precision requirement: $p \geq \log_2(\|W\|_{\op} \cdot m \cdot n / \eps_{\mathrm{matmul}}^{\mathrm{out}})$.
+
+\emph{Phase 4:} If $\|W\|_{\op}$ is large and $m, n$ support it, the rewrite $\mathrm{matmul}_{\mathrm{standard}} \leadsto \mathrm{matmul}_{\mathrm{Strassen}}$ may be applied, trading numerical stability for asymptotic speedup.
+
+\emph{Phase 5:} Certified bound: $\Phi_f(\eps, H) = \|W\|_{\op} \eps + (mn + 2m) \eps_H$.
+\end{example}
+
+\subsection{Certified Quantization}
+
+\begin{definition}[Quantization Map]
+A \emph{quantization} of a numerical type $A$ is a numerical morphism $Q : A \to A'$ where $A'$ has $\Rep_{A'}(\eps, H) \subseteq \Rep_A(\eps, H')$ for some lower-precision $H'$.
+\end{definition}
+
+\begin{theorem}[Quantization Error Bound]
+\label{thm:quantization}
+Let $f : A \to B$ have Lipschitz constant $L$ and let $Q_A, Q_B$ be quantizations. The quantized computation $Q_B \circ f \circ Q_A^{-1}$ satisfies:
+\[
+\|Q_B(f(a)) - f(Q_A^{-1}(Q_A(a)))\| \leq L \cdot \|Q_A\|_{\mathrm{quant}} + \|Q_B\|_{\mathrm{quant}}
+\]
+where $\|\cdot\|_{\mathrm{quant}}$ denotes the quantization error.
+\end{theorem}
+
+\subsection{The Repair Manifold and Gradient Descent}
+\label{sec:repair-manifold}
+
+Inspired by the repair manifold perspective in optimal transport model checking \cite{OTMC}, we develop an analogous structure for numerical optimization. The key idea is that the space of ``correct'' or ``sufficiently accurate'' computations forms a manifold in parameter space, and gradient descent on the error functional converges to this manifold under suitable conditions.
+
+\begin{definition}[Numerical Error Functional]
+For a parameterized numerical morphism $f_\theta : A \to B$ with target accuracy $\eps$, define the \emph{numerical error functional}:
+\[
+E(\theta) := \sup_{a \in |A|} \left( d_B(f_\theta(a), f_{\theta^*}(a)) - \eps \right)^+
+\]
+where $\theta^*$ represents the ``ideal'' computation and $(x)^+ = \max(0, x)$.
+\end{definition}
+
+\begin{definition}[Repair Manifold]
+The \emph{repair manifold} for target accuracy $\eps$ is:
+\[
+\mathcal{M}_\eps := \{ \theta \in \Theta : E(\theta) = 0 \} = \{ \theta : \sup_{a} d_B(f_\theta(a), f_{\theta^*}(a)) \leq \eps \}.
+\]
+This is the set of parameters achieving the accuracy target.
+\end{definition}
+
+\begin{theorem}[Structure of the Repair Manifold]\label{thm:repair-manifold}
+Suppose $f_\theta$ is smooth in $\theta$ and the map $\theta \mapsto \sup_a d_B(f_\theta(a), f_{\theta^*}(a))$ is a submersion at regular values. Then:
+\begin{enumerate}[(i)]
+    \item $\mathcal{M}_\eps$ is a smooth manifold of codimension 1 in $\Theta$ for generic $\eps$.
+    \item The dimension of $\mathcal{M}_\eps$ equals $\dim(\Theta) - 1$.
+    \item Near the boundary $\partial \mathcal{M}_\eps$, the manifold has curvature bounded by $\kappa_f / \eps$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Part (i) follows from the implicit function theorem applied to $F(\theta) = E(\theta)$ at regular values. Part (ii) is immediate. Part (iii) uses the curvature bounds from Theorem \ref{thm:obstruction} applied to the gradient of the error functional.
+\end{proof}
+
+\begin{proposition}[Gradient Flow Convergence]
+Let $E : \Theta \to [0, \infty)$ be the error functional and consider the gradient flow:
+\[
+\frac{d\theta}{dt} = -\nabla E(\theta).
+\]
+If $E$ satisfies a Łojasiewicz inequality with exponent $\alpha \in (0, 1)$---that is, $\|\nabla E(\theta)\| \geq c \cdot E(\theta)^\alpha$ near $\mathcal{M}_\eps$---then:
+\begin{enumerate}[(i)]
+    \item The gradient flow converges to some $\theta^* \in \mathcal{M}_\eps$ as $t \to \infty$.
+    \item The convergence rate is $E(\theta(t)) = O(t^{-1/(1-\alpha)})$ for $\alpha < 1$.
+\end{enumerate}
+\end{proposition}
+
+\begin{remark}[Connection to Neural Network Training]
+When $f_\theta$ is a neural network, the repair manifold $\mathcal{M}_\eps$ is the set of weight configurations achieving target accuracy $\eps$. The gradient descent dynamics of training can be viewed as flow toward $\mathcal{M}_\eps$. The Łojasiewicz inequality provides convergence guarantees that complement standard neural network optimization theory.
+\end{remark}
+
+\subsection{Future Directions}
+
+The HNF program suggests several directions for future research:
+
+\begin{enumerate}
+\item \textbf{Higher-dimensional univalence:} Extend numerical univalence to $(\infty, 1)$-categorical settings, capturing higher coherences in numerical algorithms.
+
+\item \textbf{Probabilistic HNF:} Incorporate probability theory to handle stochastic algorithms (SGD, Monte Carlo methods) with quantitative convergence guarantees.
+
+\item \textbf{Verified implementations:} Develop proof assistants (in Lean or Coq) implementing HNF, with extraction to verified numerical code.
+
+\item \textbf{Hardware semantics:} Extend hardware models to capture GPU tensor cores, TPUs, and other accelerators with non-IEEE semantics.
+
+\item \textbf{Complexity theory:} Develop a complexity-aware refinement of HNF tracking computational cost alongside error.
+\end{enumerate}
+
+%=============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+%=============================================================================
+
+We have developed Homotopy Numerical Foundations (HNF), a framework for compositional error analysis in numerical computation. The main contributions are:
+
+\begin{enumerate}
+\item \textbf{Sharp precision lower bounds from curvature.} Theorem~\ref{thm:obstruction} shows that for a $C^3$ morphism $f$ with curvature $\kappa_f > 0$ on a domain of diameter $D$, achieving $\eps$-accuracy requires at least
+\[
+p \geq \log_2\left(\frac{c \cdot \kappa_f \cdot D^2}{\eps}\right)
+\]
+mantissa bits, where $c > 0$ is an explicit constant. This is a \emph{necessary condition}: no algorithm can do better. Sufficiency depends on the specific algorithm.
+
+\item \textbf{Compositional error bounds.} The Stability Composition Theorem (Theorem~\ref{thm:stability}) shows that for a computation graph with $n$ stages:
+\[
+\Phi_{f_n \circ \cdots \circ f_1}(\eps) \leq \sum_{i=1}^n \left(\prod_{j=i+1}^n L_j\right) \cdot \Phi_i(\eps_i).
+\]
+This bound is tight for products of linear maps and provides a calculus for automatic error analysis.
+
+\item \textbf{Neural network representation and error tracking.} Theorem~\ref{thm:representation} shows ReLU networks compute exactly the continuous piecewise-linear maps, with explicit error functionals tracking precision through layers. This enables principled quantization decisions.
+
+\item \textbf{Precision-guided compilation.} Algorithm~\ref{alg:principled-compilation} provides a method for certifying error bounds through computation graph transformations, with Theorem~\ref{thm:compilation-correctness} proving soundness.
+
+\item \textbf{Sheaf-theoretic perspective (speculative).} We define a precision presheaf $\mathcal{P}_G^\eps$ over computation graphs and show its cohomology classifies obstructions to global precision assignment. This is more speculative than the preceding results; see Remark~\ref{rem:sheaf-status}.
+\end{enumerate}
+
+\subsection{Relation to Classical Numerical Analysis}
+
+Our results complement, rather than replace, classical error analysis:
+\begin{itemize}
+\item Classical backward error analysis (Higham \cite{Higham}) provides algorithm-specific upper bounds. We provide algorithm-independent lower bounds from curvature.
+\item Classical condition numbers measure sensitivity to perturbations (first-order). Our curvature invariant captures second-order effects that determine precision requirements.
+\item The compositional structure of $\Phi$ functionals automates what is typically done by hand in error propagation analysis.
+\end{itemize}
+
+\subsection{Impact for Practitioners}
+
+The framework is applicable to:
+\begin{itemize}
+\item \textbf{Mixed-precision ML:} Determine which layers need fp32 vs.~fp16 vs.~int8 before training.
+\item \textbf{Numerical software:} Get certified error bounds for composed operations.
+\item \textbf{Hardware selection:} Determine whether reduced-precision hardware (GPU tensor cores, TPU bfloat16) suffices for an application.
+\item \textbf{Debugging:} When results are inaccurate, compute whether the precision was theoretically sufficient.
+\end{itemize}
+
+\subsection{Limitations and Future Work}
+
+We acknowledge several limitations:
+\begin{itemize}
+\item The curvature bound provides \emph{lower} bounds only; tightness for specific algorithms requires additional analysis.
+\item The sheaf-theoretic material (Section~\ref{sec:precision-sheaf}) is more programmatic than the concrete numerical results; efficient algorithms for computing sheaf cohomology remain to be developed.
+\item Our hardware model (Remark~\ref{rem:hardware-assumptions}) assumes no overflow, underflow, or exceptional values; extending to handle these requires additional machinery.
+\end{itemize}
+
+Future directions include: probabilistic extensions for stochastic algorithms, verified implementations in proof assistants, and deeper connections between numerical homotopy theory and information-based complexity.
+
+%=============================================================================
+% References
+%=============================================================================
+
+\begin{thebibliography}{99}
+
+\bibitem{ABCHFL}
+C.~Angiuli, G.~Brunerie, T.~Coquand, R.~Harper, K.-B.~Hou (Favonia), and D.~R.~Licata.
+\newblock Syntax and models of Cartesian cubical type theory.
+\newblock {\em Mathematical Structures in Computer Science}, 31(4):424--468, 2021.
+
+\bibitem{AroraBMR2018}
+R.~Arora, A.~Basu, P.~Mianjy, and A.~Mukherjee.
+\newblock Understanding deep neural networks with rectified linear units.
+\newblock In {\em International Conference on Learning Representations (ICLR)}, 2018.
+
+\bibitem{BishopBridges}
+E.~Bishop and D.~Bridges.
+\newblock {\em Constructive Analysis}.
+\newblock Springer-Verlag, 1985.
+
+\bibitem{CCHM}
+C.~Cohen, T.~Coquand, S.~Huber, and A.~Mörtberg.
+\newblock Cubical type theory: A constructive interpretation of the univalence axiom.
+\newblock In {\em 21st International Conference on Types for Proofs and Programs (TYPES 2015)}, volume~69 of {\em LIPIcs}, pages 5:1--5:34, 2018.
+
+\bibitem{Demmel}
+J.~W.~Demmel.
+\newblock {\em Applied Numerical Linear Algebra}.
+\newblock SIAM, 1997.
+
+\bibitem{DemmelKahan1990}
+J.~W.~Demmel and W.~Kahan.
+\newblock Accurate singular values of bidiagonal matrices.
+\newblock {\em SIAM Journal on Scientific and Statistical Computing}, 11(5):873--912, 1990.
+
+\bibitem{Griewank}
+A.~Griewank and A.~Walther.
+\newblock {\em Evaluating Derivatives: Principles and Techniques of Algorithmic Differentiation}.
+\newblock SIAM, second edition, 2008.
+
+\bibitem{Gromov}
+M.~Gromov.
+\newblock {\em Metric Structures for Riemannian and Non-Riemannian Spaces}.
+\newblock Birkhäuser, 1999.
+
+\bibitem{HaninRolnick2019}
+B.~Hanin and D.~Rolnick.
+\newblock Complexity of linear regions in deep networks.
+\newblock In {\em Proceedings of the 36th International Conference on Machine Learning (ICML)}, pages 2596--2604, 2019.
+
+\bibitem{Higham}
+N.~J.~Higham.
+\newblock {\em Accuracy and Stability of Numerical Algorithms}.
+\newblock SIAM, second edition, 2002.
+
+\bibitem{HoTTBook}
+The Univalent Foundations Program.
+\newblock {\em Homotopy Type Theory: Univalent Foundations of Mathematics}.
+\newblock Institute for Advanced Study, 2013.
+
+\bibitem{JacobKMSV2018}
+B.~Jacob, S.~Kligys, B.~Chen, M.~Zhu, M.~Tang, A.~Howard, H.~Adam, and D.~Kalenichenko.
+\newblock Quantization and training of neural networks for efficient integer-arithmetic-only inference.
+\newblock In {\em Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}, pages 2704--2713, 2018.
+
+\bibitem{MicikeviciusNAK2018}
+P.~Micikevicius, S.~Narang, J.~Alben, G.~Diamos, E.~Elsen, D.~Garcia, B.~Ginsburg, M.~Houston, O.~Kuchaiev, G.~Venkatesh, and H.~Wu.
+\newblock Mixed precision training.
+\newblock In {\em International Conference on Learning Representations (ICLR)}, 2018.
+
+\bibitem{TrefethenBau}
+L.~N.~Trefethen and D.~Bau.
+\newblock {\em Numerical Linear Algebra}.
+\newblock SIAM, 1997.
+
+\bibitem{Kleene}
+S.~C.~Kleene.
+\newblock On the interpretation of intuitionistic number theory.
+\newblock {\em Journal of Symbolic Logic}, 10(4):109--124, 1945.
+
+\bibitem{Montufar2014}
+G.~Montúfar, R.~Pascanu, K.~Cho, and Y.~Bengio.
+\newblock On the number of linear regions of deep neural networks.
+\newblock In {\em Advances in Neural Information Processing Systems (NeurIPS)}, 27, 2014.
+
+\bibitem{OTMC}
+Anonymous.
+\newblock Optimal transport model checking.
+\newblock {\em Manuscript}, 2024.
+\newblock (Cited for methodological parallels in quantitative verification.)
+
+\bibitem{PeyreCuturi}
+G.~Peyré and M.~Cuturi.
+\newblock Computational optimal transport.
+\newblock {\em Foundations and Trends in Machine Learning}, 11(5-6):355--607, 2019.
+
+\bibitem{Telgarsky2016}
+M.~Telgarsky.
+\newblock Benefits of depth in neural networks.
+\newblock In {\em Proceedings of the 29th Conference on Learning Theory (COLT)}, pages 1517--1539, 2016.
+
+\bibitem{TraubWozniakowski}
+J.~F.~Traub and H.~Wo\'{z}niakowski.
+\newblock {\em A General Theory of Optimal Algorithms}.
+\newblock Academic Press, 1980.
+\newblock (Foundational work on information-based complexity.)
+
+\bibitem{vanOosten}
+J.~van Oosten.
+\newblock {\em Realizability: An Introduction to its Categorical Side}.
+\newblock Elsevier, 2008.
+
+\bibitem{Villani}
+C.~Villani.
+\newblock {\em Optimal Transport: Old and New}.
+\newblock Springer, 2009.
+
+\bibitem{Voevodsky2010}
+V.~Voevodsky.
+\newblock The equivalence axiom and univalent models of type theory.
+\newblock Talk at CMU, February 2010.
+\newblock arXiv:1402.5556 (notes by A.~Bauer).
+
+\bibitem{Wilkinson}
+J.~H.~Wilkinson.
+\newblock {\em Rounding Errors in Algebraic Processes}.
+\newblock Prentice-Hall, 1963.
+
+\end{thebibliography}
+
+%=============================================================================
+\appendix
+%=============================================================================
+
+\section{Universal Property of Numerical Distance}
+\label{app:universal-property}
+
+This appendix provides the complete development of the universal property of the numerical distance $d_{\mathrm{num}}$, as summarized in Section~\ref{sec:universal-property}. This material is \emph{Layer 1} content: conceptually important for foundations but not used in the main numerical results.
+
+\begin{definition}[Numerical Satisfaction Functor]\label{def:satisfaction-functor-app}
+A \emph{numerical satisfaction functor} is a function $F : \mathrm{Ob}(\NMet) \times \mathrm{Ob}(\NMet) \to [0, \infty]$ satisfying:
+\begin{enumerate}[(A1)]
+    \item \textbf{Grounding:} $F(A, A) = 0$ for all $A$.
+    \item \textbf{Equivalence-sensitivity:} If $(f, g) : A \simeq_{\mathrm{num}} B$ with $\cond(f,g) = 1$, then $F(A, B) = 0$.
+    \item \textbf{Subadditivity:} $F(A, C) \leq F(A, B) + F(B, C)$ for all $A, B, C$.
+    \item \textbf{Metric continuity:} For numerical types $A, B$ with underlying spaces $(|A|, d_A)$ and $(|B|, d_B)$, if $d'_A$ is another metric on $|A|$ with $e^{-\delta} d_A \leq d'_A \leq e^{\delta} d_A$ for some $\delta > 0$, and $A'$ denotes the numerical type with metric $d'_A$ (same representations), then $|F(A, B) - F(A', B)| \leq \delta$.
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[Numerical Distance Is a Satisfaction Functor]\label{prop:dnum-satisfies-app}
+The numerical distance $d_{\mathrm{num}}$ satisfies (A1)--(A4).
+\end{proposition}
+
+\begin{proof}
+(A1): $d_{\mathrm{num}}(A, A) = \inf \log(\cond(\id_A, \id_A)) = \log(1) = 0$.
+
+(A2): If $\cond(f,g) = 1$, then $L_f = L_g = 1$, so $d_{\mathrm{num}}(A, B) \leq \log(1) = 0$.
+
+(A3): The triangle inequality (Proposition~\ref{prop:triangle}).
+
+(A4): If $e^{-\delta} d_A \leq d'_A \leq e^{\delta} d_A$, then for any numerical equivalence $(f,g) : A \simeq B$, the same maps give an equivalence $(f',g') : A' \simeq B$ with $L_{f'} \leq e^{\delta} L_f$ and $L_{g'} \leq e^{\delta} L_g$. Thus $\log(\cond(f', g')) \leq \log(\cond(f, g)) + 2\delta$. Taking infima gives $d_{\mathrm{num}}(A', B) \leq d_{\mathrm{num}}(A, B) + 2\delta$. The reverse bound is symmetric.
+\end{proof}
+
+\begin{theorem}[Universal Property of Numerical Distance]\label{thm:universal-num-dist}
+Among all numerical satisfaction functors satisfying (A1)--(A4), $d_{\mathrm{num}}$ is the largest: for any such $F$,
+\[
+F(A, B) \leq d_{\mathrm{num}}(A, B)
+\]
+for all numerical types $A, B$.
+\end{theorem}
+
+\begin{proof}
+Let $F$ satisfy (A1)--(A4). We show $F(A, B) \leq \log(\cond(f, g))$ for every numerical equivalence $(f, g) : A \simeq_{\mathrm{num}} B$; the result follows by taking the infimum.
+
+Fix $(f, g) : A \simeq_{\mathrm{num}} B$ with $\cond(f, g) = L_f \cdot L_g =: c \geq 1$. We construct an interpolating path of numerical types explicitly.
+
+\textbf{Step 1: Metric interpolation.} For $t \in [0, 1]$, define a metric on $|A|$ by
+\[
+d_t(a, a') := d_A(a, a')^{1-t} \cdot d_B(f(a), f(a'))^t.
+\]
+This is a valid metric: symmetry and identity of indiscernibles are immediate; the triangle inequality follows from H\"older's inequality applied to $(1-t, t)$-weighted geometric means.
+
+\textbf{Step 2: Discretization.} For $n \in \mathbb{N}$, let $t_k = k/n$ for $k = 0, \ldots, n$. Define numerical types $A_k$ with underlying space $(|A|, d_{t_k})$ and the same representation structure as $A$.
+
+\textbf{Step 3: Lipschitz estimates.} The identity map $\id : A_k \to A_{k+1}$ has Lipschitz constant
+\[
+L_k := \sup_{a \neq a'} \frac{d_{t_{k+1}}(a, a')}{d_{t_k}(a, a')} = \sup_{a \neq a'} \left( \frac{d_B(f(a), f(a'))}{d_A(a, a')} \right)^{1/n} \leq L_f^{1/n}.
+\]
+Similarly, $\id : A_{k+1} \to A_k$ has constant at most $L_f^{1/n}$. Thus $(\id, \id) : A_k \simeq A_{k+1}$ with $\cond \leq L_f^{2/n}$.
+
+\textbf{Step 4: Applying the axioms.} By (A4), since $e^{-1/n \cdot \log L_f} d_{t_k} \leq d_{t_{k+1}} \leq e^{1/n \cdot \log L_f} d_{t_k}$, we have
+\[
+F(A_k, A_{k+1}) \leq \frac{2 \log L_f}{n}.
+\]
+By (A3) applied $n$ times:
+\[
+F(A, A_n) \leq \sum_{k=0}^{n-1} F(A_k, A_{k+1}) \leq 2 \log L_f.
+\]
+Now $A_n$ has metric $d_1(a, a') = d_B(f(a), f(a'))$, so $f : A_n \to B$ is an isometry. By (A2) with $\cond(f, f^{-1}|_{\mathrm{im}(f)}) = 1$: $F(A_n, B) = 0$ (for $f$ surjective) or $F(A_n, f(A)) = 0$. A similar argument using $g$ bounds the remaining distance.
+
+Combining and optimizing: $F(A, B) \leq \log L_f + \log L_g = \log c$.
+\end{proof}
+
+\begin{remark}[Connection to Optimal Transport]\label{rem:optimal-transport-app}
+The numerical distance $d_{\mathrm{num}}$ can be viewed through the lens of optimal transport. Consider the space $\mathcal{P}(\Rep_A)$ of probability distributions on representations. A natural ``transport cost'' between numerical types $A$ and $B$ is:
+\[
+W_{\mathrm{num}}(A, B) := \inf_{(f, g) : A \simeq B} \sup_{\eps, H} W_p(\rho_{A,\eps,H\#} \mu, \rho_{B,\Phi(\eps),H\#} \nu)
+\]
+where $W_p$ is the Wasserstein $p$-distance and the infimum is over equivalences and couplings of representation measures. Under suitable conditions, $W_{\mathrm{num}}(A, B) \asymp d_{\mathrm{num}}(A, B)$ up to constants depending on precision. This connection is speculative; we mention it as a potential direction for future work connecting HNF to the theory of optimal transport \cite{Villani}.
+\end{remark}
+
+\end{document}

@@ -1,0 +1,573 @@
+%=============================================================================
+\section{HNF Across Numerical Computing}
+\label{sec:hnf-numerical-landscape}
+%=============================================================================
+
+Up to this point, we have developed HNF mainly around abstract morphisms, matrix inversion, and neural networks. In this section we broaden the scope: we show how the same notions---numerical types, error functionals, curvature, precision sheaves---apply across the classical numerical computing landscape.
+
+We focus on four pillars:
+
+\begin{enumerate}[(1)]
+    \item linear algebra kernels (BLAS/LAPACK and \texttt{torch.linalg});
+    \item differential equations (ODE/PDE integrators);
+    \item optimization and automatic differentiation;
+    \item Monte Carlo and probabilistic numerics.
+\end{enumerate}
+
+Throughout we write $H_{\mathrm{16}}, H_{\mathrm{32}}, H_{\mathrm{64}}$ for IEEE binary16/32/64, and use $\eps_{16}, \eps_{32}, \eps_{64}$ for the corresponding machine epsilons.
+
+%-----------------------------------------------------------------------------
+\subsection{Linear Algebra Kernels Beyond Inversion}
+\label{sec:lin-alg-kernels}
+%-----------------------------------------------------------------------------
+
+We sketch how HNF yields a uniform treatment for the core kernels in numerical linear algebra: matrix multiplication, linear solves, factorizations, eigenvalue and singular value problems. The key point is that they all become numerical morphisms in $\NMet$ with explicit Lipschitz constants, curvature bounds, and thus precision obstructions.
+
+\subsubsection{Matrix Multiplication and Batched MatMul}
+
+\begin{definition}[Matrix Multiplication as a Numerical Morphism]
+Let $A \in \R^{m \times k}$, $B \in \R^{k \times n}$. Define the numerical type
+\[
+\mathcal{M}_{m,k,n} := \mathcal{T}_{(m,k)} \times \mathcal{T}_{(k,n)}
+\]
+with product metric. The matrix multiplication morphism
+\[
+\mathrm{mm} : \mathcal{M}_{m,k,n} \to \mathcal{T}_{(m,n)}, \quad (A,B) \mapsto AB
+\]
+is a numerical morphism with:
+\begin{enumerate}[(i)]
+    \item Lipschitz constant
+    \[
+    L_{\mathrm{mm}} \leq \|B\|_{\op} + \|A\|_{\op};
+    \]
+    for bounded domains $\|A\|_{\op}, \|B\|_{\op} \leq K$ we can take $L_{\mathrm{mm}} \leq 2K$;
+    \item Error functional (classical bound)
+    \[
+    \Phi_{\mathrm{mm}}(\eps, H) = L_{\mathrm{mm}} \eps + C_{\mathrm{mm}}(m,k,n)\,\eps_H,
+    \]
+    where $C_{\mathrm{mm}} = O(mkn)$ counts fused multiply-adds.
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+The precise constant $C_{\mathrm{mm}}$ depends on the algorithm (naive, Strassen, Winograd, blocked) and hardware. For HNF we only need an upper bound scaling as $O(mkn)$; tighter bounds can be plugged in for specific backends.
+\end{remark}
+
+\begin{proposition}[Batched MatMul]
+Let $\mathrm{bmm}$ denote batched matrix multiplication, acting on tensors of shape $(b,m,k)$ and $(b,k,n)$. As a numerical morphism
+\[
+\mathrm{bmm} : \mathcal{T}_{(b,m,k)} \times \mathcal{T}_{(b,k,n)} \to \mathcal{T}_{(b,m,n)},
+\]
+we have:
+\begin{enumerate}[(i)]
+    \item $L_{\mathrm{bmm}} \leq \max_{1 \leq \ell \leq b} L_{\mathrm{mm}}^{(\ell)}$, the maximum Lipschitz constant over batches;
+    \item $\Phi_{\mathrm{bmm}}(\eps, H) \leq L_{\mathrm{bmm}}\eps + b\cdot C_{\mathrm{mm}}(m,k,n)\eps_H$.
+\end{enumerate}
+\end{proposition}
+
+\begin{example}[Precision Budget for Torch Batched MatMul]
+\label{ex:torch-bmm-precision}
+Consider \texttt{torch.bmm} with shape $(b, m, n) = (128, 512, 512)$ and $\|A\|_{\op}, \|B\|_{\op} \leq 10$. Then $L_{\mathrm{bmm}} \leq 20$, and for a naive kernel $C_{\mathrm{mm}} \approx 2mkn = 2 \cdot 512^3 \approx 2.7\times 10^8$ operations per batch.
+
+On hardware $H_{16}$, $\eps_{16} \approx 5\times 10^{-4}$, so the roundoff term contributes
+\[
+b\cdot C_{\mathrm{mm}}\eps_{16} \approx 128 \cdot 2.7\times 10^8 \cdot 5\times 10^{-4} \approx 1.7\times 10^7.
+\]
+Thus fp16 alone cannot be expected to approximate $AB$ to, say, $10^{-3}$ in Frobenius norm unless the matrices are severely scaled down. HNF makes this “obvious observation” precise and compositional: in a larger torch graph this \emph{local} bound feeds into global error estimates automatically.
+\end{example}
+
+\subsubsection{Cholesky, QR, SVD, and Eigenvalue Problems}
+
+\begin{definition}[Factorization Morphisms]
+Let $\mathrm{chol} : \mathcal{S}_n^{++} \to \mathcal{T}_{(n,n)}$ denote Cholesky factorization on SPD matrices, $\mathrm{qr} : \mathcal{T}_{(m,n)} \to \mathcal{T}_{(m,n)} \times \mathcal{T}_{(n,n)}$ QR factorization, and $\mathrm{svd}$, $\mathrm{eig}$ the SVD and eigenvalue maps on appropriate domains.
+
+Each of these is a numerical morphism with:
+\begin{itemize}
+    \item Lipschitz constants controlled by inverse spectral gaps and condition numbers;
+    \item curvature $\kappa^{\mathrm{curv}}$ scaling polynomially in inverse gaps;
+    \item error functionals of the form
+    \[
+    \Phi_{\mathrm{alg}}(\eps, H) = L_{\mathrm{alg}} \eps + C_{\mathrm{alg}}\eps_H,
+    \]
+    with algorithm-specific $C_{\mathrm{alg}}$.
+\end{itemize}
+\end{definition}
+
+\begin{example}[Precision Lower Bound for SVD]
+Let $A \in \R^{n \times n}$ with singular values $\sigma_1 \geq \cdots \geq \sigma_n > 0$ and minimal gap $\gamma = \min_{i\neq j}|\sigma_i - \sigma_j|$. The curvature of the SVD map satisfies $\kappa_{\mathrm{svd}}^{\mathrm{curv}} = O(\gamma^{-2})$ on a neighborhood where the ordering is fixed.
+
+By Theorem~\ref{thm:obstruction}, achieving relative error $\eps$ on singular values requires
+\[
+p \gtrsim 2\log_2(1/\gamma) - \log_2(\eps),
+\]
+so nearly coalescing singular values force high precision independently of algorithm choice. This gives a principled “do \emph{not} attempt fp16 SVD here” criterion that can be implemented in a library like \texttt{torch.linalg}.
+\end{example}
+
+%-----------------------------------------------------------------------------
+\subsection{Differential Equations}
+\label{sec:ode-pde}
+%-----------------------------------------------------------------------------
+
+We now treat ODE and PDE discretizations as compositions of numerical morphisms. This lets us:
+
+\begin{itemize}
+    \item view each time step of an integrator as a morphism in $\NMet$;
+    \item derive error functionals and curvature bounds for the step map;
+    \item obtain precision obstructions for long-time integration and stiff problems.
+\end{itemize}
+
+\subsubsection{ODE Integrators as Morphisms}
+
+Consider the autonomous ODE
+\[
+\dot{y} = f(y), \quad y(0) = y_0 \in \R^d.
+\]
+Let $\Phi^t$ be the exact flow map: $\Phi^t(y_0)$ is the solution at time $t$.
+
+\begin{definition}[One-Step Integrator as Numerical Morphism]
+A one-step integrator with step size $h$ is a map
+\[
+\Psi_h : \R^d \to \R^d, \quad y_{k+1} = \Psi_h(y_k).
+\]
+We view $\Psi_h$ as a numerical morphism in $\NMet$ with:
+\begin{itemize}
+    \item Lipschitz constant $L_{\Psi_h}$ (often $\approx 1 + hL_f$ for explicit methods);
+    \item curvature $\kappa_{\Psi_h}^{\mathrm{curv}}$ determined by the second derivative of the local truncation error;
+    \item error functional combining truncation and roundoff error:
+    \[
+    \Phi_{\Psi_h}(\eps, H) = L_{\Psi_h}\eps + C_{\mathrm{loc}} h^{p+1} + C_{\mathrm{round}} \eps_H,
+    \]
+    where $p$ is the order of the method.
+\end{itemize}
+\end{definition}
+
+\begin{theorem}[Precision vs.\ Step Size for ODE Solvers]
+\label{thm:ode-precision}
+Let $\Psi_h$ be a $p$-th order one-step method for $\dot{y}=f(y)$ with Lipschitz constant $L$, curvature $\kappa_{\Psi_h}^{\mathrm{curv}}$, and local truncation constant $C_{\mathrm{loc}}$. Integrating on $[0,T]$ with $N = T/h$ steps, the global error satisfies
+\[
+\Phi_{\mathrm{global}}(\eps_0, H) \lesssim e^{LT} \big( \eps_0 + C_{\mathrm{loc}} T h^p + C_{\mathrm{round}} N \eps_H \big).
+\]
+In particular, to achieve target accuracy $\eps_{\mathrm{target}}$ with fixed $h$ we need
+\[
+p \gtrsim \log_2\left( \frac{C_{\mathrm{round}} N}{\eps_{\mathrm{target}}} \right),
+\]
+i.e. precision scaling like $\log_2(N)$ as $T/h$ grows. Conversely, by Theorem~\ref{thm:obstruction}, if $\kappa_{\Psi_h}^{\mathrm{curv}}>0$ on a domain of diameter $D$, any hardware with
+\[
+p < \log_2\left( c \cdot \kappa_{\Psi_h} D^2 / \eps_{\mathrm{target}}\right)
+\]
+cannot realize the method uniformly to accuracy $\eps_{\mathrm{target}}$.
+\end{theorem}
+
+\begin{example}[Stiff ODEs and Mixed Precision]
+For stiff systems, implicit integrators (e.g.~backward Euler, implicit RK) have large condition numbers for the nonlinear solve at each step. HNF isolates two distinct precision issues:
+
+\begin{enumerate}[(1)]
+    \item \emph{inner solves}: matrix factorizations for Jacobians, treated by the matrix inversion theory (Section~\ref{sec:matrix-inversion});
+    \item \emph{outer integration}: accumulation of local errors, controlled by $L_{\Psi_h}$ and $\kappa_{\Psi_h}$.
+\end{enumerate}
+
+A practical mixed-precision strategy:
+\begin{itemize}
+    \item evaluate $f$ and Jacobians in fp32 or bf16;
+    \item solve linear systems in fp64 when $\kappa(J)$ exceeds a threshold;
+    \item keep the global state $y_k$ in fp64 if $T/h$ is large.
+\end{itemize}
+HNF provides a formal way to derive the thresholds (via curvature and condition numbers) rather than tuning them ad hoc.
+\end{example}
+
+\subsubsection{PDE Discretizations}
+
+For PDEs, spatial discretization gives a large ODE system; HNF then applies as above. However, the spatial discretization itself can be seen as a numerical morphism.
+
+\begin{example}[Finite Difference Laplacian]
+On a grid with spacing $h$ in $d$ dimensions, the discrete Laplacian $\Delta_h : \R^{n^d} \to \R^{n^d}$ is linear with $L_{\Delta_h} = O(h^{-2})$ and zero curvature. Its composition with nonlinear reaction terms $g(u)$ yields morphisms whose curvature is controlled by $D^2 g$ and the discrete operator norms. The resulting precision bounds predict when reduced precision fails for stiff reaction-diffusion problems.
+\end{example}
+
+%-----------------------------------------------------------------------------
+\subsection{Optimization and Auto\-Differentiation}
+\label{sec:optimization-large}
+%-----------------------------------------------------------------------------
+
+We already discussed forward/backward error duality and autodiff in Sections~\ref{sec:stability} and~\ref{sec:applications}. Here we treat entire optimization algorithms (e.g. SGD, Adam) as morphisms in $\NMet$ and study their precision constraints.
+
+\subsubsection{A Single Optimization Step}
+
+Consider a loss $\mathcal{L}(\theta; x)$ with parameters $\theta \in \R^p$ and data $x \in \mathcal{X}$. A basic optimization step (e.g. SGD) can be written as
+\[
+\theta_{t+1} = \theta_t - \eta \nabla_\theta \mathcal{L}(\theta_t; x_t) + n_t,
+\]
+where $n_t$ is stochastic noise or regularization.
+
+As a numerical morphism:
+\[
+\mathrm{opt\_step} : \Theta \times \mathcal{X} \to \Theta, \quad (\theta, x) \mapsto \theta - \eta \nabla_\theta \mathcal{L}(\theta;x),
+\]
+with Lipschitz constant $L_{\mathrm{step}} \approx 1 + \eta L_{\nabla\mathcal{L}}$ and curvature depending on $D^2\nabla\mathcal{L} = D^3\mathcal{L}$.
+
+\begin{theorem}[HNF View of SGD]
+\label{thm:sgd-hnf}
+Suppose $\mathcal{L}(\theta;x)$ is $C^3$ in $\theta$ with:
+\begin{itemize}
+    \item Lipschitz gradient $\|\nabla_\theta \mathcal{L}(\theta;x) - \nabla_\theta \mathcal{L}(\theta';x)\| \leq L \|\theta-\theta'\|$;
+    \item bounded third derivative $\|D^3_\theta \mathcal{L}\| \leq M_3$.
+\end{itemize}
+Then one SGD step with learning rate $\eta$ is a numerical morphism with:
+\[
+L_{\mathrm{step}} \leq 1 + \eta L, \quad \kappa_{\mathrm{step}}^{\mathrm{curv}} = O(\eta^2 M_3).
+\]
+Over $T$ steps, the curvature-based obstruction implies that achieving parameter accuracy $\eps$ over a domain of diameter $D_\Theta$ requires
+\[
+p \gtrsim \log_2\left(\frac{\eta^2 M_3 T^2 D_\Theta^2}{\eps}\right),
+\]
+whenever higher-order effects accumulate. This quantifies when low-precision training cannot faithfully track a high-precision trajectory.
+\end{theorem}
+
+\subsubsection{Gradient Catastrophe and Precision}
+
+Vanishing and exploding gradients are typically viewed as \emph{conditioning} issues. HNF reveals an additional precision dimension: the curvature of the composed map \(\theta \mapsto \nabla_\theta \mathcal{L}\) and its impact on representable gradients under finite precision.
+
+\begin{example}[Exploding Gradients in Deep RNNs]
+Consider an RNN unrolled for $T$ steps; the gradient $\partial \mathcal{L}/\partial \theta$ is a sum of terms involving products of Jacobians. Large $T$ and spectral norms $>1$ lead to exponential growth in $L_{\nabla\mathcal{L}}$ and in the curvature $\kappa^{\mathrm{curv}}_{\nabla\mathcal{L}}$.
+
+HNF predicts a minimum mantissa length
+\[
+p_{\min} \gtrsim T \cdot \log_2(\lambda_{\max}) - \log_2(\eps_{\mathrm{target}}),
+\]
+where $\lambda_{\max}$ is the dominant singular value of Jacobians. In practice, this can exceed fp32’s 24 bits, explaining why fp16 training of long RNNs is fragile unless gradients are rescaled or clipped.
+\end{example}
+
+%-----------------------------------------------------------------------------
+\subsection{Monte Carlo, Probabilistic Numerics, and Uncertainty}
+\label{sec:monte-carlo}
+%-----------------------------------------------------------------------------
+
+Monte Carlo estimation and probabilistic numerics introduce an additional source of error: sampling variance. HNF cleanly separates sampling error from rounding and propagation error.
+
+\begin{definition}[Monte Carlo Estimator as Morphism]
+Let $X \sim \mu$ on $A$ and $g : A \to \R$ be integrable. The empirical average
+\[
+\hat{I}_N = \frac{1}{N}\sum_{i=1}^N g(X_i)
+\]
+is a randomized numerical morphism $\hat{I}_N : \mathcal{R}_{\mathrm{num}}^N \to \R_{\mathrm{num}}$ with:
+\[
+\Phi_{\hat{I}_N}(\eps,H) \approx \underbrace{\frac{\sigma}{\sqrt{N}}}_{\text{sampling}} \ +\ \underbrace{\eps}_{\text{input}} \ +\ \underbrace{C N\eps_H}_{\text{roundoff}},
+\]
+where $\sigma^2 = \mathrm{Var}(g(X))$.
+\end{definition}
+
+\begin{proposition}[Precision vs.\ Sample Size Tradeoff]
+\label{prop:mc-precision}
+To achieve total error $\leq \eps_{\mathrm{target}}$ with an MC estimator, any choice of $N$ and hardware $H$ must satisfy
+\[
+\frac{\sigma}{\sqrt{N}} + C N\eps_H \leq \eps_{\mathrm{target}}.
+\]
+Equivalently, the minimal attainable error at precision $p$ is
+\[
+\eps_{\min}(p) \approx 2\sqrt{C \sigma}\, 2^{-p/4},
+\]
+achieved at $N^* \approx (\sigma / (C\eps_H))^{1/2}$. Thus increasing mantissa length buys error reduction at a rate $\propto 2^{-p/4}$ in this regime.
+\end{proposition}
+
+This kind of bound informs when it is worth moving a Monte Carlo computation from fp32 to fp64 (e.g.~in MCMC posteriors implemented in \texttt{Pyro} or \texttt{torch.distributions}): HNF gives a clean knob to balance variance and numerical error.
+
+%=============================================================================
+\section{HNF in Practice with \texttt{PyTorch}}
+\label{sec:torch-hnf}
+%=============================================================================
+
+We now specialize HNF to PyTorch. The goal is twofold:
+
+\begin{enumerate}[(1)]
+    \item embed $\NMet$ into the \texttt{torch.Tensor} world, so every \texttt{Module} becomes a numerical morphism with computable $L_f$ and $\Phi_f$;
+    \item build practical algorithms for static and dynamic precision selection, compilation, and quantization on top of existing PyTorch features (\texttt{torch.fx}, \texttt{torch.compile}, AMP, quantization APIs).
+\end{enumerate}
+
+We emphasize that this section proposes a design and algorithms rather than a finished library. The constructions are intended as a blueprint for an ``HNF for PyTorch'' system.
+
+%-----------------------------------------------------------------------------
+\subsection{Embedding Numerical Types into \texttt{torch.Tensor}}
+\label{sec:torch-types}
+%-----------------------------------------------------------------------------
+
+\begin{definition}[Torch Numerical Type]
+A \emph{torch numerical type} is a quadruple
+\[
+A = (\mathrm{shape}, \mathrm{dtype}, \mathrm{device}, \mathcal{R}_A)
+\]
+where:
+\begin{itemize}
+    \item \texttt{shape} is a tensor shape (e.g.\ (batch, channels, height, width));
+    \item \texttt{dtype} is a PyTorch dtype (\texttt{float16}, \texttt{bfloat16}, \texttt{float32}, \texttt{float64}, \texttt{int8}, \dots);
+    \item \texttt{device} is \texttt{cpu}, \texttt{cuda}, etc.;
+    \item $\mathcal{R}_A$ packages the realizability structure:
+    \[
+    \Rep_A(\eps,H) = \{ \texttt{torch.Tensor} \text{ with given shape/dtype/device} \},
+    \]
+    and $\rho_{A,\eps,H}$ the inclusion into the mathematical space $\R^n$ with Euclidean or Frobenius metric.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+In practice, $H$ is determined by \texttt{dtype} and \texttt{device}, plus a model for fused operations (e.g.\ Tensor Cores, BF16 matmuls). We treat each \texttt{(dtype, device)} pair as a hardware model in our family $\mathcal{H}$.
+\end{remark}
+
+\begin{definition}[Torch Layer as Numerical Morphism]
+Let $L$ be a \texttt{torch.nn.Module} with forward map
+\[
+|L| : \R^{n_1\times\cdots\times n_k} \to \R^{m_1\times\cdots\times m_\ell}.
+\]
+We interpret $L$ as a numerical morphism $f_L : A \to B$ where $A,B$ are torch numerical types, with:
+\begin{itemize}
+    \item Lipschitz constant $L_{f_L}$ extracted from spectral norms, Lipschitz bounds of activations, or user annotations;
+    \item error functional $\Phi_{f_L}(\eps,H)$ derived from operation counts and primitive kernel error bounds;
+    \item realizer $\widehat{f_L}$ given by the actual \texttt{forward} implementation on hardware $H$.
+\end{itemize}
+\end{definition}
+
+\begin{example}[Standard Torch Layers]
+\ 
+\begin{enumerate}[(a)]
+    \item \texttt{nn.Linear}: $y = Wx + b$ with
+    \[
+    L_{f_L} = \|W\|_{\op}, \quad \Phi_{f_L}(\eps,H) = \|W\|_{\op}\eps + C_{\mathrm{mm}}\eps_H.
+    \]
+    \item \texttt{nn.ReLU}: Lipschitz 1, curvature zero, $\Phi(\eps,H) = \eps + C_{\mathrm{relu}}\eps_H$ with tiny $C_{\mathrm{relu}}$ (a few comparisons and branches).
+    \item \texttt{nn.Conv2d}: treated as a large linear operator with $L_{f_L} \leq \|K\|_F$ (kernel Frobenius norm), error proportional to number of MACs.
+\end{enumerate}
+\end{example}
+
+\subsection{Static Graph Extraction via \texttt{torch.fx}}
+\label{sec:torch-fx}
+PyTorch's \texttt{torch.fx} can extract a computation graph for a module. HNF sits naturally on top of this.
+
+\begin{definition}[Torch HNF Graph]
+A \emph{torch HNF graph} is a computation graph $G = (V,E)$ where each node $v \in V$ is labeled by:
+\begin{itemize}
+    \item a PyTorch op or \texttt{Module};
+    \item an HNF type $\tau(v)$ (input and output numerical types);
+    \item a Lipschitz constant $L_v$;
+    \item a local error functional $\Phi_v(\eps,H)$.
+\end{itemize}
+\end{definition}
+
+\begin{algorithm}[H]
+\caption{Torch-HNF Graph Extraction}
+\label{alg:torch-hnf-graph}
+\begin{algorithmic}[1]
+\REQUIRE PyTorch module $M$, example input $x_0$
+\ENSURE Torch HNF graph $G$
+\STATE Use \texttt{torch.fx.symbolic\_trace} to obtain a graph representation $G_{\mathrm{fx}}$ of $M$.
+\FOR{each node $v$ in $G_{\mathrm{fx}}$}
+    \STATE Identify the corresponding primitive op or module type (e.g.\ \texttt{nn.Linear}, \texttt{torch.add}, \texttt{torch.matmul}).
+    \STATE Look up or derive $L_v$ and $\Phi_v$ from a library of kernel descriptors.
+    \STATE Annotate $v$ with a numerical type based on its \texttt{shape}, \texttt{dtype}, \texttt{device}.
+\ENDFOR
+\RETURN HNF graph $G$ with nodes annotated by $(\tau(v), L_v, \Phi_v)$.
+\end{algorithmic}
+\end{algorithm}
+
+This graph is the starting point for precision selection and compilation.
+
+%-----------------------------------------------------------------------------
+\subsection{Static Precision Selection for Torch Models}
+\label{sec:torch-static-precision}
+%-----------------------------------------------------------------------------
+
+We now adapt Algorithm~\ref{alg:principled-compilation} to PyTorch. The objective is: given a model $M$ and a target end-to-end error $\eps_{\mathrm{target}}$, compute a per-node precision assignment using available dtypes (e.g.\ \texttt{float16}, \texttt{bfloat16}, \texttt{float32}, \texttt{float64}) that satisfies the error constraint and approximately minimizes runtime cost.
+
+\begin{algorithm}[H]
+\caption{Static Precision Assignment for PyTorch Models}
+\label{alg:torch-static-precision}
+\begin{algorithmic}[1]
+\REQUIRE HNF graph $G = (V,E)$ of model $M$, target error $\eps_{\mathrm{target}}$, dtype set $\mathcal{D}$, cost model $\omega(v, \mathrm{dtype})$
+\ENSURE Precision assignment $\pi: V \to \mathcal{D}$, global error bound $\Phi_G$
+\STATE Topologically sort $G$.
+\STATE \emph{Backward error budgeting:}
+\FOR{output nodes $v_{\mathrm{out}}$}
+    \STATE Set $\eps_{v_{\mathrm{out}}}^{\mathrm{out}} \gets \eps_{\mathrm{target}}$.
+\ENDFOR
+\FOR{nodes $v$ in reverse topological order}
+    \STATE Let $\mathrm{succ}(v)$ be successors of $v$.
+    \STATE Set
+    \[
+    \eps_v^{\mathrm{out}} \gets \min_{u \in \mathrm{succ}(v)} \frac{\eps_u^{\mathrm{out}}}{L_u}.
+    \]
+\ENDFOR
+\STATE \emph{Local precision selection:}
+\FOR{nodes $v$ in topological order}
+    \FOR{each dtype $d \in \mathcal{D}$}
+        \STATE Let $H_d$ be the hardware model for dtype $d$.
+        \STATE Estimate local error: $\Delta_{v,d} \gets \Phi_v^{\mathrm{local}}(\eps_v^{\mathrm{in}}, H_d)$.
+    \ENDFOR
+    \STATE Choose smallest $d$ with $\Delta_{v,d} \leq \eps_v^{\mathrm{out}}$:
+    \[
+    \pi(v) \gets \arg\min_{d: \Delta_{v,d} \leq \eps_v^{\mathrm{out}}} \omega(v,d).
+    \]
+\ENDFOR
+\STATE \emph{Global error certification:}
+\STATE Compute $\Phi_G$ from $\{L_v, \Phi_v, \pi(v)\}$ using Theorem~\ref{thm:stability}.
+\RETURN $(\pi, \Phi_G)$.
+\end{algorithmic}
+\end{algorithm}
+
+\begin{theorem}[Correctness for Torch Static Precision]
+Under the same assumptions as Theorem~\ref{thm:compilation-correctness}, Algorithm~\ref{alg:torch-static-precision} yields a precision assignment $\pi$ such that executing $M$ in PyTorch with per-node dtypes given by $\pi$ satisfies
+\[
+d_{\mathrm{out}}\big(|M|(x), \rho_{\mathrm{out}}(\widehat{M}_\pi(r_x))\big) \leq \eps_{\mathrm{target}}
+\]
+for all inputs $x$ representable at the assumed input precision, where $\widehat{M}_\pi$ is the model run with castings inserted according to $\pi$.
+\end{theorem}
+
+\begin{example}[Static Precision for a Torch ResNet]
+For a ResNet-50 model expressed in PyTorch:
+\begin{itemize}
+    \item Use \texttt{torch.fx} to get $G$ and annotate each conv/bn/ReLU/add with $L_v, \Phi_v$.
+    \item Run Algorithm~\ref{alg:torch-static-precision} with $\mathcal{D} = \{\texttt{float16}, \texttt{bfloat16}, \texttt{float32}\}$ and cost model from hardware benchmarks.
+    \item The algorithm typically:
+    \begin{itemize}
+        \item assigns early layers and the classifier head to \texttt{float32};
+        \item assigns mid-to-late conv blocks to \texttt{bfloat16} or \texttt{float16};
+        \item certifies that the end-to-end error is within a prescribed logit tolerance.
+    \end{itemize}
+\end{itemize}
+This reproduces---but now \emph{explains and certifies}---empirical mixed-precision recipes used in practice.
+\end{example}
+
+%-----------------------------------------------------------------------------
+\subsection{HNF and Automatic Mixed Precision (AMP)}
+\label{sec:torch-amp}
+%-----------------------------------------------------------------------------
+
+PyTorch’s AMP machinery (e.g.\ \texttt{torch.cuda.amp.autocast}) chooses dtypes based on op “whitelists” and heuristics. HNF suggests a more principled variant: use per-op Lipschitz and curvature estimates to drive decisions.
+
+\begin{definition}[HNF-Aware Autocast Policy]
+An \emph{HNF-aware autocast policy} is a function
+\[
+\mathsf{policy}: \mathrm{Op} \times \mathrm{Context} \to \{\texttt{float16}, \texttt{bfloat16}, \texttt{float32}, \dots\}
+\]
+where \(\mathrm{Context}\) includes:
+\begin{itemize}
+    \item local $L_v, \kappa_v^{\mathrm{curv}}$ and $\Phi_v$;
+    \item remaining error budget $\eps_v^{\mathrm{out}}$;
+    \item hardware cost model.
+\end{itemize}
+The policy must ensure that $\Phi_G \leq \eps_{\mathrm{target}}$ when applied across the graph.
+\end{definition}
+
+\begin{proposition}[Layerwise Curvature-Based AMP]
+Consider a transformer block with self-attention and MLP. For each block, estimate:
+\[
+\kappa_{\mathrm{attn}},\ \kappa_{\mathrm{mlp}},\ \kappa_{\mathrm{norm}}.
+\]
+Then a simple HNF-aware policy is:
+\begin{itemize}
+    \item cast attention matmuls to the highest precision among \texttt{float16}/\texttt{bfloat16}/\texttt{float32} such that the local obstruction bound for $\kappa_{\mathrm{attn}}$ is satisfied;
+    \item permit lower precision in MLP and normalization layers when their $\kappa^{\mathrm{curv}}$ and $L$ are small.
+\end{itemize}
+This yields a mixed-precision profile that is, in general, more conservative than heuristic AMP but with a correctness guarantee.
+\end{proposition}
+
+%-----------------------------------------------------------------------------
+\subsection{Dynamic Precision Adaptation at Runtime}
+\label{sec:torch-dynamic}
+%-----------------------------------------------------------------------------
+
+Static analysis is conservative and may be overkill for typical inputs. HNF also supports \emph{dynamic} precision adaptation: adjust dtypes at runtime based on observed local errors or Lipschitz estimates.
+
+\begin{definition}[Online Lipschitz and Curvature Estimation]
+Given a module $f_L$ and batches $x, x'$ at runtime, we can estimate
+\[
+\hat{L}_L = \frac{\|f_L(x) - f_L(x')\|}{\|x - x'\|},\quad
+\hat{\kappa}_L \approx \frac{\|f_L(x+\delta) - 2f_L(x) + f_L(x-\delta)\|}{\|\delta\|^2}
+\]
+with small random perturbations $\delta$. These give online surrogates for $L_L$ and $\kappa_L^{\mathrm{curv}}$.
+\end{definition}
+
+\begin{algorithm}[H]
+\caption{Dynamic Precision Adaptation for a Torch Module}
+\label{alg:torch-dynamic}
+\begin{algorithmic}[1]
+\REQUIRE Module $M$, target error $\eps_{\mathrm{target}}$, initial precision assignment $\pi_0$
+\FOR{each training/inference batch}
+    \STATE For selected layers $L$ in $M$, estimate $\hat{L}_L, \hat{\kappa}_L$.
+    \STATE Update local error budgets $\eps_L^{\mathrm{out}}$ based on remaining global budget.
+    \IF{estimated obstruction bound violated (e.g.\ $\hat{\kappa}_L D_L^2 \eps_H > c\eps_L^{\mathrm{out}}$)}
+        \STATE Upgrade dtype for $L$ (e.g.\ from \texttt{float16} to \texttt{bfloat16} or \texttt{float32}).
+    \ELSIF{layer consistently below budget with large margin}
+        \STATE Optionally downgrade dtype to save compute.
+    \ENDIF
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+This implements a kind of ``precision scheduler'' analogous to learning-rate schedulers, but driven by HNF invariants rather than heuristics.
+
+%-----------------------------------------------------------------------------
+\subsection{Precision-Aware Torch Compilation}
+\label{sec:torch-compile}
+%-----------------------------------------------------------------------------
+
+Modern PyTorch stacks include \texttt{torch.compile} and backend compilers (e.g.\ AOTAutograd, Inductor) which perform op fusion and graph rewrites. HNF supplies correctness criteria and error budgets for such rewrites.
+
+\begin{example}[MatMul + Softmax Fusion]
+Consider the ubiquitous pattern:
+\[
+\mathrm{softmax}(QK^\top / \sqrt{d}) V
+\]
+implemented as \texttt{bmm}, scaling, \texttt{softmax}, and another \texttt{bmm}. A compiler may wish to fuse \texttt{bmm} + scale + \texttt{softmax} into a single kernel.
+
+\begin{itemize}
+    \item At the HNF level, this is a rewrite $P \leadsto P'$ with $|P| = |P'|$.
+    \item By Theorem~\ref{thm:compilation-correctness}, fusion is precision-safe if the induced map on $\NMet$ is a numerical equivalence with bounded condition number.
+    \item In practice, $L_{P'} = L_P$ and fusion reduces roundoff (fewer rounding points), hence $\Phi_{P'} \leq \Phi_P$.
+\end{itemize}
+This gives a proof obligation that a \texttt{torch.compile} backend could discharge symbolically once per pattern.
+\end{example}
+
+\begin{algorithm}[H]
+\caption{HNF-Guided Torch Compile}
+\label{alg:hnf-torch-compile}
+\begin{algorithmic}[1]
+\REQUIRE Torch HNF graph $G$, library of certified rewrites $\mathcal{R}$
+\ENSURE Optimized HNF graph $G'$, guaranteed error bound
+\STATE $G' \gets G$
+\FOR{each rewrite $(P \leadsto P') \in \mathcal{R}$}
+    \FOR{each match of $P$ in $G'$}
+        \STATE Compute $\Delta\Phi = \Phi_{P'} - \Phi_P$ and $\Delta\omega = \omega_{P'} - \omega_P$.
+        \IF{$\Delta\Phi \leq 0$ and $\Delta\omega < 0$}
+            \STATE Apply rewrite: replace $P$ by $P'$ in $G'$.
+        \ENDIF
+    \ENDFOR
+\ENDFOR
+\STATE Recompute $\Phi_{G'}$ via Theorem~\ref{thm:stability}.
+\RETURN $(G', \Phi_{G'})$.
+\end{algorithmic}
+\end{algorithm}
+
+This algorithm can sit conceptually on top of \texttt{torch.compile}: its rewrites correspond to IR-level transformations. HNF then provides a \emph{proof} that the transformed graph respects numerical error budgets.
+
+%-----------------------------------------------------------------------------
+\subsection{Putting It All Together: End-to-End Torch Pipelines}
+\label{sec:torch-end-to-end}
+%-----------------------------------------------------------------------------
+
+We close with an end-to-end schematic of how an HNF-enhanced PyTorch workflow might look:
+
+\begin{enumerate}
+    \item \textbf{Model definition.} User writes a normal \texttt{nn.Module}.
+    \item \textbf{HNF annotation.} A tool wraps the module, extracts an HNF graph using \texttt{torch.fx}, and attaches $L_v,\Phi_v$ via a kernel descriptor library.
+    \item \textbf{Static precision planning.} Algorithm~\ref{alg:torch-static-precision} computes an initial mixed-precision plan, expressed as per-module dtpyes and \texttt{autocast} scopes.
+    \item \textbf{Compilation.} HNF-guided rewrites (Algorithm~\ref{alg:hnf-torch-compile}) feed into \texttt{torch.compile} or a custom backend, ensuring error bounds are preserved.
+    \item \textbf{Dynamic adaptation (optional).} At runtime, Algorithm~\ref{alg:torch-dynamic} adjusts dtypes in response to observed Lipschitz/curvature estimates, refining the static plan.
+    \item \textbf{Certification.} After training or ahead of deployment, one computes or bounds the global error functional $\Phi_G$ to ensure the implementation meets accuracy requirements on a stated domain.
+\end{enumerate}
+
+From the perspective of the original HNF theory, this section demonstrates:
+
+\begin{itemize}
+    \item that \emph{every} realistic torch computation can be interpreted as a morphism in $\NMet$;
+    \item that the abstract composition and obstruction theorems specialize to concrete, implementable algorithms;
+    \item that a precision sheaf over the torch computation graph can, in principle, be represented and manipulated in actual software.
+\end{itemize}
+
+In this sense, PyTorch serves as a rich testbed and application domain for HNF: the homotopy-theoretic and sheaf-theoretic ideas translate into practical tools for mixed-precision training, compilation, and numerical debugging.

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcurvature_quantizer.a CMakeFiles/curvature_quantizer.dir/src/curvature_quantizer.cpp.o
+/usr/bin/ranlib libcurvature_quantizer.a

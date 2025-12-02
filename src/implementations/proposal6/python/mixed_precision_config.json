@@ -1,0 +1,42 @@
+{
+  "model": "MNIST_MLP_3Layer",
+  "target_accuracy": 1e-06,
+  "layer_precision": {
+    "0": {
+      "dtype": "float32",
+      "bits": 24,
+      "curvature": 0.0,
+      "reason": "Curvature \u03ba=0.00e+00"
+    },
+    "1": {
+      "dtype": "float32",
+      "bits": 24,
+      "curvature": 0.0,
+      "reason": "Curvature \u03ba=0.00e+00"
+    },
+    "2": {
+      "dtype": "float32",
+      "bits": 24,
+      "curvature": 0.0,
+      "reason": "Curvature \u03ba=0.00e+00"
+    },
+    "3": {
+      "dtype": "float32",
+      "bits": 24,
+      "curvature": 0.0,
+      "reason": "Curvature \u03ba=0.00e+00"
+    },
+    "4": {
+      "dtype": "float32",
+      "bits": 24,
+      "curvature": 0.0,
+      "reason": "Curvature \u03ba=0.00e+00"
+    },
+    "5": {
+      "dtype": "float64",
+      "bits": 34,
+      "curvature": 51.6145603061741,
+      "reason": "Curvature \u03ba=5.16e+01"
+    }
+  }
+}
