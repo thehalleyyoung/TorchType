@@ -30,6 +30,7 @@ jobs:
   a3-scan:
     name: Static Analysis
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       # ── Checkout ─────────────────────────────────────────────────────
       - uses: actions/checkout@v4

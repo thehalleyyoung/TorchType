@@ -1,4 +1,4 @@
-# .a3.yml — PythonFromScratch configuration
+# .a3.yml — TorchType configuration
 # See: https://github.com/thehalleyyoung/PythonFromScratch
 
 analysis:
@@ -27,5 +27,7 @@ scan:
     - "examples/**"
     - "setup.py"
     - "conftest.py"
+    - "**/eigen-*/**"
+    - "app.py"
   include:
     - "**/*.py"
