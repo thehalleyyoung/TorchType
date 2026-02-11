@@ -45,7 +45,7 @@ jobs:
 
       # ── Install a3 ────────────────────────────────────────
       - name: Install a3
-        run: pip install a3-python[ci]
+        run: pip install a3-python[ci]>=0.1.18
 
       # ── Collect changed Python files ─────────────────────────────────
       - name: Get changed files
